@@ -1,0 +1,7 @@
+progressbar {
+  -moz-binding: url("progressbar.xbl#progressbar");
+}
+
+label.head {
+  font-weight: bold;
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<bindings id="pq"
+  xmlns="http://www.mozilla.org/xbl"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+>
+
+<binding id="progressbar">
+  <content>
+    <xul:progressmeter mode="normal" value="50">
+      <children/>
+    </xul:progressmeter>
+  </content>
+</binding>
+
+</bindings>
