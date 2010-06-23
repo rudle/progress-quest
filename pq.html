@@ -1,0 +1,177 @@
+<html>
+<head>
+<link rel="stylesheet" href="pq.css" type="text/css">
+<title>Progress Qwest</title>
+<head>
+
+<body>
+<div class="vbox window">
+
+<div id="titlebar">
+  <img src="swords.gif">
+  <span>Progress Quest/web v8.0</span>
+</div> 
+
+<script src="pq.js"></script>
+
+<div class="hbox" flex="1">
+  <div class="vbox" flex="5">
+    <span class="label head" >Character Sheet</span>
+    <table class="listbox" rows="4" class="list" id="traits">
+      <tr>
+        <th style="width:30%">Trait</th>
+        <th style="width:70%" >Value</th>
+      </tr>
+      <tr>
+        <td >Name</td>
+        <td >Crobab</td>
+      </tr>
+      <tr>
+        <td >Race</td>
+        <td >Half Man</td>
+      </tr>
+      <tr>
+        <td >Class</td>
+        <td >Slow Poisoner</td>
+      </tr>
+      <tr>
+        <td >Level</td>
+        <td >1</td>
+      </tr>
+    </table>
+
+  <div class="vbox" flex="4">
+    <table class="listbox" id="stats" rows="8">
+      <tr>
+        <th  style="width:30%">Stat</th>
+        <th  style="width:70%">Value</th>
+      </tr>
+      <tr><td >STR</td><td>18</td></tr>
+      <tr><td >CON</td><td>14</td></tr>
+      <tr><td >DEX</td><td>9</td></tr>
+      <tr><td >INT</td><td>12</td></tr>
+      <tr><td >WIS</td><td>44</td></tr>
+      <tr><td >CHA</td><td>12</td></tr>
+      <tr><td >HP Max</td><td>343</td></tr>
+      <tr><td >MP Max</td><td>6564</td></tr>
+    </table>
+
+  </div>
+
+
+
+    <span class="label" >Experience</span>
+    <div class="progress-container" id="xpbar">
+      <div class="bar" style="width: 50%"></div>
+    </div>
+
+    <span class="label head" >Spell Book</span>
+    <table class="listbox" id="spells" flex="1">
+      <tr>
+        <th >Spell</th>
+        <th >Level</th>
+      </tr>
+      <tr><td>Black Idaho<td>LXI
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+
+    </table>
+  </div>
+
+  <div class="vbox" flex="1">
+    <span class="label head" >Equipment</span>
+    <table class="listbox" id="equips" rows="11">
+      <tr><td >Weapon</td><td >Sharpened Stick</td></tr>
+      <tr><td >Shield</td><td></tr>
+      <tr><td >Helm<td></tr>
+      <tr><td >Hauberk<td></tr>
+      <tr><td >Brassairts<td></tr>
+      <tr><td >Vambraces<td></tr>
+      <tr><td >Gauntlets<td></tr>
+      <tr><td >Gambeson<td></tr>
+      <tr><td >Cuisses<td></tr>
+      <tr><td >Greaves<td></tr>
+      <tr><td >Sollerets<td></tr>
+    </table>
+
+    <span class="label head" >Inventory</span>
+    <table class="listbox" id="inventory" flex="1">
+      <tr>
+        <th >Item</th>
+        <th >Qty</th>
+      </tr>
+      <tr><td>Cruzle brass<td>15
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+      <tr><td>&nbsp;<td>
+    </table>
+    <span class="label" >Encumbrance</span>
+    <div class="progress-container" id="encumbar">
+      <div class="bar" style="width: 50%"></div>
+    </div>
+  </div>
+
+  <div class="vbox" flex="4">
+    <span class="label head" >Plot Development</span>
+    <table class="listbox" id="plots">
+      <tr><td>Prologue
+      <tr><td>Act 1
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+    </table>
+    <div class="progress-container" id="plotbar">
+      <div class="bar" style="width: 50%"></div>
+    </div>
+
+    <span class="label head" >Quests</span>
+    <table class="listbox" id="quests">
+      <tr>
+        <td><input type=checkbox checked="true"> Kill all the Bads
+      </tr>
+      <tr><td> &#9745; Kill all the Bads
+      <tr><td> &#9746; Kill all the Bads
+      <tr><td> &#9744; Kill all the Bads
+      <tr><td> &#x2713; Kill all the Bads
+      <tr><td> &#x2714; Kill all the Bads
+      <tr><td> <s>Kill all the Bads</s>
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+      <tr><td>&nbsp;
+    </table>
+    <div class="progress-container" id="questbar">
+      <div class="bar" style="width: 50%"></div>
+    </div>
+  </div>
+</div>
+
+<div id="tasktext" class="label">Executing a Greater Wolog</div>
+<div class="progress-container" id="taskbar">
+  <div class="bar" style="width: 50%"></div>
+</div>
+
+</div>
+
+</body>
+</html>
