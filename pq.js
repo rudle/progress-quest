@@ -166,100 +166,70 @@ function winSkill() {
   skills[skill] = (skills[skill].truncate(-1) + 1) + "%";
 }
 
-WinEquip {
-  MainForm.Equips Count GET RANDOM
-  bestequip 1 PEEK STORE # remember as the "best item"
-  (DUP) {
-    (1 EQUAL) KShields KArmors IFELSE
-    KDefense
-    SWAP
-  } {    
-    DISCARD
-    KOffense
-    KWeapons
-  } IFELSE
-  # ... listtype,stuff
 
-    (DUP Count GET) 
-    1 PEEK " SWAP GET 1 ELEMENT '" CONCAT 
-           (MainForm.Traits Level BYNAME GET) CONCAT
-                  "' SUB @Abs NEGATE" CONCAT
-    5
-  @PickBest
+function winEquip() {
+  var posn = Random(Equips.Items.Count);
+  Equips.Tag = posn; // remember as the "best item"
+  if (posn = 0) {
+    var stuff = K.Weapons.Lines;
+    var better = K.OffenseAttrib.Lines;
+    var worse = K.OffenseBad.Lines;
+  } else {
+    var better = K.DefenseAttrib.Lines;
+    var worse = K.DefenseBad.Lines;
+    var stuff = posn = 1 ? K.Shields.Lines : K.Armors.Lines;
+  }
+  var name = LPick(stuff,GetI(Traits,'Level'));
+  var qual = StrToInt(Split(name,1));
+  name = Split(name,0);
+  var plus = GetI(Traits,'Level') - qual;
+  if (plus < 0) better = worse;
+  var count = 0;
+  for (var count = 0; count < 2; ++count) {
+    if (plus == 0) break;
+    var modifier = Pick(better);
+    qual = StrToInt(Split(modifier, 1));
+    modifier = Split(modifier, 0);
+    if (Pos(modifier, name) > 0) break; // no repeats
+    if (Abs(plus) < Abs(qual)) break; // too much
+    name = modifier + ' ' + name;
+    plus -= qual;
+    ++count;
+  }
+  if (plus != 0) name = IntToStr(plus) + ' ' + name;
+  if (plus > 0) name = '+' + name;
 
-  GET # ... listtype,itemrecord
-  DUP 1 ELEMENT # ... listtype,itemrecord,quality
-  MainForm.Traits Level BYNAME GET SWAP SUB # ... listtype,itemrecord,qualitydifference
-  SWAP HEAD SWAP # ... listtype,name,qualitydifference
-  (DUP NEGATIVE) {Bad} {Attrib} IFELSE # ... listtype,name,qualitydiff,Attrib/Bad
-
-  3 LIFT SWAP CONCAT 2 DROP # ... attriblist,name,qualitydiff
-  2 {
-    DUP UNLESS
-    2 PEEK @Pick
-    (DUP HEAD) # ... attriblist,name,qualitydiff,atribrec,modifier
-    (3 PEEK 1 PEEK STRSTR) {DISCARD DISCARD BREAK} IF # allow no repeats
-    SWAP 1 ELEMENT # ... attriblist,name,qualitydiff,modifier,delta
-    # make sure not too much of an improvement
-    (DUP @Abs) (3 PEEK @Abs) GREATER {DISCARD DISCARD BREAK} IF 
-    SWAP ' ' CONCAT 3 LIFT CONCAT
-    2 DROP SUB 
-  } REPEAT
-  DUP POSITIVE {+ SWAP CONCAT} IF
-  DUP {' ' CONCAT SWAP CONCAT} {DISCARD} IFELSE
-  MainForm.Equips ($bestequip 1 JOIN)  PUT
-  DISCARD
-} STORE
+  Put(Equips, posn, name);
+}
 
 
-# Time to level up in seconds
-LevelUpTime { # ... level
-  DUP 10 ADD MUL 10 ADD # ... level^2 + 10 level + 10 minutes
-  60 MUL # seconds
-} STORE
+// Time to level up in seconds
+function levelUpTime(level) {
+  return level * 20 * 60;  // 20 minutes per level
+}
+
 
 
 # Give level-up rewards
-LevelUp { # ...  => ... 
-  # increment level
-  1 MainForm.Traits Level BYNAME PUT+
+function levelUp() {
+  Add(Traits,'Level',1);
+  Add(Stats,'HP Max', GetI(Stats,'CON') div 3 + 1 + Random(4));
+  Add(Stats,'MP Max', GetI(Stats,'INT') div 3 + 1 + Random(4));
+  WinStat;
+  WinStat;
+  WinSpell;
+  ExpBar.setPosMax(0, LevelUpTime(GetI(Traits,'Level')));
+  SaveGame;
+  Brag('l');
+}
 
-  # Boost HP
-    MainForm.Stats 'CON' BYNAME GET 3 DIV 1 ADD 4 RANDOM ADD
-    MainForm.Stats
-    'HP Max'
-  BYNAME PUT+
-
-  # Boost MP
-    MainForm.Stats 'INT' BYNAME GET 3 DIV 1 ADD 4 RANDOM ADD
-    MainForm.Stats
-    'MP Max'
-  BYNAME PUT+
-
-  # Boost stats
-  2 { @WinStat } REPEAT
-
-  # Boost spell
-  @WinSpell
-
-  # Boost skills
-  @WinSkills
-
-  # Reset XP bar
-  0 MainForm.ExpBar Position PUT
-  ((MainForm.Traits Level BYNAME GET) @LevelUpTime) MainForm.ExpBar Max PUT
-
-  @SaveGame
-  #l Brag INVOKE
-} STORE
-
-
-SaveGame { MainForm.Save OnClick INVOKE } STORE
-
+function saveGame() {
+  todo()
+}
 
 function goBuy() {
   task(5000,'Negotiating purchase of better equipment');
-  q("buyEquipment()");
+  q(buyEquipment);
 }
 
 function buyEquipment () {
@@ -273,6 +243,13 @@ function goSell() {
 }
 
 function sell() {
+  var tag = GetI(Inventory,1) * GetI(Traits,'Level');
+  if (Pos(' of ',Items[1].Caption) > 0) 
+    tag *= (1+RandomLow(10)) * (1+RandomLow(GetI(Traits,'Level')));
+  Items[0].MakeVisible(false);
+  Items.Delete(1);
+  Add(Inventory,'Gold',Tag);
+
   MainForm.Inventory 1 GET SPLIT # ... item qty
   MainForm.Traits Level BYNAME GET MUL # ... item qty*level
   SWAP ' of ' STRSTR STRLEN {10 @RandomLow 1 ADD MUL
