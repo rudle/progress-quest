@@ -35,44 +35,20 @@ table { border-collapse: collapse; border-spacing: 0; }
   display: block;
 }
 
-.groupbox { 
-  display: -moz-groupbox;
-  margin: 6px;
-  padding: 1ex;
-  border: solid 1px #462712;
-  -moz-border-radius: 3px;
-  -moz-appearance: none;
-  background: url(vellum-faded.jpg);
-}
 
 .hbox > *, .horizontal > *, td > * { 
   display: inline-block;
 }
 
-.deck1 > * { 
-  display: block;
-}
-.deck1 > *:first-child { 
-  display: none;
-}
-
-.deck0 > * { 
-  display: none;
-}
-.deck0 > *:first-child { 
-  display: block;
-}
-
-
 
 .vbox {
   vertical-align: top;
- }
+}
 
 td, th, .label, tr input, #titlebar { 
   font-family: Helvetica;
   font-size: 8pt;
- }
+}
 
 td, th { 
   padding-left: 1ex;
@@ -92,6 +68,7 @@ th:first-child {
 table { 
   border: solid 1px black;
   width: 250px;
+  background-color: white;
 }
 
 
@@ -99,63 +76,6 @@ table {
   font-weight: bold;
   font-size: 9pt;
 }
-
-
-
-
-body {
-  -moz-appearance: none;
-  color: #462712;
-  background: url(vellum.jpg);
-}
-
-.groupbox { 
-  border-color: #462712;
-}
-
-.groupbox, .caption { 
-  background: url(vellum-faded.jpg);
-}
-
-
-
-
-#loading { 
-  font: 24pt monotype corsiva;
-  padding: 5ex;
-  background: none;
-}
-
-
-.progress-bar {
-  -moz-appearance: none !important;
-  background-color: /*#8be*/ #ffda68 !important;
-}
-
-.lit > .progress-bar {
-  -moz-appearance: none !important;
-  background-color: #FFD490 !important;
-}
-
-
-.slider {
-  height: 2ex;
-  border: inset 1px silver;
-}
-
-row[onclick] {
-  border: solid 1px transparent;
-}
-row[onclick]:hover {
-  color: #00a;
-}
-row[qty]:hover {
-  border: outset 1px #462712;
-}
-row[qty]:active {
-  border: solid 1px #866752;
-}
-
 
 
 
@@ -175,6 +95,8 @@ div.progress-container > div.bar {
 }
 
 /*
+These bits are for text overlay on the progress bars
+
   z-index: 10;
   position: relative;
 
@@ -198,23 +120,11 @@ div.progress-container > div.label {
 
 
 .window { 
-  margin: 1em;
-}
-
-div { 
-  background-color: #eee;
- }
-
-table { 
-  background-color: white;
- }
-
-
-.window { 
   background-color: #eee; 
   width:800px;
   border: outset 2px silver;
   padding: 2px;
+  margin: 1em;
 }
 
 #taskbar { 
