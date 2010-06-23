@@ -94,20 +94,6 @@ div.progress-container > div.bar {
   width: 50%;
 }
 
-/*
-These bits are for text overlay on the progress bars
-
-  z-index: 10;
-  position: relative;
-
-div.progress-container > div.label {
-  z-index: 20;
-  position: absolute;
-  text-align: center;
-  width: 250px;
-}
-*/
-
 
 #titlebar { 
   background-color: blue;
