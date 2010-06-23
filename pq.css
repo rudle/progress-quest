@@ -1,7 +1,222 @@
-progressbar {
-  -moz-binding: url("progressbar.xbl#progressbar");
+/* RESET (via Boilerplate via Eric Meyer) */
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4,
+h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite,
+code, del, dfn, em, font, img, ins, kbd, q, s, samp, small,
+strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd,
+ol, ul, li, fieldset, form, label, legend, table, caption, tbody,
+tfoot, thead, tr, th, td { 
+  margin: 0; 
+  padding: 0; 
+  border: 0;
+  outline: 0; 
+  font-size: 100%; 
+  vertical-align: baseline;
+  background: transparent; 
+}
+body { line-height: 1; }
+ol, ul { list-style: none; }
+blockquote, q { quotes: none; }
+blockquote:before, blockquote:after, q:before, q:after { 
+  content: ''; content: none; 
+}
+:focus { outline: 0; }
+ins { text-decoration: none; }
+del { text-decoration: line-through; }
+table { border-collapse: collapse; border-spacing: 0; }
+
+/* XULish */
+
+.hbox > * { 
+  vertical-align: middle;
 }
 
-label.head {
-  font-weight: bold;
+.vbox > * { 
+  display: block;
 }
+
+.groupbox { 
+  display: -moz-groupbox;
+  margin: 6px;
+  padding: 1ex;
+  border: solid 1px #462712;
+  -moz-border-radius: 3px;
+  -moz-appearance: none;
+  background: url(vellum-faded.jpg);
+}
+
+.hbox > *, .horizontal > *, td > * { 
+  display: inline-block;
+}
+
+.deck1 > * { 
+  display: block;
+}
+.deck1 > *:first-child { 
+  display: none;
+}
+
+.deck0 > * { 
+  display: none;
+}
+.deck0 > *:first-child { 
+  display: block;
+}
+
+
+
+.vbox {
+  vertical-align: top;
+ }
+
+td, th, .label, tr input, #titlebar { 
+  font-family: Helvetica;
+  font-size: 8pt;
+ }
+
+td, th { 
+  padding-left: 1ex;
+}
+
+th { 
+  border-bottom: solid 1px grey;
+  background-color: #eee;
+  text-align: left;
+  font-weight: normal;
+}
+
+th:first-child { 
+  border-right: solid 1px grey;
+}
+
+table { 
+  border: solid 1px black;
+  width: 250px;
+}
+
+
+.head {
+  font-weight: bold;
+  font-size: 9pt;
+}
+
+
+
+
+body {
+  -moz-appearance: none;
+  color: #462712;
+  background: url(vellum.jpg);
+}
+
+.groupbox { 
+  border-color: #462712;
+}
+
+.groupbox, .caption { 
+  background: url(vellum-faded.jpg);
+}
+
+
+
+
+#loading { 
+  font: 24pt monotype corsiva;
+  padding: 5ex;
+  background: none;
+}
+
+
+.progress-bar {
+  -moz-appearance: none !important;
+  background-color: /*#8be*/ #ffda68 !important;
+}
+
+.lit > .progress-bar {
+  -moz-appearance: none !important;
+  background-color: #FFD490 !important;
+}
+
+
+.slider {
+  height: 2ex;
+  border: inset 1px silver;
+}
+
+row[onclick] {
+  border: solid 1px transparent;
+}
+row[onclick]:hover {
+  color: #00a;
+}
+row[qty]:hover {
+  border: outset 1px #462712;
+}
+row[qty]:active {
+  border: solid 1px #866752;
+}
+
+
+
+
+
+div.progress-container { 
+  border: 1px solid #ccc; 
+  width: 250px; 
+  margin: 2px 5px 2px 0; 
+  padding: 1px; 
+  background: white;
+}
+
+div.progress-container > div.bar { 
+  background-color: #ACE97C; 
+  height: 12px;
+  width: 50%;
+}
+
+/*
+  z-index: 10;
+  position: relative;
+
+div.progress-container > div.label {
+  z-index: 20;
+  position: absolute;
+  text-align: center;
+  width: 250px;
+}
+*/
+
+
+#titlebar { 
+  background-color: blue;
+  color: white;
+  font-weight: bold;
+  font-size: 9pt;
+  padding-bottom: 4px;
+  margin-bottom: 1ex;
+ }
+
+
+.window { 
+  margin: 1em;
+}
+
+div { 
+  background-color: #eee;
+ }
+
+table { 
+  background-color: white;
+ }
+
+
+.window { 
+  background-color: #eee; 
+  width:800px;
+  border: outset 2px silver;
+  padding: 2px;
+}
+
+#taskbar { 
+  width: 99%;
+ }
