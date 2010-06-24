@@ -5,8 +5,9 @@ function Random(n) {
 }
 
 function Roll(stat) {
-  stat.Tag = 3 + Random(6) + Random(6) + Random(6);
-  stat.html(stat.Tag);
+  stats[stat] = 3 + Random(6) + Random(6) + Random(6);
+  $("#"+stat).text(stats[stat]);
+  return stats[stat];
 }
 
 function Choose(n, k) {
@@ -19,54 +20,64 @@ function Choose(n, k) {
   return result / d;
 }
 
+var stats = {};
+
 function RollEm() {
-  var STR = $("STR");
-  var CON = $("CON");
-  var DEX = $("DEX");
-  var INT = $("INT");
-  var WIS = $("WIS");
-  var CHA = $("CHA");
-  var Total = $("Total");
-  var ReRoll = $("ReRoll");
+  var Total = $("#Total");
+  var ReRoll = $("#ReRoll");
   //ReRoll.Tag = RandSeed();
-  Roll(STR);
-  Roll(CON);
-  Roll(DEX);
-  Roll(INT);
-  Roll(WIS);
-  Roll(CHA);
-  Total.tag = STR.Tag + CON.Tag + DEX.Tag + INT.Tag + WIS.Tag + CHA.Tag;
-  Total.html(Total.Tag);
-  /*
-  if (Total.Tag >= (63+18)) Total.Color = clRed
-  else if (Total.Tag > (4 * 18)) Total.Color = clYellow
-  else if (Total.Tag <= (63-18)) Total.Color = clGray
-  else if (Total.Tag < (3 * 18)) Total.Color = clSilver
-  else Total.Color = clWhite;
-*/
+  stats.total = 
+    Roll("STR") +
+    Roll("CON") +
+    Roll("DEX") +
+    Roll("INT") +
+    Roll("WIS") +
+    Roll("CHA");
+  Total.text(stats.total);
+
+  var color = (stats.total >= (63+18)) ? 'red' :
+    (stats.total > (4 * 18)) ? 'yellow' :
+    (stats.total <= (63-18)) ? 'grey'   :
+    (stats.total < (3 * 18)) ? 'silver' :
+    'white';
+  Total.css("background-color", color);
 }
 
 function RerollClick() {
   //OldRolls.Items.Insert(0, IntToStr(ReRoll.Tag));
   //Unroll.Enabled = true;
   RollEm();
-  alert("ok");
 }
 
 
-function TNewGuyForm_Go() {
-  Tag = 1;
-  return mrOk == ShowModal();
+function fill(e, a, n) {
+  var def = Random(a.length);
+  for (var i = 0; i < a.length; ++i) {
+    var v = a[i].split("|")[0];
+    var check = def == i ? " checked " : " ";
+    $("<div><input type=radio name=\"" + n + "\" value=\"" + v + "\" " +
+                      check  +">" + v + "</div>").appendTo(e);
+  }
 }
 
 $(document).ready(function () {
-  //$("#Reroll").click(function(){RerollClick();});
+  fill("#races", K.Races, "Race");
+  fill("#classes", K.Klasses, "Class");
+
+  $("#Reroll").click(function(){RerollClick();});
+  //RerollClick();
 
   //var caption = 'Progress Quest - New Character';
   //if (MainForm.GetHostName != '')
   //  caption = caption + ' [' + MainForm.GetHostName + ']';
   //Randomize();
   RollEm();
+
+  $("#RandomName").click(GenClick);
+  if ($("#Name").text() == '') {
+    GenClick();
+    //Name.SetFocus();
+  }
 });
 
 function TNewGuyForm_UnrollClick() {
@@ -134,33 +145,18 @@ function GenerateName() {
 
   function Pick(s) {
     var count = 1;
-    for (var i = 0; i <= Length(s)-1; ++i)
-      if (s[i] == '|') Inc(count);
-    return Split(s, Random(count));
+    for (var i = 0; i < s.length; ++i)
+      if (s[i] == '|') ++count;
+    return s.split("|")[Random(count)];
   }
 
   var result = '';
   for (var i = 0; i <= 5; ++i)
     result += Pick(KParts[i % 3]);
-  return UpperCase(Copy(result,1,1)) + Copy(result,2,Length(result));
+  return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
-function TNewGuyForm_GenClick() {
-  Name.Text = GenerateName();
+function GenClick() {
+  $("#Name").attr("value", GenerateName());
 }
 
-function TNewGuyForm_FormActivate() {
-  if (Name.Text == '') {
-    GenClick();
-    Name.SetFocus();
-  }
-}
-
-function TNewGuyForm_FormCreate() {
-  Race.Items.Clear();
-  for (var i = 0; i <= K.Races.Lines.Count-1; ++i)
-    Race.Items.Add(Split(K.Races.Lines[i],0));
-  Klass.Items.Clear();
-  for (var i = 0; i <= K.Klasses.Lines.Count-1; ++i)
-    Klass.Items.Add(Split(K.Klasses.Lines[i],0));
-}

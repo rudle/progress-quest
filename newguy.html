@@ -21,8 +21,8 @@ input, button { display: inline; }
 
   <div class="hbox">
       Name
-      <input id=Name>
-      <button id=RandomName>?</button>
+      <input id="Name">
+      <button id="RandomName">?</button>
   </div>
 
   <div class=hbox>
@@ -67,23 +67,6 @@ input, button { display: inline; }
   </div>
 
 </div>
-
-<script>
-function fill(e, a, n) {
-  var def = Random(a.length);
-  for (var i = 0; i < a.length; ++i) {
-    var v = a[i].split("|")[0];
-    var check = def == i ? " checked " : " ";
-    $("<div><input type=radio name=\"" + n + "\" value=\"" + v + "\" " +
-                      check  +">" + v + "</div>").appendTo(e);
-  }
-}
-fill("#races", K.Races, "Race");
-fill("#classes", K.Klasses, "Class");
-
-
-//$(document).ready(function(){});
-</script>
 
 </body>
 </html>
