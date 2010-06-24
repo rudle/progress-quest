@@ -100,6 +100,7 @@ function UnrollClick() {
 }
 
 
+/* Multiplayer:
 function TNewGuyForm_ParseSoldResponse(body) {
   if ((LowerCase(Split(body,0)) == 'ok')) {
     MainForm.SetPasskey(Split(body,1));
@@ -145,10 +146,8 @@ function TNewGuyForm_SoldClick() {
     }
   }
 }
+*/
 
-function TNewGuyForm_ApplicationEvents1Minimize() {
-  MainForm.MinimizeIt();
-}
 
 function GenerateName() {
   var KParts = [
