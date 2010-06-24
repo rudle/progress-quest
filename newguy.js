@@ -1,7 +1,19 @@
 /* copyright (c)2002-2010 Eric Fredricksen all rights reserved */
 
+
+var randseed = Math.floor(Math.random() * 0xFFFFFFFF);
+
 function Random(n) {
-  return Math.floor(Math.random() * n);
+  return Rand32Rough() % n;
+}
+
+
+function Rand32Rough() { 
+  // http://www.merlyn.demon.co.uk/js-randm.htm#MR
+  var T32 = 0x100000000;
+  var constant = 134775813;
+  var X = constant * randseed + 1;
+  return (randseed = X % T32);
 }
 
 function Roll(stat) {
@@ -20,12 +32,12 @@ function Choose(n, k) {
   return result / d;
 }
 
-var stats = {};
+var stats = {"history":[]};
 
 function RollEm() {
   var Total = $("#Total");
   var ReRoll = $("#ReRoll");
-  //ReRoll.Tag = RandSeed();
+  stats.seed = randseed;
   stats.total = 
     Roll("STR") +
     Roll("CON") +
@@ -44,8 +56,8 @@ function RollEm() {
 }
 
 function RerollClick() {
-  //OldRolls.Items.Insert(0, IntToStr(ReRoll.Tag));
-  //Unroll.Enabled = true;
+  stats.history.push(stats.seed);
+  $("#Unroll").attr("disabled", false);
   RollEm();
 }
 
@@ -65,27 +77,28 @@ $(document).ready(function () {
   fill("#classes", K.Klasses, "Class");
 
   $("#Reroll").click(function(){RerollClick();});
-  //RerollClick();
+  $("#Unroll").click(function(){UnrollClick();});
 
   //var caption = 'Progress Quest - New Character';
   //if (MainForm.GetHostName != '')
   //  caption = caption + ' [' + MainForm.GetHostName + ']';
-  //Randomize();
   RollEm();
 
   $("#RandomName").click(GenClick);
   if ($("#Name").text() == '') {
     GenClick();
-    //Name.SetFocus();
+    $("#Name")[0].focus();
+    $("#Name")[0].select();
   }
 });
 
-function TNewGuyForm_UnrollClick() {
-  RandSeed = StrToInt(OldRolls.Items[0]);
-  OldRolls.Items.Delete(0);
-  Unroll.Enabled = OldRolls.Items.Count > 0;
+
+function UnrollClick() {
+  randseed = stats.history.pop();
+  $("#Unroll").attr("disabled", stats.history.length == 0);
   RollEm();
 }
+
 
 function TNewGuyForm_ParseSoldResponse(body) {
   if ((LowerCase(Split(body,0)) == 'ok')) {
