@@ -1,4 +1,6 @@
-var Spells = [
+var K = {};
+
+K.Spells = [
   "Slime Finger",
   "Rabbit Punch",
   "Hastiness",
@@ -45,7 +47,8 @@ var Spells = [
   "Tonsilectomy",
   "Curse Family",
   "Infinite Confusion"];
-var OffenseAttrib = [
+
+K.OffenseAttrib = [
   "Polished|+1",
   "Serrated|+1",
   "Heavy|+1",
@@ -57,7 +60,8 @@ var OffenseAttrib = [
   "Dancing|+5",
   "Invisible|+6",
   "Vorpal|+7"];
-var DefenseAttrib = [
+
+K.DefenseAttrib = [
   "Studded|+1",
   "Banded|+2",
   "Gilded|+2",
@@ -67,7 +71,8 @@ var DefenseAttrib = [
   "Fine|+4",
   "Impressive|+5",
   "Custom|+3"];
-var Shields = [
+
+K.Shields = [
   "Parasol|0",
   "Pie Plate|1",
   "Garbage Can Lid|2",
@@ -84,7 +89,8 @@ var Shields = [
   "Baroque Shield|11",
   "Aegis|12",
   "Magnetic Field|18"];
-var Armors = [
+
+K.Armors = [
   "Lace|1",
   "Macrame|2",
   "Burlap|3",
@@ -105,7 +111,8 @@ var Armors = [
   "Mithril Mail|20",
   "Diamond Mail|25",
   "Plasma|30"];
-var Weapons = [
+
+K.Weapons = [
   "Stick|0",
   "Broken Bottle|1",
   "Shiv|1",
@@ -144,7 +151,8 @@ var Weapons = [
   "Halberd|11",
   "Poleax|12",
   "Bandyclef|15"];
-var Specials = [
+
+K.Specials = [
   "Diadem",
   "Festoon",
   "Gemstone",
@@ -182,7 +190,8 @@ var Specials = [
   "Gimcrack",
   "Hood",
   "Vulpeculum"];
-var ItemAttrib = [
+
+K.ItemAttrib = [
   "Golden",
   "Gilded",
   "Spectral",
@@ -216,7 +225,8 @@ var ItemAttrib = [
   "Iron",
   "Ormolu",
   "Puissant"];
-var ItemOfs = [
+
+K.ItemOfs = [
   "Foreboding",
   "Foreshadowing",
   "Nervousness",
@@ -268,7 +278,8 @@ var ItemOfs = [
   "Diamonique",
   "Electrum",
   "Hydragyrum"];
-var BoringItems = [
+
+K.BoringItems = [
   "nail",
   "lunchpail",
   "sock",
@@ -311,7 +322,8 @@ var BoringItems = [
   "trinket",
   "credenza",
   "writ"];
-var Monsters = [
+
+K.Monsters = [
   "Anhkheg|6|chitin",
   "Ant|0|antenna",
   "Ape|4|ass",
@@ -543,7 +555,8 @@ var Monsters = [
   "Moakum|8|frenum",
   "Fly|0|*",
   "Hogbird|3|curl"];
-var MonMods = [
+
+K.MonMods = [
   "-4 fœtal *",
   "-4 dying *",
   "-3 crippled *",
@@ -560,7 +573,8 @@ var MonMods = [
   "+3 undead *",
   "+4 giant *",
   "+4 * Rex"];
-var OffenseBad = [
+
+K.OffenseBad = [
   "Dull|-2",
   "Tarnished|-1",
   "Rusty|-3",
@@ -570,7 +584,8 @@ var OffenseBad = [
   "Rubber|-6",
   "Nerf|-7",
   "Unbalanced|-2"];
-var DefenseBad = [
+
+K.DefenseBad = [
   "Holey|-1",
   "Patched|-1",
   "Threadbare|-2",
@@ -585,7 +600,8 @@ var DefenseBad = [
   "Cracked|-4",
   "Warped|-3",
   "Corroded|-3"];
-var Races = [
+
+K.Races = [
   "Half Orc|HP Max",
   "Half Man|CHA",
   "Half Halfling|DEX",
@@ -607,7 +623,8 @@ var Races = [
   "Skraeling|WIS",
   "Demicanadian|CON",
   "Land Squid|STR,HP Max"];
-var Klasses = [
+
+K.Klasses = [
   "Ur-Paladin|WIS,CON",
   "Voodoo Princess|INT,CHA",
   "Robot Monk|STR",
@@ -626,7 +643,8 @@ var Klasses = [
   "Lowling|WIS",
   "Birdrider|WIS",
   "Vermineer|INT"];
-var Titles = [
+
+K.Titles = [
   "Mr.",
   "Mrs.",
   "Sir",
@@ -636,7 +654,8 @@ var Titles = [
   "Chief",
   "Admiral",
   "Saint"];
-var ImpressiveTitles = [
+
+K.ImpressiveTitles = [
   "King",
   "Queen",
   "Lord",
@@ -648,3 +667,4 @@ var ImpressiveTitles = [
   "Chief",
   "Boss",
   "Archbishop"];
+
