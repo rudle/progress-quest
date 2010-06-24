@@ -1,7 +1,7 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
 // revs:
-// 6: pq 6.3.web 
+// 6: pq 6.3/web 
 // 5: pq 6.3
 // 4: pq 6.2
 // 3: pq 6.1
@@ -9,51 +9,52 @@
 // 1: pq 6.0, some early release I guess;)n't remember
 var RevString = '&rev=6';
 
+var timerid;
+var timestart;
+
+function timeGetTime() {
+  return Date.getTime();
+}
+
 function StartTimer() {
-  if (! MainForm.Timer1.Enabled)
-    MainForm.Timer1.Tag = timeGetTime();
-  MainForm.Timer1.Enabled = True;
+  if (!timerid) {
+    timestart = timeGetTime();
+    timerid = setInterval(Timer1Timer, 100);
+  }
   // BS location for this, but...
-  MainForm.Caption = 'ProgressQuest - ' + ChangeFileExt(ExtractFileName(MainForm.GameSaveName), '');
+  // MainForm.Caption = 'ProgressQuest - ' + ChangeFileExt(ExtractFileName(MainForm.GameSaveName), '');
 }
 
-function TMainForm_GetPasskey() { return Traits.Tag; }
-function TMainForm_SetPasskey(v) {
-  Traits.Hint = v;
-  Traits.Tag = StrToIntDef(Traits.Hint,0);
-}
+var game = { queue: [] };
 
-function TMainForm_GetMotto() { return Stats.Hint; }
-function TMainForm_SetMotto(v) { Stats.Hint = v; }
+function GetPasskey() { return game.passkey; }
+function SetPasskey(v) { game.passkey = v; }
 
-function TMainForm_GetHostName() { return Spells.Hint; }
-function TMainForm_SetHostName(v) { Spells.Hint = v; }
+function GetMotto() { return game.motto; }
+function SetMotto(v) { game.motto = v; }
 
-function TMainForm_GetHostAddr() {
-  if (Equips.Hint == '' && GetPasskey() != 0)
-    return 'http://www.progressquest.com/knoram.php?';
-  else
-    return Equips.Hint;
-}
+function GetHostName() { return game.hostname; }
+function SetHostName(v) { game.hostname = v; }
 
-function TMainForm_SetHostAddr(v) { Equips.Hint = v; }
+function GetHostAddr() { return game.hostaddr; }
+function SetHostAddr(v) { game.hostaddr = v; }
 
-function TMainForm_GetLogin() { return Inventory.Hint; }
-function TMainForm_SetLogin(v) { Inventory.Hint = v; }
+function GetLogin() { return game.login; }
+function SetLogin(v) { game.login = v; }
 
-function TMainForm_GetPassword() { return Plots.Hint; }
-function TMainForm_SetPassword(v) { Plots.Hint = v; }
+function GetPassword() { return game.password; }
+function SetPassword(v) { game.password = v; }
 
-function TMainForm_GetGuild() { return Label1.Hint; }
-function TMainForm_SetGuild(v) { Label1.Hint = v; }
+function GetGuild() { return game.guild; }
+function SetGuild(v) { game.guild = v; }
 
-function TMainForm_Q(s) {
-  fQueue.Items.Add(s);
+function Q(s) {
+  game.queue.push(s);
   Dequeue();
 }
 
-function TMainForm_TaskDone() {
-  return TaskBar.Position >= TaskBar.Max;
+function TaskDone() {
+  return $("#TaskBar").attr("Position") >= $("#TaskBar").attr("Max");
 }
 
 function Odds(chance, outof) {
@@ -65,7 +66,7 @@ function RandSign() {
 }
 
 function Pick(s) {
-  return s[Random(s.Count)];
+  return s[Random(s.length)];
 }
 
 function RandomLow(below) {
@@ -73,7 +74,7 @@ function RandomLow(below) {
 }
 
 function PickLow(s) {
-  return s[RandomLow(s.Count)];
+  return s[RandomLow(s.length)];
 }
 
 function Ends(s, e) {
@@ -165,7 +166,7 @@ function TMainForm_InterplotCinematic() {
     var nemesis = NamedMonster(GetI(Traits,'Level')+3);
     Q('task|4|A desperate struggle commences with ' + nemesis);
     var s = Random(3);
-    for (var i = 1; i <= Random(1 + Plots.Items.Count); ++i) {
+    for (var i = 1; i <= Random(1 + Plots.length); ++i) {
       s += 1 + Random(2);
       switch (s % 3) {
       case 0: Q('task|2|Locked in grim combat with ' + nemesis); break;
@@ -219,9 +220,9 @@ function TMainForm_MonsterTask(level) {
 
   if (Odds(1,25)) {
     // Use an NPC every once in a while
-    var monster = ' ' + Pick(NewGuyForm.Race.Items);
+    var monster = ' ' + Pick(NewGuyForm.Race);
     if (Odds(1,2)) {
-      monster = 'passing' + monster + ' ' + Pick(NewGuyForm.Klass.Items);
+      monster = 'passing' + monster + ' ' + Pick(NewGuyForm.Klass);
     } else {
       monster = PickLow(K.Titles.Lines) + ' ' + GenerateName + ' the' + monster;
       definite = true;
@@ -312,31 +313,31 @@ function TMainForm_Dequeue() {
       if (fTask.Caption = 'sell') {
         Inventory.Tag = GetI(Inventory.Inventory,1);
         Inventory.Tag = Inventory.Tag * GetI(Traits,'Level');
-        if (Pos(' of ', Inventory.Items[1].Caption) > 0)
+        if (Pos(' of ', Inventory[1].Caption) > 0)
           Inventory.Tag = Inventory.Tag * (1+RandomLow(10)) * (1+RandomLow(GetI(Traits,'Level')));
-        Inventory.Items[0].MakeVisible(false);
-        Inventory.Items.Delete(1);
+        Inventory[0].MakeVisible(false);
+        Inventory.Delete(1);
         Add(Inventory, 'Gold', Inventory.Tag);
       }
-      if (Items.Count > 1) {
-        Task('Selling ' + Indefinite(Inventory.Items[1].Caption, GetI(Inventory,1)), 1 * 1000);
+      if (Items.length > 1) {
+        Task('Selling ' + Indefinite(Inventory[1].Caption, GetI(Inventory,1)), 1 * 1000);
         fTask.Caption = 'sell';
         break;
       }
     }
     var old = fTask.Caption;
     fTask.Caption = '';
-    if (fQueue.Items.Count > 0) {
-      var a = Split(fQueue.Items[0],0);
-      var n = StrToInt(Split(fQueue.Items[0],1));
-      var s = Split(fQueue.Items[0],2);
+    if (fQueue.length > 0) {
+      var a = Split(fQueue[0],0);
+      var n = StrToInt(Split(fQueue[0],1));
+      var s = Split(fQueue[0],2);
       if (a == 'task' || a == 'plot') {
         if (a == 'plot') {
           CompleteAct;
-          s = 'Loading ' + Plots.Items[Plots.Items.Count-1].Caption;
+          s = 'Loading ' + Plots[Plots.length-1].Caption;
         }
         Task(s, n * 1000);
-        fQueue.Items.Delete(0);
+        fQueue.Delete(0);
       } else {
         throw 'bah!';
       }
@@ -361,10 +362,10 @@ function TMainForm_Dequeue() {
 }
 
 function IndexOf(list, key) {
-  for (var i = 0; i < list.Items.Count; ++i)
-    if (list.Items.Item[i].Caption == key) 
+  for (var i = 0; i < list.length; ++i)
+    if (list.Item[i].Caption == key) 
       return i;
-  var item = list.Items.Add;
+  var item = list.Add;
   item.Caption = key;
   item.MakeVisible(false);
   list.Width = list.Width - 1; // trigger an autosize
@@ -386,12 +387,12 @@ function TMainForm_Put(list, key, value) {
 }
 
 function TMainForm_Put(list, pos, value) {
-  var item = list.Items.Item[pos];
-  if (item.SubItems.Count < 1) 
+  var item = list.Item[pos];
+  if (item.SubItems.length < 1) 
     item.SubItems.Add(value);
   else 
     item.SubItems[0] = value;
-  list.Items[pos].Selected = true;
+  list[pos].Selected = true;
 }
 
 function LevelUpTime(level) {  // seconds 
@@ -405,7 +406,7 @@ function TMainForm_GoButtonClick() {
 
   fTask.Caption = '';
   fQuest.Caption = '';
-  fQueue.Items.Clear();
+  fQueue.Clear();
 
   Task('Loading.',2000); // that dot is spotted for later...
   Q('task|10|Experiencing an enigmatic and foreboding night vision');
@@ -415,7 +416,7 @@ function TMainForm_GoButtonClick() {
   Q('task|2|Loading');
 
   PlotBar.Max = 26;
-  var item = Plots.Items.Add();
+  var item = Plots.Add();
   item.Caption = 'Prologue';
   item.StateIndex = 0;
 
@@ -426,7 +427,7 @@ function TMainForm_GoButtonClick() {
 
 function TMainForm_WinSpell() {
   AddR(Spells, K.Spells.Lines[RandomLow(Min(GetI(Stats,'WIS')+GetI(Traits,'Level'),
-                                            K.Spells.Lines.Count))], 1);
+                                            K.Spells.Lines.length))], 1);
 }
 
 function LPick(list, goal) {
@@ -442,7 +443,7 @@ function LPick(list, goal) {
 }
 
 function TMainForm_WinEquip() {
-  var posn = Random(Equips.Items.Count);
+  var posn = Random(Equips.length);
   Equips.Tag = posn; // remember as the "best item"
   if (posn == 0) {
     stuff = K.Weapons.Lines;
@@ -484,7 +485,7 @@ function Square(x) { return x * x; }
 function TMainForm_WinStat() {
   var i;
   if (Odds(1,2))  {
-    i = Random(Stats.Items.Count)
+    i = Random(Stats.length)
   } else {
     // Favor the best stat so it will tend to clump
     var t = 0;
@@ -496,7 +497,7 @@ function TMainForm_WinStat() {
       t -= Square(GetI(Stats,i));
     }
   }
-  Add(Stats, Stats.Items[index].Caption, 1);
+  Add(Stats, Stats[index].Caption, 1);
 }
 
 function TMainForm_SpecialItem() {
@@ -519,20 +520,20 @@ function TMainForm_CompleteQuest() {
   var lev = 0;  // Quell stupid compiler warning
   QuestBar.Position = 0;
   QuestBar.Max = 50 + Random(100);
-  if (Quests.Items.Count > 0) {
+  if (Quests.length > 0) {
     /*$IFDEF LOGGING*/
-    Log('Quest completed: ' + Quests.Items[Quests.Items.Count-1].Caption);
+    Log('Quest completed: ' + Quests[Quests.length-1].Caption);
     /*$ENDIF*/
-    Quests.Items[Quests.Items.Count-1].StateIndex = 1;
+    Quests[Quests.length-1].StateIndex = 1;
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
-    while (Quest.Items.Count > 99) Quest.Items.Delete(0);
+    while (Quest.length > 99) Quest.Delete(0);
 
-    var item = Quest.Items.Add;
+    var item = Quest.Add;
     switch (Random(5)) {
     case 0: 
       var level = GetI(Traits,'Level');
       for (var i = 1; i <= 4; ++i) {
-        var montag = Random(K.Monsters.Lines.Count);
+        var montag = Random(K.Monsters.Lines.length);
         var m = K.Monsters.Lines[montag];
         var l = StrToInt(Split(m,1));
         if (i == 1 || abs(l - level) < abs(lev - level)) {
@@ -561,7 +562,7 @@ function TMainForm_CompleteQuest() {
     case 4: 
       level = GetI(Traits,'Level');
       for (var i = 1; i <= 2; ++i) {
-        montag = Random(K.Monsters.Lines.Count);
+        montag = Random(K.Monsters.Lines.length);
         m = K.Monsters.Lines[montag];
         l = StrToInt(Split(m,1));
         if ((i == 1) || (abs(l - level) < abs(lev - level))) {
@@ -641,11 +642,11 @@ String.prototype.toArabic = function() {
 
 function TMainForm_CompleteAct() {
   PlotBar.Position = 0;
-  Plots.Items[Plots.Items.Count-1].StateIndex = 1;
-  PlotBar.Max = 60 * 60 * (1 + 5 * Plots.Items.Count); // 1 hr + 5/act
+  Plots[Plots.length-1].StateIndex = 1;
+  PlotBar.Max = 60 * 60 * (1 + 5 * Plots.length); // 1 hr + 5/act
   PlotBar.Hint = 'Cutscene omitted';
-  var item = Plots.Items.Add;
-  item.Caption = 'Act ' + (PlotsItems.Count-1).toRoman();
+  var item = Plots.Add;
+  item.Caption = 'Act ' + (PlotsItems.length-1).toRoman();
   item.MakeVisible(false);
   item.StateIndex = 0;
   item.Width = item.Width-1;
@@ -692,10 +693,10 @@ function TMainForm_CharSheet() {
   WrLn(Format('Level %d (exp. %d/%d)', [GetI(Traits,'Level'), ExpBar.Position, ExpBar.Max]));
   //WrLn('Level ' + Get(Traits,'Level') + ' (' + ExpBar.Hint + ')');
   WrLn;
-  if (Plots.Items.Count > 0)
-    WrLn('Plot stage: ' + Plots.Items[Plots.Items.Count-1].Caption + ' (' + PlotBar.Hint + ')');
-  if (Quests.Items.Count > 0)
-    WrLn('Quest: ' + Quests.Items[Quests.Items.Count-1].Caption + ' (' + QuestBar.Hint + ')');
+  if (Plots.length > 0)
+    WrLn('Plot stage: ' + Plots[Plots.length-1].Caption + ' (' + PlotBar.Hint + ')');
+  if (Quests.length > 0)
+    WrLn('Quest: ' + Quests[Quests.length-1].Caption + ' (' + QuestBar.Hint + ')');
   WrLn();
   WrLn( 'Stats:');
   WrLn( Format('  STR%7d', [GetI(Stats,'STR')]));
@@ -706,19 +707,19 @@ function TMainForm_CharSheet() {
   WrLn( Format('  CHA%7d      MP Max%7d', [GetI(Stats,'CHA'), GetI(Stats,'MP Max')]));
   WrLn();
   WrLn( 'Equipment:');
-  for (var i = 1; i <= Equips.Items.Count-1; ++i)
+  for (var i = 1; i <= Equips.length-1; ++i)
     if (Get(Equips,i) != '')
-      WrLn( '  ' + LeftStr(Equips.Items[i].Caption + '            ', 12) + Get(Equips,i));
+      WrLn( '  ' + LeftStr(Equips[i].Caption + '            ', 12) + Get(Equips,i));
   WrLn();
   WrLn( 'Spell Book:');
-  for (var i = 1; i <= Items.Count-1; ++i)
-    WrLn( '  ' + Spells.Items[i].Caption + ' ' + Get(Spells,i));
+  for (var i = 1; i <= Items.length-1; ++i)
+    WrLn( '  ' + Spells[i].Caption + ' ' + Get(Spells,i));
   WrLn();
   WrLn( 'Inventory (' + EncumBar.Hint + '):');
   WrLn( '  ' + Indefinite('gold piece', GetI(Inventory, 'Gold')));
-  for (var i = 2; i <= Items.Count-1; ++i) {
-    if (Pos(' of ', Inventory.Items[i].Caption) > 0) 
-      WrLn( '  ' + Definite(Inventory.Items[i].Caption, GetI(Inventory,i)));
+  for (var i = 2; i <= Items.length-1; ++i) {
+    if (Pos(' of ', Inventory[i].Caption) > 0) 
+      WrLn( '  ' + Definite(Inventory[i].Caption, GetI(Inventory,i)));
     else 
       WrLn( '  ' + Indefinite(Items[i].Caption, GetI(Inventory,i)));
   }
@@ -762,8 +763,8 @@ function TMainForm_Get(list, key) {
 }
 
 function TMainForm_Get(list, index) {
-  var item = list.Items.Item[index];
-  return (item.SubItems.Count < 1) ? '' : item.SubItems[0];
+  var item = list.Item[index];
+  return (item.SubItems.length < 1) ? '' : item.SubItems[0];
 }
 
 function TMainForm_GetI(list, key) {
@@ -776,14 +777,14 @@ function TMainForm_GetI(list, index) {
 
 function TMainForm_Sum(list) {
   var result = 0;
-  for (var i = 0; i <= list.Items.Count - 1; ++i)
+  for (var i = 0; i <= list.length - 1; ++i)
     Result += GetI(list,i);
 }
 
 function PutLast(list, value) {
-  if (list.Items.Count > 0) {
-    with (list.Items.Item[list.Items.Count-1]) {
-      if (SubItems.Count < 1) 
+  if (list.length > 0) {
+    with (list.Item[list.length-1]) {
+      if (SubItems.length < 1) 
         SubItems.Add(value);
       else 
         SubItems[0] = value;
@@ -845,10 +846,10 @@ function TMainForm_Timer1Timer() {
       with (ExpBar) Hint = IntToStr(Max-Position) + ' XP needed for next level';
 
       // advance quest
-      if (gain) if (Plots.Items.Count > 1) with (QuestBar) {
+      if (gain) if (Plots.length > 1) with (QuestBar) {
         if (Position >= Max) {
           CompleteQuest;
-        } else if (Quests.Items.Count > 0) {
+        } else if (Quests.length > 0) {
           Position = Position + TaskBar.Max.div(1000);
           Hint = IntToStr(100 * Position.div(Max)) + '% complete';
         }
@@ -917,8 +918,8 @@ function TMainForm_RollCharacter() {
 
   with (NewGuyForm) {
     Put(Traits,'Name',Name.Text);
-    Put(Traits,'Race',Race.Items[Race.ItemIndex]);
-    Put(Traits,'Class',Klass.Items[Klass.ItemIndex]);
+    Put(Traits,'Race',Race[Race.ItemIndex]);
+    Put(Traits,'Class',Klass[Klass.ItemIndex]);
     Put(Traits,'Level',1);
     Put(Stats,'STR',STR.Tag);
     Put(Stats,'CON',CON.Tag);
@@ -1068,9 +1069,9 @@ function TMainForm_LoadGame(name) {
   FSaveFileName = name;
   var m = TMemoryStream.Create;
   var f = TFileStream.Create(name, fmOpenRead);
-  Traits.Items.Clear();
-  Stats.Items.Clear();
-  Equips.Items.Clear();
+  Traits.Clear();
+  Stats.Clear();
+  Equips.Clear();
   m.Seek(0, soFromBeginning);
   for (i = 0; i <= ComponentCount-1; ++i)
     m.ReadComponent(Components[i]);
@@ -1159,14 +1160,14 @@ function TMainForm_Brag(trigger) {
     ExportCharSheet;
   if (GetPasskey = 0) return; // not a online game!
   var url = 'cmd=b&t=' + trigger;
-  with (Traits) for (i = 0; i <= Items.Count-1; ++i) 
+  with (Traits) for (i = 0; i <= Items.length-1; ++i) 
     url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
   url = url + '&x=' + IntToStr(ExpBar.Position);
   url = url + '&i=' + UrlEncode(Get(Equips,Equips.Tag));
-  if (Equips.Tag > 1) url = url + '+' + Equips.Items[Equips.Tag].Caption;
+  if (Equips.Tag > 1) url = url + '+' + Equips[Equips.Tag].Caption;
   var best = 0;
-  if (Spells.Items.Count > 0) with (Spells) {
-    for (i = 1; i <= Items.Count-1; ++i)
+  if (Spells.length > 0) with (Spells) {
+    for (i = 1; i <= Items.length-1; ++i)
       if ((i+flat) * RomanToInt(Get(Spells,i)) >
           (best+flat) * RomanToInt(Get(Spells,best)))
         best = i;
@@ -1175,8 +1176,8 @@ function TMainForm_Brag(trigger) {
   best = 0;
   for (var i = 1; i <= 5; ++i)
     if (GetI(Stats,i) > GetI(Stats,best)) best = i;
-  url = url + '&k=' + Stats.Items[best].Caption + '+' + Get(Stats,best);
-  url = url + '&a=' + UrlEncode(Plots.Items[Plots.Items.Count-1].Caption);
+  url = url + '&k=' + Stats[best].Caption + '+' + Get(Stats,best);
+  url = url + '&a=' + UrlEncode(Plots[Plots.length-1].Caption);
   url = url + '&h=' + UrlEncode(GetHostName);
   url = url + RevString;
   url = url + '&p=' + IntToStr(LFSR(url, GetPasskey));
@@ -1201,7 +1202,7 @@ function TMainForm_AuthenticateUrl(url) {
 function TMainForm_Guildify() {
   if (GetPasskey = 0) return; // not a online game!
   var url = 'cmd=guild';
-  with (Traits) for (i = 0; i <= Items.Count-1; ++i)
+  with (Traits) for (i = 0; i <= Items.length-1; ++i)
     url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
   url = url + '&h=' + UrlEncode(GetHostName);
   url = url + RevString;
