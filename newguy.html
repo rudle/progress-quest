@@ -4,6 +4,7 @@
 <title>Progress Quest - Roll One Up</title>
 <script src="jquery.js"></script>
 <script src="config.js"></script>
+<script src="newguy.js"></script>
 <style>
 input, button { display: inline; }
 
@@ -38,14 +39,14 @@ input, button { display: inline; }
       <legend>Stats</legend>
       
       <table>
-        <tr> <th> STR <td> 13 </tr>
-        <tr> <th> DEX <td> 34 </tr>
-        <tr> <th> CON <td> 23 </tr>
-        <tr> <th> INT <td> 12 </tr>
-        <tr> <th> WIS <td> 4 </tr>
-        <tr> <th> CHA <td> 12 </tr>
+        <tr> <th> STR <td id="STR">13</tr>
+        <tr> <th> CON <td id="CON">23</tr>
+        <tr> <th> DEX <td id="DEX">34</tr>
+        <tr> <th> INT <td id="INT">12</tr>
+        <tr> <th> WIS <td id="WIS">4</tr>
+        <tr> <th> CHA <td id="CHA">12</tr>
         <tr> <th colspan=2> &nbsp; </tr>
-        <tr> <th> Total <td> 48 </tr>
+        <tr> <th> Total <td id="Total">48</tr>
       </table>
 
       <br>
@@ -69,10 +70,12 @@ input, button { display: inline; }
 
 <script>
 function fill(e, a, n) {
+  var def = Random(a.length);
   for (var i = 0; i < a.length; ++i) {
     var v = a[i].split("|")[0];
-    $("<div><input type=radio name=\"" + n + "\" value=" + v +">" +
-      v + "</div>").appendTo(e);
+    var check = def == i ? " checked " : " ";
+    $("<div><input type=radio name=\"" + n + "\" value=\"" + v + "\" " +
+                      check  +">" + v + "</div>").appendTo(e);
   }
 }
 fill("#races", K.Races, "Race");

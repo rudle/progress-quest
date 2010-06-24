@@ -1,13 +1,12 @@
 /* copyright (c)2002-2010 Eric Fredricksen all rights reserved */
 
-function UrlEncode(s) {
-  NewGuyForm.PoorCodeDesign.InputString = s;
-  return NewGuyForm.PoorCodeDesign.Encode;
+function Random(n) {
+  return Math.floor(Math.random() * n);
 }
 
 function Roll(stat) {
   stat.Tag = 3 + Random(6) + Random(6) + Random(6);
-  stat.Caption = IntToStr(stat.Tag);
+  stat.html(stat.Tag);
 }
 
 function Choose(n, k) {
@@ -20,21 +19,31 @@ function Choose(n, k) {
   return result / d;
 }
 
-function TNewGuyForm_RollEm() {
-  ReRoll.Tag = RandSeed();
+function RollEm() {
+  var STR = $("STR");
+  var CON = $("CON");
+  var DEX = $("DEX");
+  var INT = $("INT");
+  var WIS = $("WIS");
+  var CHA = $("CHA");
+  var Total = $("Total");
+  var ReRoll = $("ReRoll");
+  //ReRoll.Tag = RandSeed();
   Roll(STR);
   Roll(CON);
   Roll(DEX);
   Roll(INT);
   Roll(WIS);
   Roll(CHA);
-  Total.tag = STR.Tag + Con.Tag + DEX.Tag + Int.Tag + Wis.Tag + CHA.Tag;
-  Total.Caption = IntToStr(Total.Tag);
+  Total.tag = STR.Tag + CON.Tag + DEX.Tag + INT.Tag + WIS.Tag + CHA.Tag;
+  Total.html(Total.Tag);
+  /*
   if (Total.Tag >= (63+18)) Total.Color = clRed
   else if (Total.Tag > (4 * 18)) Total.Color = clYellow
   else if (Total.Tag <= (63-18)) Total.Color = clGray
   else if (Total.Tag < (3 * 18)) Total.Color = clSilver
   else Total.Color = clWhite;
+*/
 }
 
 function TNewGuyForm_RerollClick() {
@@ -48,20 +57,13 @@ function TNewGuyForm_Go() {
   return mrOk == ShowModa();
 }
 
-function TNewGuyForm_FormShow() {
-  if (Tag > 0) {
-    Tag = 0;
-    Caption = 'Progress Quest - New Character';
-    if (MainForm.GetHostName != '')
-      Caption = Caption + ' [' + MainForm.GetHostName + ']';
-    Randomize();
-    RollEm();
-    with (Race)
-      ItemIndex = Random(Items.Count);
-    with (Klass)
-      ItemIndex = Random(Items.Count);
-  }
-}
+$(document).ready(function () {
+  //var caption = 'Progress Quest - New Character';
+  //if (MainForm.GetHostName != '')
+  //  caption = caption + ' [' + MainForm.GetHostName + ']';
+  //Randomize();
+  RollEm();
+});
 
 function TNewGuyForm_UnrollClick() {
   RandSeed = StrToInt(OldRolls.Items[0]);
@@ -103,8 +105,8 @@ function TNewGuyForm_SoldClick() {
         if ((GetAccount() != '') || (GetPassword != ''))
           url = StuffString(url, 8, 0, GetAccount() + ':' + GetPassword() + '@');
         args = 'cmd=create' +
-                '&name=' + UrlEncode(Name.Text) +
-                '&realm=' + UrlEncode(MainForm.GetHostName) +
+                '&name=' + escape(Name.Text) +
+                '&realm=' + escape(MainForm.GetHostName) +
                 RevString;
         ParseSoldResponse(DownloadString(url + args));
       } catch (EWebError) {
