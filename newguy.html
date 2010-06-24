@@ -13,27 +13,30 @@ input, button { display: inline; }
 <body>
 <div class="vbox window">
 
-  <div class=hbox>
-    <span>
+  <div id="titlebar">
+    <img src="swords.gif">
+    <span>Progress Quest/web v8.0</span>
+  </div> 
+
+  <div class="hbox">
       Name
       <input id=Name>
       <button id=RandomName>?</button>
-    </span>
   </div>
 
   <div class=hbox>
 
-    <div class=vbox id="races">
-      Race<br>
-    </div>
+    <fieldset class="vbox groupbox" id="races">
+      <legend>Race</legend>
+    </fieldset>
     
-    <div class=vbox id="classes">
-      Class<br>
-    </div>
+    <fieldset class="vbox groupbox" id="classes">
+      <legend>Class</legend>
+    </fieldset>
     
-    <div class=vbox>
-      Stats<br>
-
+    <fieldset class="vbox groupbox">
+      <legend>Stats</legend>
+      
       <table>
         <tr> <th> STR <td> 13 </tr>
         <tr> <th> DEX <td> 34 </tr>
@@ -41,16 +44,20 @@ input, button { display: inline; }
         <tr> <th> INT <td> 12 </tr>
         <tr> <th> WIS <td> 4 </tr>
         <tr> <th> CHA <td> 12 </tr>
+        <tr> <th colspan=2> &nbsp; </tr>
         <tr> <th> Total <td> 48 </tr>
       </table>
 
       <br>
       <br>
-
+      <br>
+      <br>
+      
       <button id=Roll>Roll</button>
       <button id=Unroll>Unroll</button>
 
-    </div>
+    </fieldset>
+
   </div>
 
   <div class=hbox style="text-align:right">
