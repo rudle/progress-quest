@@ -46,18 +46,22 @@ function RollEm() {
 */
 }
 
-function TNewGuyForm_RerollClick() {
-  OldRolls.Items.Insert(0, IntToStr(ReRoll.Tag));
-  Unroll.Enabled = true;
+function RerollClick() {
+  //OldRolls.Items.Insert(0, IntToStr(ReRoll.Tag));
+  //Unroll.Enabled = true;
   RollEm();
+  alert("ok");
 }
+
 
 function TNewGuyForm_Go() {
   Tag = 1;
-  return mrOk == ShowModa();
+  return mrOk == ShowModal();
 }
 
 $(document).ready(function () {
+  //$("#Reroll").click(function(){RerollClick();});
+
   //var caption = 'Progress Quest - New Character';
   //if (MainForm.GetHostName != '')
   //  caption = caption + ' [' + MainForm.GetHostName + ']';
