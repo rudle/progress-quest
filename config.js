@@ -1,150 +1,4 @@
-object K: TK
-  Left = 457
-  Top = 331
-  Width = 800
-  Height = 567
-  Caption = 'K'
-  Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
-  TextHeight = 13
-  object Label1: TLabel
-    Left = 8
-    Top = 116
-    Width = 28
-    Height = 13
-    Caption = 'Spells'
-  end
-  object Label2: TLabel
-    Left = 168
-    Top = 4
-    Width = 64
-    Height = 13
-    Caption = 'Offense Attrib'
-  end
-  object Label3: TLabel
-    Left = 280
-    Top = 228
-    Width = 70
-    Height = 13
-    Caption = 'Defense Atrtrib'
-  end
-  object Label4: TLabel
-    Left = 140
-    Top = 228
-    Width = 34
-    Height = 13
-    Caption = 'Shields'
-  end
-  object Label5: TLabel
-    Left = 8
-    Top = 228
-    Width = 27
-    Height = 13
-    Caption = 'Armor'
-  end
-  object Label6: TLabel
-    Left = 8
-    Top = 4
-    Width = 41
-    Height = 13
-    Caption = 'Weapon'
-  end
-  object Label7: TLabel
-    Left = 164
-    Top = 428
-    Width = 40
-    Height = 13
-    Caption = 'Speicals'
-  end
-  object Label8: TLabel
-    Left = 8
-    Top = 428
-    Width = 47
-    Height = 13
-    Caption = 'Item Attrib'
-  end
-  object Label9: TLabel
-    Left = 320
-    Top = 428
-    Width = 34
-    Height = 13
-    Caption = 'Item Of'
-  end
-  object Label10: TLabel
-    Left = 172
-    Top = 116
-    Width = 58
-    Height = 13
-    Caption = 'Boring Items'
-  end
-  object Label11: TLabel
-    Left = 12
-    Top = 344
-    Width = 125
-    Height = 13
-    Caption = 'Monsters (name level item)'
-  end
-  object Label12: TLabel
-    Left = 236
-    Top = 344
-    Width = 162
-    Height = 13
-    Caption = 'Monster mods (adjustment pattern)'
-  end
-  object Label13: TLabel
-    Left = 324
-    Top = 8
-    Width = 56
-    Height = 13
-    Caption = 'OffenseBad'
-  end
-  object Label14: TLabel
-    Left = 404
-    Top = 232
-    Width = 59
-    Height = 13
-    Caption = 'DefenseBad'
-  end
-  object Label15: TLabel
-    Left = 480
-    Top = 8
-    Width = 26
-    Height = 13
-    Caption = 'Race'
-  end
-  object Label16: TLabel
-    Left = 480
-    Top = 120
-    Width = 25
-    Height = 13
-    Caption = 'Class'
-  end
-  object Label17: TLabel
-    Left = 328
-    Top = 120
-    Width = 25
-    Height = 13
-    Caption = 'Titles'
-  end
-  object Label18: TLabel
-    Left = 476
-    Top = 428
-    Width = 74
-    Height = 13
-    Caption = 'Impressive titles'
-  end
   object Spells: TMemo
-    Left = 8
-    Top = 132
-    Width = 153
-    Height = 89
-    Lines.Strings = (
       'Slime Finger'
       'Rabbit Punch'
       'Hastiness'
@@ -191,15 +45,7 @@ object K: TK
       'Tonsilectomy'
       'Curse Family'
       'Infinite Confusion')
-    TabOrder = 0
-    WordWrap = False
-  end
   object OffenseAttrib: TMemo
-    Left = 168
-    Top = 20
-    Width = 141
-    Height = 89
-    Lines.Strings = (
       'Polished|+1'
       'Serrated|+1'
       'Heavy|+1'
@@ -211,15 +57,7 @@ object K: TK
       'Dancing|+5'
       'Invisible|+6'
       'Vorpal|+7')
-    TabOrder = 1
-    WordWrap = False
-  end
   object DefenseAttrib: TMemo
-    Left = 280
-    Top = 244
-    Width = 113
-    Height = 89
-    Lines.Strings = (
       'Studded|+1'
       'Banded|+2'
       'Gilded|+2'
@@ -229,15 +67,7 @@ object K: TK
       'Fine|+4'
       'Impressive|+5'
       'Custom|+3')
-    TabOrder = 2
-    WordWrap = False
-  end
   object Shields: TMemo
-    Left = 140
-    Top = 244
-    Width = 133
-    Height = 89
-    Lines.Strings = (
       'Parasol|0'
       'Pie Plate|1'
       'Garbage Can Lid|2'
@@ -254,15 +84,7 @@ object K: TK
       'Baroque Shield|11'
       'Aegis|12'
       'Magnetic Field|18')
-    TabOrder = 3
-    WordWrap = False
-  end
   object Armors: TMemo
-    Left = 8
-    Top = 244
-    Width = 129
-    Height = 89
-    Lines.Strings = (
       'Lace|1'
       'Macrame|2'
       'Burlap|3'
@@ -283,15 +105,7 @@ object K: TK
       'Mithril Mail|20'
       'Diamond Mail|25'
       'Plasma|30')
-    TabOrder = 4
-    WordWrap = False
-  end
   object Weapons: TMemo
-    Left = 8
-    Top = 20
-    Width = 153
-    Height = 89
-    Lines.Strings = (
       'Stick|0'
       'Broken Bottle|1'
       'Shiv|1'
@@ -330,15 +144,7 @@ object K: TK
       'Halberd|11'
       'Poleax|12'
       'Bandyclef|15')
-    TabOrder = 5
-    WordWrap = False
-  end
   object Specials: TMemo
-    Left = 164
-    Top = 444
-    Width = 149
-    Height = 89
-    Lines.Strings = (
       'Diadem'
       'Festoon'
       'Gemstone'
@@ -376,15 +182,7 @@ object K: TK
       'Gimcrack'
       'Hood'
       'Vulpeculum')
-    TabOrder = 6
-    WordWrap = False
-  end
   object ItemAttrib: TMemo
-    Left = 8
-    Top = 444
-    Width = 149
-    Height = 89
-    Lines.Strings = (
       'Golden'
       'Gilded'
       'Spectral'
@@ -418,15 +216,7 @@ object K: TK
       'Iron'
       'Ormolu'
       'Puissant')
-    TabOrder = 7
-    WordWrap = False
-  end
   object ItemOfs: TMemo
-    Left = 320
-    Top = 444
-    Width = 149
-    Height = 89
-    Lines.Strings = (
       'Foreboding'
       'Foreshadowing'
       'Nervousness'
@@ -478,15 +268,7 @@ object K: TK
       'Diamonique'
       'Electrum'
       'Hydragyrum')
-    TabOrder = 8
-    WordWrap = False
-  end
   object BoringItems: TMemo
-    Left = 168
-    Top = 132
-    Width = 149
-    Height = 89
-    Lines.Strings = (
       'nail'
       'lunchpail'
       'sock'
@@ -529,15 +311,7 @@ object K: TK
       'trinket'
       'credenza'
       'writ')
-    TabOrder = 9
-    WordWrap = False
-  end
   object Monsters: TMemo
-    Left = 8
-    Top = 360
-    Width = 221
-    Height = 61
-    Lines.Strings = (
       'Anhkheg|6|chitin'
       'Ant|0|antenna'
       'Ape|4|ass'
@@ -769,15 +543,7 @@ object K: TK
       'Moakum|8|frenum'
       'Fly|0|*'
       'Hogbird|3|curl')
-    TabOrder = 10
-    WordWrap = False
-  end
   object MonMods: TMemo
-    Left = 232
-    Top = 360
-    Width = 221
-    Height = 61
-    Lines.Strings = (
       '-4 f'#339'tal *'
       '-4 dying *'
       '-3 crippled *'
@@ -794,15 +560,7 @@ object K: TK
       '+3 undead *'
       '+4 giant *'
       '+4 * Rex')
-    TabOrder = 11
-    WordWrap = False
-  end
   object OffenseBad: TMemo
-    Left = 316
-    Top = 20
-    Width = 141
-    Height = 89
-    Lines.Strings = (
       'Dull|-2'
       'Tarnished|-1'
       'Rusty|-3'
@@ -812,15 +570,7 @@ object K: TK
       'Rubber|-6'
       'Nerf|-7'
       'Unbalanced|-2')
-    TabOrder = 12
-    WordWrap = False
-  end
   object DefenseBad: TMemo
-    Left = 396
-    Top = 244
-    Width = 141
-    Height = 89
-    Lines.Strings = (
       'Holey|-1'
       'Patched|-1'
       'Threadbare|-2'
@@ -835,15 +585,7 @@ object K: TK
       'Cracked|-4'
       'Warped|-3'
       'Corroded|-3')
-    TabOrder = 13
-    WordWrap = False
-  end
   object Races: TMemo
-    Left = 480
-    Top = 24
-    Width = 249
-    Height = 89
-    Lines.Strings = (
       'Half Orc|HP Max'
       'Half Man|CHA'
       'Half Halfling|DEX'
@@ -865,14 +607,7 @@ object K: TK
       'Skraeling|WIS'
       'Demicanadian|CON'
       'Land Squid|STR,HP Max')
-    TabOrder = 14
-  end
   object Klasses: TMemo
-    Left = 480
-    Top = 136
-    Width = 249
-    Height = 89
-    Lines.Strings = (
       'Ur-Paladin|WIS,CON'
       'Voodoo Princess|INT,CHA'
       'Robot Monk|STR'
@@ -891,14 +626,7 @@ object K: TK
       'Lowling|WIS'
       'Birdrider|WIS'
       'Vermineer|INT')
-    TabOrder = 15
-  end
   object Titles: TMemo
-    Left = 328
-    Top = 136
-    Width = 57
-    Height = 81
-    Lines.Strings = (
       'Mr.'
       'Mrs.'
       'Sir'
@@ -908,14 +636,7 @@ object K: TK
       'Chief'
       'Admiral'
       'Saint')
-    TabOrder = 16
-  end
   object ImpressiveTitles: TMemo
-    Left = 476
-    Top = 442
-    Width = 149
-    Height = 89
-    Lines.Strings = (
       'King'
       'Queen'
       'Lord'
@@ -927,7 +648,3 @@ object K: TK
       'Chief'
       'Boss'
       'Archbishop')
-    TabOrder = 17
-    WordWrap = False
-  end
-end
