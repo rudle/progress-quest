@@ -45,7 +45,7 @@ table { border-collapse: collapse; border-spacing: 0; }
   vertical-align: top;
 }
 
-td, th, .label, tr input, #titlebar { 
+td, th, .label, tr input, #titlebar, div { 
   font-family: Helvetica;
   font-size: 8pt;
 }

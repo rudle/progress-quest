@@ -1,0 +1,79 @@
+<html>
+<head>
+<link rel="stylesheet" href="pq.css" type="text/css">
+<title>Progress Quest - Roll One Up</title>
+<script src="jquery.js"></script>
+<script src="config.js"></script>
+<style>
+input, button { display: inline; }
+
+</style>
+</head>
+
+<body>
+<div class="vbox window">
+
+  <div class=hbox>
+    <span>
+      Name
+      <input id=Name>
+      <button id=RandomName>?</button>
+    </span>
+  </div>
+
+  <div class=hbox>
+
+    <div class=vbox id="races">
+      Race<br>
+    </div>
+    
+    <div class=vbox id="classes">
+      Class<br>
+    </div>
+    
+    <div class=vbox>
+      Stats<br>
+
+      <table>
+        <tr> <th> STR <td> 13 </tr>
+        <tr> <th> DEX <td> 34 </tr>
+        <tr> <th> CON <td> 23 </tr>
+        <tr> <th> INT <td> 12 </tr>
+        <tr> <th> WIS <td> 4 </tr>
+        <tr> <th> CHA <td> 12 </tr>
+        <tr> <th> Total <td> 48 </tr>
+      </table>
+
+      <br>
+      <br>
+
+      <button id=Roll>Roll</button>
+      <button id=Unroll>Unroll</button>
+
+    </div>
+  </div>
+
+  <div class=hbox style="text-align:right">
+    <button id=Sold type=default>Sold!</button>
+    <button id=Cancel>Cancel</button>
+  </div>
+
+</div>
+
+<script>
+function fill(e, a, n) {
+  for (var i = 0; i < a.length; ++i) {
+    var v = a[i].split("|")[0];
+    $("<div><input type=radio name=\"" + n + "\" value=" + v +">" +
+      v + "</div>").appendTo(e);
+  }
+}
+fill("#races", K.Races, "Race");
+fill("#classes", K.Klasses, "Class");
+
+
+//$(document).ready(function(){});
+</script>
+
+</body>
+</html>
