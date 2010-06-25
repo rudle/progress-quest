@@ -19,27 +19,31 @@
 <div class="hbox" flex="1">
   <div class="vbox" flex="5">
     <span class="label head" >Character Sheet</span>
-    <table class="listbox" rows="4" class="list" id="Traits">
-      <tr>
-        <th style="width:30%">Trait</th>
-        <th style="width:70%" >Value</th>
-      </tr>
-      <tr>
-        <td>Name</td>
-        <td key="Name">Crobab</td>
-      </tr>
-      <tr>
-        <td>Race</td>
-        <td key="Race">Half Man</td>
-      </tr>
-      <tr>
-        <td>Class</td>
-        <td key="Class">Slow Poisoner</td>
-      </tr>
-      <tr>
-        <td>Level</td>
-        <td key="Level">1</td>
-      </tr>
+    <table class="listbox" rows="4" class="list">
+      <thead>
+        <tr>
+          <th style="width:30%">Trait</th>
+          <th style="width:70%" >Value</th>
+        </tr>
+      </thead>
+      <tbody id="Traits">
+        <tr>
+          <td>Name</td>
+          <td key="Name">Crobab</td>
+        </tr>
+        <tr>
+          <td>Race</td>
+          <td key="Race">Half Man</td>
+        </tr>
+        <tr>
+          <td>Class</td>
+          <td key="Class">Slow Poisoner</td>
+        </tr>
+        <tr>
+          <td>Level</td>
+          <td key="Level">1</td>
+        </tr>
+      </tbody>
     </table>
 
   <div class="vbox" flex="4">
@@ -68,100 +72,120 @@
     </div>
 
     <span class="label head" >Spell Book</span>
-    <table class="listbox" id="Spells" flex="1">
-      <tr>
-        <th >Spell</th>
-        <th >Level</th>
-      </tr>
-      <tr><td>Black Idaho<td>LXI
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-
+    <table class="listbox">
+      <thead>
+        <tr>
+          <th >Spell</th>
+          <th >Level</th>
+        </tr>
+      </thead>
+      <tbody id="Spells">
+        <tr><td>Black Idaho<td>LXI</tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+      </tbody>
     </table>
   </div>
 
   <div class="vbox" flex="1">
     <span class="label head" >Equipment</span>
-    <table class="listbox" id="Equips" rows="11">
-      <tr><td >Weapon</td><td >Sharpened Stick</td></tr>
-      <tr><td >Shield</td><td></tr>
-      <tr><td >Helm<td></tr>
-      <tr><td >Hauberk<td></tr>
-      <tr><td >Brassairts<td></tr>
-      <tr><td >Vambraces<td></tr>
-      <tr><td >Gauntlets<td></tr>
-      <tr><td >Gambeson<td></tr>
-      <tr><td >Cuisses<td></tr>
-      <tr><td >Greaves<td></tr>
-      <tr><td >Sollerets<td></tr>
+    <table class="listbox" rows="11">
+      <tbody id="Equips">
+        <tr><td >Weapon</td><td >Sharpened Stick</td></tr>
+        <tr><td >Shield</td><td></tr>
+        <tr><td >Helm<td></tr>
+        <tr><td >Hauberk<td></tr>
+        <tr><td >Brassairts<td></tr>
+        <tr><td >Vambraces<td></tr>
+        <tr><td >Gauntlets<td></tr>
+        <tr><td >Gambeson<td></tr>
+        <tr><td >Cuisses<td></tr>
+        <tr><td >Greaves<td></tr>
+        <tr><td >Sollerets<td></tr>
+      </tbody>
     </table>
 
     <span class="label head" >Inventory</span>
-    <table class="listbox" id="Inventory" flex="1">
-      <tr>
-        <th >Item</th>
-        <th >Qty</th>
-      </tr>
-      <tr><td>Cruzle brass<td>15
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
-      <tr><td>&nbsp;<td>
+    <table class="listbox">
+      <thead>
+        <tr>
+          <th >Item</th>
+          <th >Qty</th>
+        </tr>
+      </thead>
+      <tbody id="Inventory">
+        <tr><td>Cruzle brass<td>15</tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+        <tr><td>&nbsp;<td></tr>
+      </tbody>
     </table>
+
     <span class="label" >Encumbrance</span>
     <div class="progress-container" id="EncumBar">
       <div class="bar" style="width: 50%"></div>
     </div>
   </div>
 
+
   <div class="vbox" flex="4">
+
     <span class="label head" >Plot Development</span>
     <div class="scroll listbox">
-    <table id="Plots">
-    </table>
+      <table>
+        <tbody id="Plots">
+        </tbody>
+      </table>
     </div>
+
     <div class="progress-container" id="PlotBar">
       <div class="bar" style="width: 50%"></div>
     </div>
 
     <span class="label head" >Quests</span>
-    <table class="listbox" id="Quests">
-      <tr>
-        <td><input type=checkbox checked="true"> Kill all the Bads
-      </tr>
-      <tr><td> &#9745; Kill all the Bads
-      <tr><td> &#9746; Kill all the Bads
-      <tr><td> &#9744; Kill all the Bads
-      <tr><td> &#x2713; Kill all the Bads
-      <tr><td> &#x2714; Kill all the Bads
-      <tr><td> <s>Kill all the Bads</s>
-      <tr><td>&nbsp;
-      <tr><td>&nbsp;
-      <tr><td>&nbsp;
-      <tr><td>&nbsp;
-      <tr><td>&nbsp;
-      <tr><td>&nbsp;
-      <tr><td>&nbsp;
+    <table class="listbox">
+      <tbody id="Quests">
+        <tr>
+          <td><input type=checkbox checked="true"> Kill all the Bads
+        </tr>
+        <tr><td> &#9745; Kill all the Bads</tr>
+        <tr><td> &#9746; Kill all the Bads</tr>
+        <tr><td> &#9744; Kill all the Bads</tr>
+        <tr><td> &#x2713; Kill all the Bads</tr>
+        <tr><td> &#x2714; Kill all the Bads</tr>
+        <tr><td> <s>Kill all the Bads</s></tr>
+        <tr><td>&nbsp;</tr>
+        <tr><td>&nbsp;</tr>
+        <tr><td>&nbsp;</tr>
+        <tr><td>&nbsp;</tr>
+        <tr><td>&nbsp;</tr>
+        <tr><td>&nbsp;</tr>
+        <tr><td>&nbsp;</tr>
+      </tbody>
     </table>
+
     <div class="progress-container" id="QuestBar">
       <div class="bar" style="width: 50%"></div>
     </div>
   </div>
+
 </div>
 
 <div id="Kill" class="label">Executing a Greater Wolog</div>
+
 <div class="progress-container" id="TaskBar">
   <div class="bar" style="width: 50%"></div>
 </div>

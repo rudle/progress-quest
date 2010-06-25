@@ -221,7 +221,7 @@ function ImpressiveGuy() {
     (Random(2) ? ' of the ' + Pick(K.Races) : ' of ' + GenerateName());
 }
 
-function TMainForm_MonsterTask(level) {
+function MonsterTask(level) {
   var definite = false;
   for (var i = level; i >= 1; --i) {
     if (Odds(2,5))
@@ -232,18 +232,18 @@ function TMainForm_MonsterTask(level) {
 
   if (Odds(1,25)) {
     // Use an NPC every once in a while
-    var monster = ' ' + Pick(NewGuyForm.Race);
+    var monster = ' ' + Pick(K.Races);
     if (Odds(1,2)) {
-      monster = 'passing' + monster + ' ' + Pick(NewGuyForm.Klass);
+      monster = 'passing' + monster + ' ' + Pick(K.Klasses);
     } else {
-      monster = PickLow(K.Titles) + ' ' + GenerateName + ' the' + monster;
+      monster = PickLow(K.Titles) + ' ' + GenerateName() + ' the' + monster;
       definite = true;
     }
     var lev = level;
     monster = monster + '|' + IntToStr(level) + '|*';
   } else if ((game.questmonster != '') && Odds(1,4)) {
     // Use the quest monster
-    var monster = k.Monsters[fQuest.Tag];
+    var monster = k.Monsters[game.questmonsterindex];
     var lev = StrToInt(Split(monster,1));
   } else {
     // Pick the monster out of so many random ones closest to the level we want
@@ -258,12 +258,11 @@ function TMainForm_MonsterTask(level) {
     }
   }
 
-  game.task = monster;
   var result = Split(monster,0);
-  game.task = 'kill|' + game.task;
+  game.task = 'kill|' + monster;
 
   var qty = 1;
-  if ((level-lev) > 10) {
+  if (level-lev > 10) {
     // lev is too low. multiply...
     qty = Math.floor((level + Random(lev)) / max(lev,1));
     if (qty < 1) qty = 1;
@@ -299,11 +298,12 @@ function TMainForm_MonsterTask(level) {
   return { 'description': result, 'level': level };
 }
 
+
 function ProperCase(s) {
-  return UpperCase(Copy(s,1,1)) + Copy(s,2,10000);
+  return Copy(s,1,1).toUpperCase() + Copy(s,2,10000);
 }
 
-function TMainForm_EquipPrice() {
+function EquipPrice() {
   return  5 * GetI(Traits,'Level') * GetI(Traits,'Level')
           + 10 * GetI(Traits,'Level')
           + 20;
@@ -319,20 +319,20 @@ function Dequeue() {
       }
     } else if (game.task == 'buying') {
       // buy some equipment
-      Add(Inventory,'Gold',-EquipPrice);
+      Add(Inventory,'Gold',-EquipPrice());
       WinEquip();
     } else if ((game.task == 'market') || (game.task == 'sell')) {
       if (game.task = 'sell') {
-        Inventory.Tag = GetI(Inventory.Inventory,1);
-        Inventory.Tag = Inventory.Tag * GetI(Traits,'Level');
-        if (Pos(' of ', Inventory[1].Caption) > 0)
-          Inventory.Tag = Inventory.Tag * (1+RandomLow(10)) * (1+RandomLow(GetI(Traits,'Level')));
-        Inventory[0].MakeVisible(false);
-        Inventory.Delete(1);
-        Add(Inventory, 'Gold', Inventory.Tag);
+        var amt = GetI(Inventory, 1) * GetI(Traits,'Level');
+        if (Pos(' of ', Inventory.label(1) > 0))
+          amt *= (1+RandomLow(10)) * (1+RandomLow(GetI(Traits,'Level')));
+        Inventory.scrollToTop();
+        Inventory.poptop();
+        Add(Inventory, 'Gold', amt);
       }
-      if (Items.length > 1) {
-        Task('Selling ' + Indefinite(Inventory[1].Caption, GetI(Inventory,1)), 1 * 1000);
+      if (Items.length() > 1) {
+        Task('Selling ' + Indefinite(Inventory.label(1), GetI(Inventory,1)), 
+             1 * 1000);
         game.task = 'sell';
         break;
       }
@@ -399,6 +399,7 @@ function LevelUpTime(level) {  // seconds
 
 
 function ProgressBar(id) {
+  this.id = id;
   this.bar = $("#"+ id + " > .bar");
 
   this.reset = function (newmax) {
@@ -418,6 +419,15 @@ function ProgressBar(id) {
   this.done = function () {
     return this.Position >= this.Max;
   }
+
+  this.save = function (game) {
+    game[id] = {position: this.Position, max: this.Max};
+  }
+  
+  this.load = function (game) {
+    this.Max = game[id].max;
+    this.reposition(game[id].position);
+  }
 };
 
 function alert(k) {
@@ -425,6 +435,7 @@ function alert(k) {
 }
 
 function ListBox(id) {
+  this.id = id;
   this.box = $("#"+ id);
 
   this.Add = function (caption) {
@@ -438,19 +449,27 @@ function ListBox(id) {
 
   this.item = function (key) {
     if (typeof key == typeof 'string') {
-      return this.box.find("tr").filter(function (index) {
+      var result = this.rows().filter(function (index) {
         return $(this).children().first().text() === key;
       });
+      if (!result.length) {
+        result = $("<tr><td>" + key + "</td><td/></tr>");
+        this.box.find("tr").last().after(result);
+      }
+      return result;
     } else {
       return this.box.find("tr").eq(key);
     }
   }
 
   this.last = function () {
-    return this.box.find("tr").last();
+    return this.rows().last();
   }
 
   this.scrollToBottom = function () {
+    // TODO
+  }
+  this.scrollToTop = function () {
     // TODO
   }
 
@@ -460,6 +479,23 @@ function ListBox(id) {
 
   this.length = function () {
     return this.rows().length;
+  }
+
+  this.poptop = function () {
+    this.box.find("tr").first().remove();
+  }
+
+  this.save = function (game) {
+    game[this.id] = {items: []};
+    this.rows().each(function (index) {
+      game[this.id].items.push($(this).html());
+    });
+  }
+
+  this.load = function (game) {
+    this.rows().remove();
+    for (var i = 0; i < game[this.id].length; ++i)
+      this.box.appeand(game[this.id][i]);
   }
 };
 
@@ -490,9 +526,6 @@ function GoButtonClick() {
   SaveGame();
   Brag('s');
   
-  alert(toArabic("LIX"));
-  var n55 = 55;
-  alert(toRoman(3333));
   AddR(Spells, "Lasers", 3);
   alert("DEBUG " + GetI(Stats, 3));
 }
@@ -500,7 +533,7 @@ function GoButtonClick() {
 
 function StrToIntDef(s, def) {
   var result = parseInt(s);
-  return result == NaN ? def : result;
+  return isNaN(result) ? def : result;
 }
 
 
@@ -570,18 +603,17 @@ function WinEquip() {
 function Square(x) { return x * x; }
 
 function WinStat() {
-  var items = Stats.rows();
   if (Odds(1,2))  {
-    var i = items.eq(Random(items.length));
+    var i = Stats.rows().eq(Random(Stats.length()));
   } else {
     // Favor the best stat so it will tend to clump
     var t = 0;
-    items.each(function (index,elt) {
+    Stats.rows().each(function (index,elt) {
       t += Square(StrToInt($(this).children().last().text()));
     });
     t = Random(t);
     var i;
-    items.each(function (index,elt) {
+    Stats.rows().each(function (index,elt) {
       i = this;
       t -= Square(StrToInt($(this).children().last().text()));
       return t < 0;
@@ -591,7 +623,7 @@ function WinStat() {
 }
 
 function SpecialItem() {
-  return InterestingItem + ' of ' + Pick(K.ItemOfs);
+  return InterestingItem() + ' of ' + Pick(K.ItemOfs);
 }
 
 function InterestingItem() {
@@ -614,8 +646,8 @@ function CompleteQuest() {
     /*$ENDIF*/
     Quests.last().wrap("<s/>");
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
-    while (Quest.box.children().length > 99) 
-      Quest.box.find("tr").first().remove();
+    while (Quest.box.children().length > 99)
+      Quest.poptop();
 
     game.questmonster = '';
     var caption;
@@ -630,7 +662,7 @@ function CompleteQuest() {
         if (i == 1 || Abs(l - level) < Abs(lev - level)) {
           lev = l;
           game.questmonster = m;
-          fQuest.Tag = montag;  // TODO wat's this?
+          game.questmonsterindex = montag;
         }
       }
       caption = 'Exterminate ' + Definite(Split(game.questmonster,0),2);
@@ -782,7 +814,7 @@ function TMainForm_CharSheet() {
   WrLn;
   if (Plots.length() > 0)
     WrLn('Plot stage: ' + Plots.last().text() + ' (' + PlotBar.Hint + ')');
-  if (Quests.length > 0)
+  if (Quests.length() > 0)
     WrLn('Quest: ' + Quests.last().text() + ' (' + QuestBar.Hint + ')');
   WrLn();
   WrLn( 'Stats:');
@@ -794,17 +826,17 @@ function TMainForm_CharSheet() {
   WrLn( Format('  CHA%7d      MP Max%7d', [GetI(Stats,'CHA'), GetI(Stats,'MP Max')]));
   WrLn();
   WrLn( 'Equipment:');
-  for (var i = 1; i <= Equips.length-1; ++i)
+  for (var i = 1; i <= Equips.length()-1; ++i)
     if (Get(Equips,i) != '')
       WrLn( '  ' + LeftStr(Equips[i].Caption + '            ', 12) + Get(Equips,i));
   WrLn();
   WrLn( 'Spell Book:');
-  for (var i = 1; i <= Items.length-1; ++i)
+  for (var i = 1; i <= Items.length()-1; ++i)
     WrLn( '  ' + Spells[i].Caption + ' ' + Get(Spells,i));
   WrLn();
   WrLn( 'Inventory (' + EncumBar.Hint + '):');
   WrLn( '  ' + Indefinite('gold piece', GetI(Inventory, 'Gold')));
-  for (var i = 2; i <= Items.length-1; ++i) {
+  for (var i = 2; i <= Items.length()-1; ++i) {
     if (Pos(' of ', Inventory[i].Caption) > 0) 
       WrLn( '  ' + Definite(Inventory[i].Caption, GetI(Inventory,i)));
     else 
@@ -862,18 +894,6 @@ function Sum(list) {
   var result = 0;
   for (var i = 0; i <= list.length - 1; ++i)
     Result += GetI(list,i);
-}
-
-function PutLast(list, value) {
-  if (list.length > 0) {
-    with (list.Item[list.length-1]) {
-      if (SubItems.length < 1) 
-        SubItems.Add(value);
-      else 
-        SubItems[0] = value;
-    }
-  }
-  list.Width = list.Width - 1; // trigger an autosize
 }
 
 Number.prototype.div = function (divisor) {
@@ -939,7 +959,7 @@ function Timer1Timer() {
       if (Plots.length() > 1) {
         if (QuestBar.done()) {
           CompleteQuest();
-        } else if (Quests.length > 0) {
+        } else if (Quests.length() > 0) {
           QuestBar.increment(TaskBar.Max / 1000);
           QuestBar.Hint = IntToStr(100 * QuestBar.Position.div(QuestBar.Max)) + '% complete';
         }
@@ -1066,7 +1086,10 @@ function FormShow() {
 /*$IFDEF CHEATS*/
 $(function() {
   function cheat(label, effect) {
-    $('body').append("<button>"+label+"</button>").click(effect);
+    var b = $("<button/>");
+    b.text(label);
+    b.click(effect);
+    b.appendTo('body');
   }
 
   cheat("Task", function () {
@@ -1093,6 +1116,15 @@ $(function() {
   cheat("Plot", function () {
     PlotBar.reposition(PlotBar.Max);
     TaskBar.reposition(TaskBar.Max);
+  });
+
+  cheat("Pause", function () {
+    if (game.timerid) {
+      clearTimeout(game.timerid);
+      game.timerid = null;
+    } else {
+      StartTimer();
+    }
   });
 
 });
@@ -1211,14 +1243,14 @@ function Brag(trigger) {
     ExportCharSheet;
   if (GetPasskey = 0) return; // not a online game!
   var url = 'cmd=b&t=' + trigger;
-  with (Traits) for (i = 0; i <= Items.length-1; ++i) 
+  with (Traits) for (i = 0; i <= Items.length()-1; ++i) 
     url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
   url = url + '&x=' + IntToStr(ExpBar.Position);
   url = url + '&i=' + UrlEncode(Get(Equips, game.bestequip));
   if (game.bestequip > 1) url = url + '+' + Equips[game.bestequip].Caption;
   var best = 0;
-  if (Spells.length > 0) with (Spells) {
-    for (i = 1; i <= Items.length-1; ++i)
+  if (Spells.length() > 0) with (Spells) {
+    for (i = 1; i <= Items.length()-1; ++i)
       if ((i+flat) * RomanToInt(Get(Spells,i)) >
           (best+flat) * RomanToInt(Get(Spells,best)))
         best = i;
@@ -1254,7 +1286,7 @@ function TMainForm_AuthenticateUrl(url) {
 function TMainForm_Guildify() {
   if (GetPasskey = 0) return; // not a online game!
   var url = 'cmd=guild';
-  with (Traits) for (i = 0; i <= Items.length-1; ++i)
+  with (Traits) for (i = 0; i <= Items.length()-1; ++i)
     url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
   url = url + '&h=' + UrlEncode(GetHostName);
   url = url + RevString;
