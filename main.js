@@ -172,7 +172,7 @@ function InterplotCinematic() {
     Q('task|2|You awake in a friendly place, but the road awaits');
     break;
   case 2: 
-    var nemesis = ImpressiveGuy;
+    var nemesis = ImpressiveGuy();
     Q("task|2|Oh sweet relief! You've reached the protection of the good " + nemesis);
     Q('task|3|There is rejoicing, and an unnerving encouter with ' + nemesis + ' in private');
     Q('task|2|You forget your ' + BoringItem() + ' and go back to get it');
@@ -193,7 +193,7 @@ function TMainForm_NamedMonster(level) {
   var lev = 0;
   var result = '';
   for (var i = 1; i <= 5; ++i) {
-    var m = Pick(K.Monsters.Lines);
+    var m = Pick(K.Monsters);
     if (result == '' || (abs(level-StrToInt(Split(m,1))) < abs(level-lev))) {
       result = Split(m,0);
       lev = StrToInt(Split(m,1));
@@ -202,9 +202,9 @@ function TMainForm_NamedMonster(level) {
   return GenerateName + ' the ' + result;
 }
 
-function TMainForm_ImpressiveGuy() {
-  return Pick(K.ImpressiveTitles.Lines) + 
-    (Random(2) ? ' of the ' + Pick(K.Races.Lines) : ' of ' + GenerateName);
+function ImpressiveGuy() {
+  return Pick(K.ImpressiveTitles) + 
+    (Random(2) ? ' of the ' + Pick(K.Races) : ' of ' + GenerateName());
 }
 
 function TMainForm_MonsterTask(level) {
@@ -222,21 +222,21 @@ function TMainForm_MonsterTask(level) {
     if (Odds(1,2)) {
       monster = 'passing' + monster + ' ' + Pick(NewGuyForm.Klass);
     } else {
-      monster = PickLow(K.Titles.Lines) + ' ' + GenerateName + ' the' + monster;
+      monster = PickLow(K.Titles) + ' ' + GenerateName + ' the' + monster;
       definite = true;
     }
     var lev = level;
     monster = monster + '|' + IntToStr(level) + '|*';
   } else if ((game.questmonster != '') && Odds(1,4)) {
     // Use the quest monster
-    var monster = k.Monsters.Lines[fQuest.Tag];
+    var monster = k.Monsters[fQuest.Tag];
     var lev = StrToInt(Split(monster,1));
   } else {
     // Pick the monster out of so many random ones closest to the level we want
-    var monster = Pick(K.Monsters.Lines);
+    var monster = Pick(K.Monsters);
     var lev = StrToInt(Split(monster,1));
     for (var i = 0; i < 5; ++i) {
-      var m1 = Pick(K.Monsters.Lines);
+      var m1 = Pick(K.Monsters);
       if (abs(level-StrToInt(Split(m1,1))) < abs(level-lev)) {
         monster = m1;
         lev = StrToInt(Split(monster,1));
@@ -486,8 +486,8 @@ $(document).ready(GoButtonClick);
 
 
 function TMainForm_WinSpell() {
-  AddR(Spells, K.Spells.Lines[RandomLow(Min(GetI(Stats,'WIS')+GetI(Traits,'Level'),
-                                            K.Spells.Lines.length))], 1);
+  AddR(Spells, K.Spells[RandomLow(Min(GetI(Stats,'WIS')+GetI(Traits,'Level'),
+                                            K.Spells.length))], 1);
 }
 
 function LPick(list, goal) {
@@ -506,16 +506,16 @@ function TMainForm_WinEquip() {
   var posn = Random(Equips.length);
   Equips.Tag = posn; // remember as the "best item"
   if (posn == 0) {
-    stuff = K.Weapons.Lines;
-    better = K.OffenseAttrib.Lines;
-    worse = K.OffenseBad.Lines;
+    stuff = K.Weapons;
+    better = K.OffenseAttrib;
+    worse = K.OffenseBad;
   } else {
-    better = K.DefenseAttrib.Lines;
-    worse = K.DefenseBad.Lines;
+    better = K.DefenseAttrib;
+    worse = K.DefenseBad;
     if (posn == 1) 
-      stuff = K.Shields.Lines
+      stuff = K.Shields
     else 
-      stuff = K.Armors.Lines;
+      stuff = K.Armors;
   }
   var name = LPick(stuff,GetI(Traits,'Level'));
   var qual = StrToInt(Split(name,1));
@@ -561,15 +561,15 @@ function TMainForm_WinStat() {
 }
 
 function TMainForm_SpecialItem() {
-  return InterestingItem + ' of ' + Pick(K.ItemOfs.Lines);
+  return InterestingItem + ' of ' + Pick(K.ItemOfs);
 }
 
 function TMainForm_InterestingItem() {
-  return Pick(K.ItemAttrib.Lines) + ' ' + Pick(K.Specials.Lines);
+  return Pick(K.ItemAttrib) + ' ' + Pick(K.Specials);
 }
 
 function TMainForm_BoringItem() {
-  return Pick(K.BoringItems.Lines);
+  return Pick(K.BoringItems);
 }
 
 function TMainForm_WinItem() {
@@ -593,8 +593,8 @@ function TMainForm_CompleteQuest() {
     case 0: 
       var level = GetI(Traits,'Level');
       for (var i = 1; i <= 4; ++i) {
-        var montag = Random(K.Monsters.Lines.length);
-        var m = K.Monsters.Lines[montag];
+        var montag = Random(K.Monsters.length);
+        var m = K.Monsters[montag];
         var l = StrToInt(Split(m,1));
         if (i == 1 || abs(l - level) < abs(lev - level)) {
           var lev = l;
@@ -622,8 +622,8 @@ function TMainForm_CompleteQuest() {
     case 4: 
       level = GetI(Traits,'Level');
       for (var i = 1; i <= 2; ++i) {
-        montag = Random(K.Monsters.Lines.length);
-        m = K.Monsters.Lines[montag];
+        montag = Random(K.Monsters.length);
+        m = K.Monsters[montag];
         l = StrToInt(Split(m,1));
         if ((i == 1) || (abs(l - level) < abs(lev - level))) {
           lev = l;
@@ -700,16 +700,13 @@ String.prototype.toArabic = function() {
   return n;
 }
 
-function TMainForm_CompleteAct() {
-  PlotBar.Position = 0;
-  Plots[Plots.length-1].StateIndex = 1;
-  PlotBar.Max = 60 * 60 * (1 + 5 * Plots.length); // 1 hr + 5/act
+function CompleteAct() {
+  PlotBar.reposition(0);
+  Plots.checkOff(Plots.length-1);
+  PlotBar.reset(60 * 60 * (1 + 5 * Plots.length())); // 1 hr + 5/act
   PlotBar.Hint = 'Cutscene omitted';
-  var item = Plots.Add;
-  item.Caption = 'Act ' + (PlotsItems.length-1).toRoman();
-  item.MakeVisible(false);
-  item.StateIndex = 0;
-  item.Width = item.Width-1;
+  Plots.Add('Act ' + (PlotsItems.length-1).toRoman());
+  Plots.scrollToBottom();
 
   WinItem();
   WinEquip();

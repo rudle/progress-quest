@@ -1,21 +1,6 @@
 /* copyright (c)2002-2010 Eric Fredricksen all rights reserved */
 
 
-var randseed = Math.floor(Math.random() * 0xFFFFFFFF);
-
-function Random(n) {
-  return Rand32Rough() % n;
-}
-
-
-function Rand32Rough() { 
-  // http://www.merlyn.demon.co.uk/js-randm.htm#MR
-  var T32 = 0x100000000;
-  var constant = 134775813;
-  var X = constant * randseed + 1;
-  return (randseed = X % T32);
-}
-
 function Roll(stat) {
   stats[stat] = 3 + Random(6) + Random(6) + Random(6);
   $("#"+stat).text(stats[stat]);

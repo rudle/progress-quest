@@ -65,7 +65,7 @@ th:first-child {
   border-right: solid 1px grey;
 }
 
-table { 
+.listbox { 
   border: solid 1px black;
   width: 250px;
   background-color: white;
@@ -130,7 +130,7 @@ div.progress-container > div.bar {
 
 .window { 
   background-color: #eee; 
-  width:800px;
+  width: 800px;
   border: outset 2px silver;
   padding: 2px;
   margin: 1em;
@@ -139,3 +139,13 @@ div.progress-container > div.bar {
 #taskbar { 
   width: 99%;
  }
+
+div.scroll { 
+  overflow: auto;
+  height: 100px;
+  width: 250px;
+}
+
+div.scroll > table { 
+  width: 234px;
+}

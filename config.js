@@ -1,3 +1,22 @@
+// TODO These code bits don't really belong here.
+
+var randseed = Math.floor(Math.random() * 0xFFFFFFFF);
+
+function Random(n) {
+  return Rand32Rough() % n;
+}
+
+
+function Rand32Rough() { 
+  // http://www.merlyn.demon.co.uk/js-randm.htm#MR
+  var T32 = 0x100000000;
+  var constant = 134775813;
+  var X = constant * randseed + 1;
+  return (randseed = X % T32);
+}
+
+
+
 var K = {};
 
 K.Spells = [
