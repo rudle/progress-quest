@@ -12,12 +12,14 @@
   <span>Progress Quest/web v8.0</span>
 </div> 
 
-<script src="pq.js"></script>
+<script src="jquery.js"></script>
+<script src="config.js"></script>
+<script src="main.js"></script>
 
 <div class="hbox" flex="1">
   <div class="vbox" flex="5">
     <span class="label head" >Character Sheet</span>
-    <table class="listbox" rows="4" class="list" id="traits">
+    <table class="listbox" rows="4" class="list" id="Traits">
       <tr>
         <th style="width:30%">Trait</th>
         <th style="width:70%" >Value</th>
@@ -41,7 +43,7 @@
     </table>
 
   <div class="vbox" flex="4">
-    <table class="listbox" id="stats" rows="8">
+    <table class="listbox" id="Stats" rows="8">
       <tr>
         <th  style="width:30%">Stat</th>
         <th  style="width:70%">Value</th>
@@ -61,12 +63,12 @@
 
 
     <span class="label" >Experience</span>
-    <div class="progress-container" id="xpbar">
+    <div class="progress-container" id="ExpBar">
       <div class="bar" style="width: 50%"></div>
     </div>
 
     <span class="label head" >Spell Book</span>
-    <table class="listbox" id="spells" flex="1">
+    <table class="listbox" id="Spells" flex="1">
       <tr>
         <th >Spell</th>
         <th >Level</th>
@@ -85,7 +87,7 @@
 
   <div class="vbox" flex="1">
     <span class="label head" >Equipment</span>
-    <table class="listbox" id="equips" rows="11">
+    <table class="listbox" id="Equips" rows="11">
       <tr><td >Weapon</td><td >Sharpened Stick</td></tr>
       <tr><td >Shield</td><td></tr>
       <tr><td >Helm<td></tr>
@@ -100,7 +102,7 @@
     </table>
 
     <span class="label head" >Inventory</span>
-    <table class="listbox" id="inventory" flex="1">
+    <table class="listbox" id="Inventory" flex="1">
       <tr>
         <th >Item</th>
         <th >Qty</th>
@@ -119,14 +121,14 @@
       <tr><td>&nbsp;<td>
     </table>
     <span class="label" >Encumbrance</span>
-    <div class="progress-container" id="encumbar">
+    <div class="progress-container" id="EncumBar">
       <div class="bar" style="width: 50%"></div>
     </div>
   </div>
 
   <div class="vbox" flex="4">
     <span class="label head" >Plot Development</span>
-    <table class="listbox" id="plots">
+    <table class="listbox" id="Plots">
       <tr><td>Prologue
       <tr><td>Act 1
       <tr><td>&nbsp;
@@ -137,12 +139,12 @@
       <tr><td>&nbsp;
       <tr><td>&nbsp;
     </table>
-    <div class="progress-container" id="plotbar">
+    <div class="progress-container" id="PlotBar">
       <div class="bar" style="width: 50%"></div>
     </div>
 
     <span class="label head" >Quests</span>
-    <table class="listbox" id="quests">
+    <table class="listbox" id="Quests">
       <tr>
         <td><input type=checkbox checked="true"> Kill all the Bads
       </tr>
@@ -160,14 +162,14 @@
       <tr><td>&nbsp;
       <tr><td>&nbsp;
     </table>
-    <div class="progress-container" id="questbar">
+    <div class="progress-container" id="QuestBar">
       <div class="bar" style="width: 50%"></div>
     </div>
   </div>
 </div>
 
-<div id="tasktext" class="label">Executing a Greater Wolog</div>
-<div class="progress-container" id="taskbar">
+<div id="Kill" class="label">Executing a Greater Wolog</div>
+<div class="progress-container" id="TaskBar">
   <div class="bar" style="width: 50%"></div>
 </div>
 

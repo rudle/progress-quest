@@ -9,23 +9,21 @@
 // 1: pq 6.0, some early release I guess;)n't remember
 var RevString = '&rev=6';
 
-var timerid;
-var timestart;
+var game = {}; // queue: [] };
+
 
 function timeGetTime() {
-  return Date.getTime();
+  return new Date().getTime();
 }
 
 function StartTimer() {
-  if (!timerid) {
-    timestart = timeGetTime();
-    timerid = setInterval(Timer1Timer, 100);
+  if (!game.timerid) {
+    game.lasttick = timeGetTime();
+    game.timerid = setInterval(Timer1Timer, 100);
   }
   // BS location for this, but...
   // MainForm.Caption = 'ProgressQuest - ' + ChangeFileExt(ExtractFileName(MainForm.GameSaveName), '');
 }
-
-var game = { queue: [] };
 
 function GetPasskey() { return game.passkey; }
 function SetPasskey(v) { game.passkey = v; }
@@ -54,7 +52,7 @@ function Q(s) {
 }
 
 function TaskDone() {
-  return $("#TaskBar").attr("Position") >= $("#TaskBar").attr("Max");
+  return TaskBar.done();
 }
 
 function Odds(chance, outof) {
@@ -77,6 +75,10 @@ function PickLow(s) {
   return s[RandomLow(s.length)];
 }
 
+function Copy(s, b, l) {
+  return s.substr(b, l);
+}
+
 function Ends(s, e) {
   return Copy(s,1+Length(s)-Length(e),Length(e)) = e;
 }
@@ -96,19 +98,7 @@ function Plural(s) {
 }
 
 function Split(s, field, separator) {
-  while (field > 0) {
-    var p = Pos(separator, s);
-    s = Copy(s, p+1, 10000);
-    --field;
-  }
-  if (Pos(separator, s) > 0) 
-    return Copy(s, 1, Pos(separator,s) - 1)
-  else 
-    return s;
-}
-
-function Split(s, field) {
-  return Split(s, field, '|');
+  return s.split(separator || "|")[field];
 }
 
 function Indefinite(s, qty) {
@@ -135,15 +125,19 @@ function prefix(a, m, s, sep) {
 }
 
 function Sick(m, s) {
-  return prefix(['dead', 'comatose', 'crippled', 'sick', 'undernourished'], m, s);
+  m = 6 - abs(m);
+  return prefix(['dead','comatose','crippled','sick','undernourished'], m, s);
 }
+
 
 function Young(m, s) {
-  return prefix(['foetal', 'baby', 'preadolescent', 'teenage', 'underage'], m, s);
+  m = 6 - abs(m);
+  return prefix(['foetal','baby','preadolescent','teenage','underage'], m, s);
 }
 
+
 function Big(m, s) {
-  return prefix(['greater', 'massive', 'enormous', 'giant', 'titanic'], m, s);
+  return prefix(['greater','massive','enormous','giant','titanic'], m, s);
 }
 
 function Special(m, s) {
@@ -153,13 +147,13 @@ function Special(m, s) {
     return prefix(['Battle-','cursed ','Were-','undead ','demon '], m, s, '');
 }
 
-function TMainForm_InterplotCinematic() {
+function InterplotCinematic() {
   switch (Random(3)) {
   case 0: 
-    Q('task|1|Exhausted, you arrive at a fri}ly oasis in a hostile land');
-    Q('task|2|You greet old fri}s and meet new allies');
-    Q('task|2|You are privy to a council) { powerful)-gooders');
-    Q('task|1|There is much to be)ne. You are chosen!');
+    Q('task|1|Exhausted, you arrive at a friendly oasis in a hostile land');
+    Q('task|2|You greet old friends and meet new allies');
+    Q('task|2|You are privy to a council of powerful do-gooders');
+    Q('task|1|There is much to be done. You are chosen!');
     break;
   case 1: 
     Q('task|1|Your quarry is in sight, but a mighty enemy bars your path!');
@@ -175,7 +169,7 @@ function TMainForm_InterplotCinematic() {
       }
     }
     Q('task|3|Victory! ' + nemesis + ' is slain! Exhausted, you lose conciousness');
-    Q('task|2|You awake in a fri}ly place, but the road awaits');
+    Q('task|2|You awake in a friendly place, but the road awaits');
     break;
   case 2: 
     var nemesis = ImpressiveGuy;
@@ -191,8 +185,12 @@ function TMainForm_InterplotCinematic() {
 }
 
 
+function StrToInt(s) {
+  return s.valueOf();
+}
+
 function TMainForm_NamedMonster(level) {
-  var lev = 0;  // shut up, compiler hint
+  var lev = 0;
   var result = '';
   for (var i = 1; i <= 5; ++i) {
     var m = Pick(K.Monsters.Lines);
@@ -229,7 +227,7 @@ function TMainForm_MonsterTask(level) {
     }
     var lev = level;
     monster = monster + '|' + IntToStr(level) + '|*';
-  } else if ((fQuest.Caption != '') && Odds(1,4)) {
+  } else if ((game.questmonster != '') && Odds(1,4)) {
     // Use the quest monster
     var monster = k.Monsters.Lines[fQuest.Tag];
     var lev = StrToInt(Split(monster,1));
@@ -246,9 +244,9 @@ function TMainForm_MonsterTask(level) {
     }
   }
 
-  fTask.Caption = monster;
+  game.task = monster;
   var result = Split(monster,0);
-  fTask.Caption = 'kill|' + fTask.Caption;
+  game.task = 'kill|' + game.task;
 
   var qty = 1;
   if ((level-lev) > 10) {
@@ -297,20 +295,20 @@ function TMainForm_EquipPrice() {
           + 20;
 }
 
-function TMainForm_Dequeue() {
-  while (TaskDone) {
-    if (Split(fTask.Caption,0) == 'kill') {
-      if (Split(fTask.Caption,3) == '*') {
-        WinItem;
-      } else if (Split(fTask.Caption,3) != '') {
-        Add(Inventory,LowerCase(Split(fTask.Caption,1) + ' ' + ProperCase(Split(fTask.Caption,3))),1);
+function Dequeue() {
+  while (TaskDone()) {
+    if (Split(game.task,0) == 'kill') {
+      if (Split(game.task,3) == '*') {
+        WinItem();
+      } else if (Split(game.task,3) != '') {
+        Add(Inventory,LowerCase(Split(game.task,1) + ' ' + ProperCase(Split(game.task,3))),1);
       }
-    } else if (fTask.Caption == 'buying') {
+    } else if (game.task == 'buying') {
       // buy some equipment
       Add(Inventory,'Gold',-EquipPrice);
-      WinEquip;
-    } else if ((fTask.Caption == 'market') || (fTask.Caption = 'sell')) {
-      if (fTask.Caption = 'sell') {
+      WinEquip();
+    } else if ((game.task == 'market') || (game.task == 'sell')) {
+      if (game.task = 'sell') {
         Inventory.Tag = GetI(Inventory.Inventory,1);
         Inventory.Tag = Inventory.Tag * GetI(Traits,'Level');
         if (Pos(' of ', Inventory[1].Caption) > 0)
@@ -321,41 +319,43 @@ function TMainForm_Dequeue() {
       }
       if (Items.length > 1) {
         Task('Selling ' + Indefinite(Inventory[1].Caption, GetI(Inventory,1)), 1 * 1000);
-        fTask.Caption = 'sell';
+        game.task = 'sell';
         break;
       }
     }
-    var old = fTask.Caption;
-    fTask.Caption = '';
-    if (fQueue.length > 0) {
-      var a = Split(fQueue[0],0);
-      var n = StrToInt(Split(fQueue[0],1));
-      var s = Split(fQueue[0],2);
+    
+    var old = game.task;
+    game.task = '';
+    if (game.queue.length > 0) {
+      var a = Split(game.queue[0],0);
+      var n = StrToInt(Split(game.queue[0],1));
+      var s = Split(game.queue[0],2);
       if (a == 'task' || a == 'plot') {
         if (a == 'plot') {
-          CompleteAct;
+          CompleteAct();
           s = 'Loading ' + Plots[Plots.length-1].Caption;
         }
         Task(s, n * 1000);
-        fQueue.Delete(0);
+        game.queue.shift();
       } else {
-        throw 'bah!';
+        throw 'bah!' + a;
       }
-    } else if (Encumbar.Position >= Encumbar.Max) {
+    } else if (EncumBar.done()) {
       Task('Heading to market to sell loot',4 * 1000);
-      fTask.Caption = 'market';
+      game.task = 'market';
     } else if ((Pos('kill|',old) <= 0) && (old != 'heading')) {
-      if (GetI(Inventory, 'Gold') > EquipPrice) {
+      if (GetI(Inventory, 'Gold') > EquipPrice()) {
         Task('Negotiating purchase of better equipment', 5 * 1000);
-        fTask.Caption = 'buying';
+        game.task = 'buying';
       } else {
         Task('Heading to the killing fields', 4 * 1000);
-        fTask.Caption = 'heading';
+        game.task = 'heading';
       }
     } else {
-      var n = GetI(Traits,'Level');
+      var n = GetI(Traits, 'Level');
       var t = MonsterTask(n);
-      var n = Math.floor((2 * InventoryLabelAlsoGameStyle.Tag * t.level * 1000) / n);
+      var InventoryLabelAlsoGameStyleTag = 3;
+      var n = Math.floor((2 * InventoryLabelAlsoGameStyleTag * t.level * 1000) / n);
       Task('Executing ' + t.description, n);
     }
   }
@@ -400,13 +400,71 @@ function LevelUpTime(level) {  // seconds
   return 20 * level * 60;
 }
 
-function TMainForm_GoButtonClick() {
-  ExpBar.Position = 0;
-  ExpBar.Max = LevelUpTime(1);
 
-  fTask.Caption = '';
-  fQuest.Caption = '';
-  fQueue.Clear();
+function ProgressBar(id) {
+  this.bar = $("#"+ id + " > .bar");
+
+  this.reset = function (newmax) {
+    this.Max = newmax;
+    this.reposition(0);
+  }
+
+  this.reposition = function (newpos) {
+    this.Position = newpos;
+    this.bar.css("width", 100 * this.Position / this.Max + "%")
+  }
+
+  this.increment = function (inc) {
+    this.reposition(this.Position + inc);
+  }
+
+  this.done = function () {
+    return this.Position >= this.Max;
+  }
+};
+
+
+function ListBox(id) {
+  this.box = $("#"+ id);
+
+  this.Add = function (caption) {
+    var tr = this.box.append("<tr><td>" + caption + "</td></tr>");
+    return tr;
+  }
+
+  this.ClearSelection = function () {
+    // TODO
+  }
+};
+
+
+var ExpBar, PlotBar, TaskBar, QuestBar;
+var Traits,Stats,Spells,Equips,Inventory,Plots,Quests;
+var Kill;
+    
+    
+function GoButtonClick() {
+  ExpBar = new ProgressBar("ExpBar");
+  PlotBar = new ProgressBar("PlotBar");
+  TaskBar = new ProgressBar("TaskBar");
+  QuestBar = new ProgressBar("QuestBar");
+
+  Traits = new ListBox("Traits");
+  Stats = new ListBox("Stats");
+  Spells = new ListBox("Spells");
+  Equips = new ListBox("Equips");
+  Inventory = new ListBox("Inventory");
+  Plots = new ListBox("Plots");
+  Quests = new ListBox("Quests");
+
+  Kill = $("#Kill");
+
+
+  ExpBar.reset(LevelUpTime(1));
+
+  game.task = '';
+  game.questmonster = '';
+  game.queue = [];
 
   Task('Loading.',2000); // that dot is spotted for later...
   Q('task|10|Experiencing an enigmatic and foreboding night vision');
@@ -415,15 +473,17 @@ function TMainForm_GoButtonClick() {
   Q('task|4|Drawing upon an unexpected reserve of determination, you set out on a long and dangerous journey');
   Q('task|2|Loading');
 
-  PlotBar.Max = 26;
-  var item = Plots.Add();
-  item.Caption = 'Prologue';
-  item.StateIndex = 0;
+  PlotBar.reset(26);
+  Plots.Add('Prologue');
 
   StartTimer();
   SaveGame();
   Brag('s');
 }
+
+
+$(document).ready(GoButtonClick);
+
 
 function TMainForm_WinSpell() {
   AddR(Spells, K.Spells.Lines[RandomLow(Min(GetI(Stats,'WIS')+GetI(Traits,'Level'),
@@ -473,7 +533,7 @@ function TMainForm_WinEquip() {
     plus -= qual;
     ++count;
   }
-  if (plus != 0) name = IntToStr(plus) + ' ' + name;
+  if (plus != 0) name = plus + ' ' + name;
   if (plus > 0) name = '+' + name;
 
   Put(Equips, posn, name);
@@ -538,26 +598,26 @@ function TMainForm_CompleteQuest() {
         var l = StrToInt(Split(m,1));
         if (i == 1 || abs(l - level) < abs(lev - level)) {
           var lev = l;
-          fQuest.Caption = m;
+          game.questmonster = m;
           fQuest.Tag = montag;
         }
       }
-      item.Caption = 'Exterminate ' + Definite(Split(fQuest.Caption,0),2);
+      item.Caption = 'Exterminate ' + Definite(Split(game.questmonster,0),2);
       break;
     case 1:
-      fQuest.Caption = InterestingItem;
-      Caption = 'Seek ' + Definite(fQuest.Caption,1);
-      fQuest.Caption = '';
+      game.questmonster = InterestingItem;
+      Caption = 'Seek ' + Definite(game.questmonster,1);
+      game.questmonster = '';
       break;
     case 2: 
-      fQuest.Caption = BoringItem;
-      Caption = 'Deliver this ' + fQuest.Caption;
-      fQuest.Caption = '';
+      game.questmonster = BoringItem;
+      Caption = 'Deliver this ' + game.questmonster;
+      game.questmonster = '';
       break;
     case 3: 
-      fQuest.Caption = BoringItem;
-      Caption = 'Fetch me ' + Indefinite(fQuest.Caption,1);
-      fQuest.Caption = '';
+      game.questmonster = BoringItem;
+      Caption = 'Fetch me ' + Indefinite(game.questmonster,1);
+      game.questmonster = '';
       break;
     case 4: 
       level = GetI(Traits,'Level');
@@ -567,11 +627,11 @@ function TMainForm_CompleteQuest() {
         l = StrToInt(Split(m,1));
         if ((i == 1) || (abs(l - level) < abs(lev - level))) {
           lev = l;
-          fQuest.Caption = m;
+          game.questmonster = m;
         }
       }
-      Caption = 'Placate ' + Definite(Split(fQuest.Caption,0),2);
-      fQuest.Caption = '';
+      Caption = 'Placate ' + Definite(Split(game.questmonster,0),2);
+      game.questmonster = '';
       break;
     }
     /*$IFDEF LOGGING*/
@@ -659,7 +719,8 @@ function TMainForm_CompleteAct() {
 
 
 /*$IFDEF LOGGING*/
-function TMainForm_Log(line) {
+function Log(line) {
+  /* TODO
   if (FLogEvents) {
     var logname = ChangeFileExt(GameSaveName, '.log');
     DateTimeToString(stamp, '[yyyy-mm-dd hh:nn:ss]', Now);
@@ -669,6 +730,7 @@ function TMainForm_Log(line) {
     Flush(log);
     CloseFile(log);
   }
+  */
 }
 /*$ENDIF*/
 
@@ -729,13 +791,13 @@ function TMainForm_CharSheet() {
   return f;
 }
 
-function TMainForm_Task(caption, msec) {
-  Kill.SimpleText = caption + '...';
+
+function Task(caption, msec) {
+  Kill.text(caption + '...');
   /*$IFDEF LOGGING*/
-  Log(Kill.SimpleText);
+  Log(Kill.text());
   /*$ENDIF*/
-  TaskBar.Position = 0;
-  TaskBar.Max = msec;
+  TaskBar.reset(msec);
 }
 
 function TMainForm_Add(list, key, value) {
@@ -798,7 +860,7 @@ Number.prototype.div = function (divisor) {
   return (dividend < 0 ? Math.ceil : Math.floor)(dividend);
 }
 
-function TMainForm_LevelUp() {
+function LevelUp() {
   Add(Traits,'Level',1);
   Add(Stats,'HP Max', GetI(Stats,'CON').div(3) + 1 + Random(4));
   Add(Stats,'MP Max', GetI(Stats,'INT').div(3) + 1 + Random(4));
@@ -813,7 +875,7 @@ function TMainForm_LevelUp() {
   Brag('l');
 }
 
-function TMainForm_ClearAllSelections() {
+function ClearAllSelections() {
   Equips.ClearSelection();
   Spells.ClearSelection();
   Stats.ClearSelection();
@@ -824,56 +886,60 @@ function TMainForm_ClearAllSelections() {
 }
 
 function RoughTime(s) {
-  if (s < 120) return IntToStr(s) + ' seconds'
-  else if (s < 60 * 120) return IntToStr(s.div(60)) + ' minutes'
-  else if (s < 60 * 60 * 48) return IntToStr(s.div(3600)) + ' hours'
-  else return IntToStr(s.div(3600 * 24)) + ' days';
+  if (s < 120) return s + ' seconds'
+  else if (s < 60 * 120) return s.div(60) + ' minutes'
+  else if (s < 60 * 60 * 48) return s.div(3600) + ' hours'
+  else return s.div(3600 * 24) + ' days';
 }
 
-function TMainForm_Timer1Timer() {
-  var gain = Pos('kill|',fTask.Caption) = 1;
-  with (TaskBar) {
-    if (Position >= Max) {
-      ClearAllSelections();
-      
-      if (Kill.SimpleText = 'Loading....') Max = 0;
-      
-      // gain XP / level up
-      if (gain) with (ExpBar) {
-        if (Position >= Max) LevelUp();
-        else Position = Position + TaskBar.Max.div(1000);
-      }
-      with (ExpBar) Hint = IntToStr(Max-Position) + ' XP needed for next level';
+function Pos(haystack, needle) {
+  return haystack.indexOf(needle) + 1;
+}
 
-      // advance quest
-      if (gain) if (Plots.length > 1) with (QuestBar) {
-        if (Position >= Max) {
-          CompleteQuest;
+function Timer1Timer() {
+  var gain = Pos('kill|',game.task) == 1;
+  if (TaskBar.done()) {
+    ClearAllSelections();
+      
+    if (Kill.text() == 'Loading....') TaskBar.Max = 0;
+      
+    // gain XP / level up
+    if (gain) {
+      if (ExpBar.done()) 
+        LevelUp();
+      else 
+        ExpBar.increment(TaskBar.Max / 1000);
+    }
+    ExpBar.Hint = Math.floor(ExpBar.Max-ExpBar.Position) + ' XP needed for next level';
+
+    // advance quest
+    if (gain) {
+      if (Plots.length > 1) {
+        if (QuestBar.done()) {
+          CompleteQuest();
         } else if (Quests.length > 0) {
-          Position = Position + TaskBar.Max.div(1000);
-          Hint = IntToStr(100 * Position.div(Max)) + '% complete';
+          QuestBar.increment(TaskBar.Max / 1000);
+          QuestBar.Hint = IntToStr(100 * QuestBar.Position.div(QuestBar.Max)) + '% complete';
         }
       }
-      
-      // advance plot
-      if (gain) with (PlotBar) {
-        if (Position >= Max) InterplotCinematic();
-        else Position = Position + TaskBar.Max.div(1000);
-      }
-
-      //Time.Caption = FormatDateTime('h:mm:ss',PlotBar.Position / (24.0 * 60 * 60));
-      PlotBar.Hint = RoughTime(PlotBar.Max-PlotBar.Position) + ' remaining';
-      //PlotBar.Hint = FormatDateTime('h:mm:ss" remaining"',(PlotBar.Max-PlotBar.Position) / (24.0 * 60 * 60));
-
-      Dequeue();
-    } else with (TaskBar) {
-      var elapsed = LongInt(timeGetTime) - LongInt(Timer1.Tag);
-      if (elapsed > 100) elapsed = 100;
-      if (elapsed < 0) elapsed = 0;
-      Position = Position + elapsed;
     }
+      
+    // advance plot
+    if (gain) {
+      if (PlotBar.done()) InterplotCinematic();
+      else PlotBar.increment(TaskBar.Max / 1000);
+
+      PlotBar.Hint = RoughTime(PlotBar.Max-PlotBar.Position) + ' remaining';
+    }
+     
+    Dequeue();
+  } else {
+    var elapsed = timeGetTime() - game.lasttick;
+    if (elapsed > 100) elapsed = 100;
+    if (elapsed < 0) elapsed = 0;
+    TaskBar.increment(elapsed);
   }
-  Timer1.Tag = timeGetTime;
+  game.lasttick = timeGetTime();
 }
 
 function TMainForm_FormCreate() {
@@ -892,7 +958,7 @@ function TMainForm_FormCreate() {
 
 function TMainForm_SpeedButton1Click() {
   /*$IFDEF CHEATS*/
-  TaskBar.Position = TaskBar.Max;
+  TaskBar.reposition(TaskBar.Max);
   /*$ENDIF*/
 }
 
@@ -931,14 +997,12 @@ function TMainForm_RollCharacter() {
     Put(Stats,'MP Max',Random(8) + INT.Tag.div(6));
     Put(Equips,'Weapon','Sharp Stick');
     Put(Inventory,'Gold',0);
-    InventoryLabelAlsoGameStyle.Tag = 3;//GameStyle.Position;
     ClearAllSelections;
     GoButtonClick(NewGuyForm);
   }
 }
 
-const
-  KUsage =
+var KUsage =
     'Usage: pq [flags] [game.pq3]\n' +
     '\n' +
     'Flags:\n' +
@@ -1026,22 +1090,21 @@ function TMainForm_CashInClick() {
 
 function TMainForm_FinishQuestClick() {
   /*$IFDEF CHEATS*/
-  QuestBar.Position = QuestBar.Max;
-  TaskBar.Position = TaskBar.Max;
+  QuestBar.reposition(QuestBar.Max);
+  TaskBar.reposition(TaskBar.Max);
   /*$ENDIF*/
 }
 
 function TMainForm_CheatPlotClick() {
   /*$IFDEF CHEATS*/
-  PlotBar.Position = PlotBar.Max;
-  TaskBar.Position = TaskBar.Max;
+  PlotBar.reposition(PlotBar.Max);
+  TaskBar.reposition(TaskBar.Max);
   /*$ENDIF*/
 }
 
-function TMainForm_SaveGame() {
-  /*$IFDEF LOGGING*/
-  Log('Saving game: ' + GameSaveName);
-  /*$ENDIF*/
+function SaveGame() {
+  /* TODO
+  Log('Saving game: ' + GameSaveName());
   try {
     if (FMakeBackups) {
       DeleteFile(ChangeFileExt(GameSaveName, '.bak'));
@@ -1063,6 +1126,7 @@ function TMainForm_SaveGame() {
   m.Free();
   f.Free()
   return true;;
+  */
 }
 
 function TMainForm_LoadGame(name) {
@@ -1154,7 +1218,8 @@ function LFSR(pt, salt) {
 }
 
 
-function TMainForm_Brag(trigger) {
+function Brag(trigger) {
+  /* TODO
   var flat = 1;
   if (FExportSheets)
     ExportCharSheet;
@@ -1190,6 +1255,7 @@ function TMainForm_Brag(trigger) {
   } catch (EWebError) {
     // 'ats okay.
   }
+  */
 }
 
 function TMainForm_AuthenticateUrl(url) {
