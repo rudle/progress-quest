@@ -1,4 +1,4 @@
-// TODO These code bits don't really belong here.
+// TODO These code bits don't really belong here, but this is the only shared bit of js
 
 var randseed = Math.floor(Math.random() * 0xFFFFFFFF);
 
@@ -13,6 +13,25 @@ function Rand32Rough() {
   var constant = 134775813;
   var X = constant * randseed + 1;
   return (randseed = X % T32);
+}
+
+function GenerateName() {
+  var KParts = [
+    'br|cr|dr|fr|gr|j|kr|l|m|n|pr||||r|sh|tr|v|wh|x|y|z',
+    'a|a|e|e|i|i|o|o|u|u|ae|ie|oo|ou',
+    'b|ck|d|g|k|m|n|p|t|v|x|z'];
+
+  function Pick(s) {
+    var count = 1;
+    for (var i = 0; i < s.length; ++i)
+      if (s[i] == '|') ++count;
+    return s.split("|")[Random(count)];
+  }
+
+  var result = '';
+  for (var i = 0; i <= 5; ++i)
+    result += Pick(KParts[i % 3]);
+  return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
 

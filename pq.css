@@ -109,6 +109,7 @@ div.progress-container {
   margin: 2px 5px 2px 0; 
   padding: 1px; 
   background: white;
+  overflow: hidden;
 }
 
 div.progress-container > div.bar { 
@@ -148,4 +149,8 @@ div.scroll {
 
 div.scroll > table { 
   width: 234px;
+}
+
+.selected { 
+  background-color: yellow;
 }

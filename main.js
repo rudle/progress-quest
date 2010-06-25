@@ -1,5 +1,7 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
+// TODO: All these Hints
+
 // revs:
 // 6: pq 6.3/web 
 // 5: pq 6.3
@@ -79,8 +81,16 @@ function Copy(s, b, l) {
   return s.substr(b, l);
 }
 
+function Length(s) {
+  return s.length;
+}
+
+String.prototype.prefix = function(s) {
+  return 0 == this.indexOf(s);
+}
+
 function Ends(s, e) {
-  return Copy(s,1+Length(s)-Length(e),Length(e)) = e;
+  return Copy(s, 1+Length(s)-Length(e), Length(e)) == e;
 }
 
 function Plural(s) {
@@ -119,19 +129,19 @@ function Definite(s, qty) {
 
 function prefix(a, m, s, sep) {
   if (sep == undefined) sep = ' ';
-  m = abs(m)
+  m = Abs(m)
   if (m < 1 || m > a.length) return s;  // In case of screwups
   return a[m-1] + sep + s;
 }
 
 function Sick(m, s) {
-  m = 6 - abs(m);
+  m = 6 - Abs(m);
   return prefix(['dead','comatose','crippled','sick','undernourished'], m, s);
 }
 
 
 function Young(m, s) {
-  m = 6 - abs(m);
+  m = 6 - Abs(m);
   return prefix(['foetal','baby','preadolescent','teenage','underage'], m, s);
 }
 
@@ -160,7 +170,7 @@ function InterplotCinematic() {
     var nemesis = NamedMonster(GetI(Traits,'Level')+3);
     Q('task|4|A desperate struggle commences with ' + nemesis);
     var s = Random(3);
-    for (var i = 1; i <= Random(1 + Plots.length); ++i) {
+    for (var i = 1; i <= Random(1 + Plots.length()); ++i) {
       s += 1 + Random(2);
       switch (s % 3) {
       case 0: Q('task|2|Locked in grim combat with ' + nemesis); break;
@@ -189,17 +199,21 @@ function StrToInt(s) {
   return s.valueOf();
 }
 
-function TMainForm_NamedMonster(level) {
+function IntToStr(i) {
+  return i + "";
+}
+
+function NamedMonster(level) {
   var lev = 0;
   var result = '';
-  for (var i = 1; i <= 5; ++i) {
+  for (var i = 0; i < 5; ++i) {
     var m = Pick(K.Monsters);
-    if (result == '' || (abs(level-StrToInt(Split(m,1))) < abs(level-lev))) {
+    if (result == '' || (Abs(level-StrToInt(Split(m,1))) < Abs(level-lev))) {
       result = Split(m,0);
       lev = StrToInt(Split(m,1));
     }
   }
-  return GenerateName + ' the ' + result;
+  return GenerateName() + ' the ' + result;
 }
 
 function ImpressiveGuy() {
@@ -237,7 +251,7 @@ function TMainForm_MonsterTask(level) {
     var lev = StrToInt(Split(monster,1));
     for (var i = 0; i < 5; ++i) {
       var m1 = Pick(K.Monsters);
-      if (abs(level-StrToInt(Split(m1,1))) < abs(level-lev)) {
+      if (Abs(level-StrToInt(Split(m1,1))) < Abs(level-lev)) {
         monster = m1;
         lev = StrToInt(Split(monster,1));
       }
@@ -333,7 +347,7 @@ function Dequeue() {
       if (a == 'task' || a == 'plot') {
         if (a == 'plot') {
           CompleteAct();
-          s = 'Loading ' + Plots[Plots.length-1].Caption;
+          s = 'Loading ' + Plots.last().text();
         }
         Task(s, n * 1000);
         game.queue.shift();
@@ -361,38 +375,21 @@ function Dequeue() {
   }
 }
 
-function IndexOf(list, key) {
-  for (var i = 0; i < list.length; ++i)
-    if (list.Item[i].Caption == key) 
-      return i;
-  var item = list.Add;
-  item.Caption = key;
-  item.MakeVisible(false);
-  list.Width = list.Width - 1; // trigger an autosize
-  return item.Index;
-}
 
-function TMainForm_Put(list, key, value) {
-  Put(list, IndexOf(list,key), value);
-}
+function Put(list, key, value) {
+  var item = list.item(key);
+  item.children().last().text(value);
+  item.addClass("selected");
 
-function TMainForm_Put(list, key, value) {
-  Put(list,key,IntToStr(value));
-  if (key == 'STR')
-    Encumbar.Max = 10 + value;
-  if (list == Inventory) {
-    Encumbar.Position = Sum(Inventory) - GetI(Inventory,'Gold');
-    Encumbar.Hint = IntToStr(Encumbar.Position) + '/' + IntToStr(Encumbar.Max) + ' cubits';
+  if (key === 'STR') {
+    EncumBar.Max = 10 + value;
+    EncumBar.reposition(EncumBar.Position);
   }
-}
 
-function TMainForm_Put(list, pos, value) {
-  var item = list.Item[pos];
-  if (item.SubItems.length < 1) 
-    item.SubItems.Add(value);
-  else 
-    item.SubItems[0] = value;
-  list[pos].Selected = true;
+  if (list === Inventory) {
+    EncumBar.reposition(Sum(Inventory) - GetI(Inventory,'Gold'));
+    EncumBar.Hint = IntToStr(EncumBar.Position) + '/' + IntToStr(EncumBar.Max) + ' cubits';
+  }
 }
 
 function LevelUpTime(level) {  // seconds 
@@ -423,6 +420,9 @@ function ProgressBar(id) {
   }
 };
 
+function alert(k) {
+  Plots.Add(k);
+}
 
 function ListBox(id) {
   this.box = $("#"+ id);
@@ -433,7 +433,33 @@ function ListBox(id) {
   }
 
   this.ClearSelection = function () {
+    this.box.find("tr").removeClass("selected");
+  }
+
+  this.item = function (key) {
+    if (typeof key == typeof 'string') {
+      return this.box.find("tr").filter(function (index) {
+        return $(this).children().first().text() === key;
+      });
+    } else {
+      return this.box.find("tr").eq(key);
+    }
+  }
+
+  this.last = function () {
+    return this.box.find("tr").last();
+  }
+
+  this.scrollToBottom = function () {
     // TODO
+  }
+
+  this.rows = function () {
+    return this.box.find("tr").has("td");
+  }
+
+  this.length = function () {
+    return this.rows().length;
   }
 };
 
@@ -444,22 +470,6 @@ var Kill;
     
     
 function GoButtonClick() {
-  ExpBar = new ProgressBar("ExpBar");
-  PlotBar = new ProgressBar("PlotBar");
-  TaskBar = new ProgressBar("TaskBar");
-  QuestBar = new ProgressBar("QuestBar");
-
-  Traits = new ListBox("Traits");
-  Stats = new ListBox("Stats");
-  Spells = new ListBox("Spells");
-  Equips = new ListBox("Equips");
-  Inventory = new ListBox("Inventory");
-  Plots = new ListBox("Plots");
-  Quests = new ListBox("Quests");
-
-  Kill = $("#Kill");
-
-
   ExpBar.reset(LevelUpTime(1));
 
   game.task = '';
@@ -479,15 +489,28 @@ function GoButtonClick() {
   StartTimer();
   SaveGame();
   Brag('s');
+  
+  alert(toArabic("LIX"));
+  var n55 = 55;
+  alert(toRoman(3333));
+  AddR(Spells, "Lasers", 3);
+  alert("DEBUG " + GetI(Stats, 3));
 }
 
 
+function StrToIntDef(s, def) {
+  var result = parseInt(s);
+  return result == NaN ? def : result;
+}
+
+
+$(document).ready(FormCreate);
 $(document).ready(GoButtonClick);
 
 
-function TMainForm_WinSpell() {
+function WinSpell() {
   AddR(Spells, K.Spells[RandomLow(Min(GetI(Stats,'WIS')+GetI(Traits,'Level'),
-                                            K.Spells.length))], 1);
+                                      K.Spells.length))], 1);
 }
 
 function LPick(list, goal) {
@@ -496,15 +519,19 @@ function LPick(list, goal) {
     var best = StrToInt(Split(result, 1));
     var s = Pick(list);
     var b1 = StrToInt(Split(s,1));
-    if (abs(goal-best) > abs(goal-b1))
+    if (Abs(goal-best) > Abs(goal-b1))
       result = s;
   }
   return result;
 }
 
-function TMainForm_WinEquip() {
-  var posn = Random(Equips.length);
-  Equips.Tag = posn; // remember as the "best item"
+function Abs(x) {
+  return x < 0 ? -x : x;
+}
+
+function WinEquip() {
+  var posn = Random(Equips.box.find("tr").length);
+  game.bestequip = posn; // remember as the "best item"
   if (posn == 0) {
     stuff = K.Weapons;
     better = K.OffenseAttrib;
@@ -527,8 +554,8 @@ function TMainForm_WinEquip() {
     var modifier = Pick(better);
     qual = StrToInt(Split(modifier, 1));
     modifier = Split(modifier, 0);
-    if (Pos(modifier, name) > 0) Break; // no repeats
-    if (Abs(plus) < Abs(qual)) Break; // too much
+    if (Pos(modifier, name) > 0) break; // no repeats
+    if (Abs(plus) < Abs(qual)) break; // too much
     name = modifier + ' ' + name;
     plus -= qual;
     ++count;
@@ -542,110 +569,109 @@ function TMainForm_WinEquip() {
 
 function Square(x) { return x * x; }
 
-function TMainForm_WinStat() {
-  var i;
+function WinStat() {
+  var items = Stats.rows();
   if (Odds(1,2))  {
-    i = Random(Stats.length)
+    var i = items.eq(Random(items.length));
   } else {
     // Favor the best stat so it will tend to clump
     var t = 0;
-    for (i = 0; i <= 5; ++i) t += Square(GetI(Stats,i));
+    items.each(function (index,elt) {
+      t += Square(StrToInt($(this).children().last().text()));
+    });
     t = Random(t);
-    i = -1;
-    while (t >= 0) {
-      ++i;
-      t -= Square(GetI(Stats,i));
-    }
+    var i;
+    items.each(function (index,elt) {
+      i = this;
+      t -= Square(StrToInt($(this).children().last().text()));
+      return t < 0;
+    });
   }
-  Add(Stats, Stats[index].Caption, 1);
+  Add(Stats, $(i).find("td").first().text(), 1);
 }
 
-function TMainForm_SpecialItem() {
+function SpecialItem() {
   return InterestingItem + ' of ' + Pick(K.ItemOfs);
 }
 
-function TMainForm_InterestingItem() {
+function InterestingItem() {
   return Pick(K.ItemAttrib) + ' ' + Pick(K.Specials);
 }
 
-function TMainForm_BoringItem() {
+function BoringItem() {
   return Pick(K.BoringItems);
 }
 
-function TMainForm_WinItem() {
-  Add(Inventory, SpecialItem, 1);
+function WinItem() {
+  Add(Inventory, SpecialItem(), 1);
 }
 
-function TMainForm_CompleteQuest() {
-  var lev = 0;  // Quell stupid compiler warning
-  QuestBar.Position = 0;
-  QuestBar.Max = 50 + Random(100);
-  if (Quests.length > 0) {
+function CompleteQuest() {
+  QuestBar.reset(50 + Random(100));
+  if (Quests.last().length) {
     /*$IFDEF LOGGING*/
-    Log('Quest completed: ' + Quests[Quests.length-1].Caption);
+    Log('Quest completed: ' + Quests.last().text());
     /*$ENDIF*/
-    Quests[Quests.length-1].StateIndex = 1;
+    Quests.last().wrap("<s/>");
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
-    while (Quest.length > 99) Quest.Delete(0);
+    while (Quest.box.children().length > 99) 
+      Quest.box.find("tr").first().remove();
 
-    var item = Quest.Add;
+    game.questmonster = '';
+    var caption;
     switch (Random(5)) {
     case 0: 
       var level = GetI(Traits,'Level');
+      var lev = 0;
       for (var i = 1; i <= 4; ++i) {
         var montag = Random(K.Monsters.length);
         var m = K.Monsters[montag];
         var l = StrToInt(Split(m,1));
-        if (i == 1 || abs(l - level) < abs(lev - level)) {
-          var lev = l;
+        if (i == 1 || Abs(l - level) < Abs(lev - level)) {
+          lev = l;
           game.questmonster = m;
-          fQuest.Tag = montag;
+          fQuest.Tag = montag;  // TODO wat's this?
         }
       }
-      item.Caption = 'Exterminate ' + Definite(Split(game.questmonster,0),2);
+      caption = 'Exterminate ' + Definite(Split(game.questmonster,0),2);
       break;
     case 1:
-      game.questmonster = InterestingItem;
-      Caption = 'Seek ' + Definite(game.questmonster,1);
-      game.questmonster = '';
+      caption = 'Seek ' + Definite(InterestingItem(), 1);
       break;
     case 2: 
-      game.questmonster = BoringItem;
-      Caption = 'Deliver this ' + game.questmonster;
-      game.questmonster = '';
+      caption = 'Deliver this ' + BoringItem();
       break;
     case 3: 
-      game.questmonster = BoringItem;
-      Caption = 'Fetch me ' + Indefinite(game.questmonster,1);
-      game.questmonster = '';
+      Caption = 'Fetch me ' + Indefinite(BoringItem(), 1);
       break;
     case 4: 
+      var lev = 0;
       level = GetI(Traits,'Level');
       for (var i = 1; i <= 2; ++i) {
         montag = Random(K.Monsters.length);
         m = K.Monsters[montag];
         l = StrToInt(Split(m,1));
-        if ((i == 1) || (abs(l - level) < abs(lev - level))) {
+        if ((i == 1) || (Abs(l - level) < Abs(lev - level))) {
           lev = l;
           game.questmonster = m;
         }
       }
       Caption = 'Placate ' + Definite(Split(game.questmonster,0),2);
-      game.questmonster = '';
+      game.questmonster = '';  // We're trying to placate them, after all
       break;
     }
+    Quest.Add(caption);
+
     /*$IFDEF LOGGING*/
-    Log('Commencing quest: ' + Caption);
+    Log('Commencing quest: ' + caption);
     /*$ENDIF*/
-    item.StateIndex = 0;
-    item.MakeVisible(false);
+    Quests.scrollToBottom();
   }
   Quest.Width = Quest.Width - 1;  // trigger a column resize
   SaveGame();
 }
 
-Number.prototype.toRoman = function() {
-  n = this;
+function toRoman(n) {
   if (n == 0) return "N";
   var s = "";
   function _rome(dn,ds) {
@@ -675,9 +701,9 @@ Number.prototype.toRoman = function() {
   return s;
 }
 
-String.prototype.toArabic = function() {
+function toArabic(s) {
   n = 0;
-  s = this.toUpperCase();
+  s = s.toUpperCase();
   function _arab(ds,dn) {
     if (!s.prefix(ds)) return false;
     s = s.substr(ds.length);
@@ -702,10 +728,10 @@ String.prototype.toArabic = function() {
 
 function CompleteAct() {
   PlotBar.reposition(0);
-  Plots.checkOff(Plots.length-1);
+  Plots.last().wrap("<s/>");
   PlotBar.reset(60 * 60 * (1 + 5 * Plots.length())); // 1 hr + 5/act
   PlotBar.Hint = 'Cutscene omitted';
-  Plots.Add('Act ' + (PlotsItems.length-1).toRoman());
+  Plots.Add('Act ' + toRoman(Plots.length()));
   Plots.scrollToBottom();
 
   WinItem();
@@ -731,12 +757,14 @@ function Log(line) {
 }
 /*$ENDIF*/
 
-function TMainForm_ExportCharSheet() {
+function ExportCharSheet() {
+  /* TODO
   AssignFile(f, ChangeFileExt(GameSaveName, '.sheet'));
   Rewrite(f);
   Write(f, CharSheet());
   Flush(f);
   CloseFile(f);
+*/
 }
 
 function TMainForm_CharSheet() {
@@ -752,10 +780,10 @@ function TMainForm_CharSheet() {
   WrLn(Format('Level %d (exp. %d/%d)', [GetI(Traits,'Level'), ExpBar.Position, ExpBar.Max]));
   //WrLn('Level ' + Get(Traits,'Level') + ' (' + ExpBar.Hint + ')');
   WrLn;
-  if (Plots.length > 0)
-    WrLn('Plot stage: ' + Plots[Plots.length-1].Caption + ' (' + PlotBar.Hint + ')');
+  if (Plots.length() > 0)
+    WrLn('Plot stage: ' + Plots.last().text() + ' (' + PlotBar.Hint + ')');
   if (Quests.length > 0)
-    WrLn('Quest: ' + Quests[Quests.length-1].Caption + ' (' + QuestBar.Hint + ')');
+    WrLn('Quest: ' + Quests.last().text() + ' (' + QuestBar.Hint + ')');
   WrLn();
   WrLn( 'Stats:');
   WrLn( Format('  STR%7d', [GetI(Stats,'STR')]));
@@ -797,44 +825,40 @@ function Task(caption, msec) {
   TaskBar.reset(msec);
 }
 
-function TMainForm_Add(list, key, value) {
+function Add(list, key, value) {
   Put(list, key, value + GetI(list,key));
-  if (value = 0) Exit;
 
-  var line = (value > 0) ? 'Gained' : 'Lost';
+  /*$IFDEF LOGGING*/
+  if (value == 0) return;
+  var line = (value > 0) ? "Gained" : "Lost";
   if (key == 'Gold') {
-    key = 'gold piece';
-    line = (value > 0) ? 'Got paid' : 'Spent';
+    key = "gold piece";
+    line = (value > 0) ? "Got paid" : "Spent";
   }
   if (value < 0) value = -value;
   line = line + ' ' + Indefinite(key, value);
-  /*$IFDEF LOGGING*/
   Log(line);
   /*$ENDIF*/
 }
 
-function TMainForm_AddR(list, key, value) {
-  Put(list, key, (value + Get(list,key).toArabic()).toRoman());
+function AddR(list, key, value) {
+  Put(list, key, toRoman(value + toArabic(Get(list,key))));
 }
 
-function TMainForm_Get(list, key) {
-  return Get(list, IndexOf(list, key));
+function Get(list, key) {
+  var item = list.item(key);
+  return item.children().last().text();
 }
 
-function TMainForm_Get(list, index) {
-  var item = list.Item[index];
-  return (item.SubItems.length < 1) ? '' : item.SubItems[0];
-}
-
-function TMainForm_GetI(list, key) {
+function GetI(list, key) {
   return StrToIntDef(Get(list,key), 0);
 }
 
-function TMainForm_GetI(list, index) {
-  return StrToIntDef(Get(list,index), 0);
+function Min(a,b) {
+  return a < b ? a : b;
 }
 
-function TMainForm_Sum(list) {
+function Sum(list) {
   var result = 0;
   for (var i = 0; i <= list.length - 1; ++i)
     Result += GetI(list,i);
@@ -856,6 +880,7 @@ Number.prototype.div = function (divisor) {
   var dividend = this / divisor;
   return (dividend < 0 ? Math.ceil : Math.floor)(dividend);
 }
+
 
 function LevelUp() {
   Add(Traits,'Level',1);
@@ -911,7 +936,7 @@ function Timer1Timer() {
 
     // advance quest
     if (gain) {
-      if (Plots.length > 1) {
+      if (Plots.length() > 1) {
         if (QuestBar.done()) {
           CompleteQuest();
         } else if (Quests.length > 0) {
@@ -939,25 +964,30 @@ function Timer1Timer() {
   game.lasttick = timeGetTime();
 }
 
-function TMainForm_FormCreate() {
-  QuestBar.Position = 0;
-  PlotBar.Position = 0;
-  TaskBar.Position = 0;
-  ExpBar.Position = 0;
-  Encumbar.Position = 0;
+function FormCreate() {
+  ExpBar = new ProgressBar("ExpBar");
+  PlotBar = new ProgressBar("PlotBar");
+  TaskBar = new ProgressBar("TaskBar");
+  QuestBar = new ProgressBar("QuestBar");
+  EncumBar = new ProgressBar("QuestBar");
 
-  FReportSave = true;
-  FLogEvents = false;
-  FMakeBackups = true;
-  FMinToTray = true;
-  FExportSheets = false;
+  Traits = new ListBox("Traits");
+  Stats = new ListBox("Stats");
+  Spells = new ListBox("Spells");
+  Equips = new ListBox("Equips");
+  Inventory = new ListBox("Inventory");
+  Plots = new ListBox("Plots");
+  Quests = new ListBox("Quests");
+
+  Kill = $("#Kill");
+
+  QuestBar.reposition(0);
+  PlotBar.reposition(0);
+  TaskBar.reposition(0);
+  ExpBar.reposition(0);
+  EncumBar.reposition(0);
 }
 
-function TMainForm_SpeedButton1Click() {
-  /*$IFDEF CHEATS*/
-  TaskBar.reposition(TaskBar.Max);
-  /*$ENDIF*/
-}
 
 function TMainForm_RollCharacter() {
   var reuslt = true;
@@ -974,7 +1004,7 @@ function TMainForm_RollCharacter() {
         ShowMessage("The thought police don't like the name '" + GameSaveName + "'. Choose a name without \\ / : * ? \" < > || | in it.");
       } else {
         FileClose(f);
-        Break;
+        break;
       }
     }
   }
@@ -999,49 +1029,12 @@ function TMainForm_RollCharacter() {
   }
 }
 
-var KUsage =
-    'Usage: pq [flags] [game.pq3]\n' +
-    '\n' +
-    'Flags:\n' +
-    '  -no-backup     Do ! make a backup file when saving the game\n' +
-    /*$IFDEF LOGGING*/
-    '  -log           Create a text log) { events as they occur in the game\n' +
-    /*$ENDIF*/
-    '  -no-report-save   Do ! display the "Game saved" message when saving\n' +
-    '  -no-tray       Do ! minimize to the system tray\n' +
-    '  -export        Export a text character sheet periodically\n' +
-    '  -export-only   Export a text character sheet now,) exit\n' +
-    '  -no-proxy      Do ! use Internet Explorer proxy settings\n' +
-    '  -help          Display this chatter (and exit)\n' ;
 
-function TMainForm_FormShow() {
-  if (Timer1.Enabled) Exit;
+function FormShow() {
+  if (game.timerid) return;
   var done = false;
   var exportandexit = false;
-  for (var i = 1; i <= ParamCount; ++i) {
-    if (ParamStr(i) == '-backup') FMakeBackups = true
-    /*$IFDEF LOGGING*/
-    else if (ParamStr(i) == '-log') FLogEvents = true
-    /*$ENDIF*/
-    else if (ParamStr(i) == '-no-report-save') FReportSave = false
-    else if (ParamStr(i) == '-no-tray') FMinToTray = false
-    else if (ParamStr(i) == '-export') FExportSheets = true
-    else if (ParamStr(i) == '-export-only') exportandexit = true
-    else if (ParamStr(i) == '-no-proxy') ProxyOK = false
-    else if (ParamStr(i) == '-help') {
-      ShowMessage(KUsage);
-      Close();
-      Exit();
-    } else {
-      LoadGame(ParamStr(i));
-      if (exportandexit) {
-        ExportCharSheet();
-        Timer1.Enabled = false;
-        Close();
-      }
-      Exit();
-    }
-  }
+
   while (!done) {
     SetHostName('');
     SetHostAddr('');
@@ -1069,35 +1062,42 @@ function TMainForm_FormShow() {
   }
 }
 
-function TMainForm_Button1Click() {
-  /*$IFDEF CHEATS*/
-  LevelUp();
-  /*$ENDIF*/
-}
 
-function TMainForm_CashInClick() {
-  /*$IFDEF CHEATS*/
-  WinEquip;
-  WinItem;
-  WinSpell;
-  WinStat;
-  Add(Inventory,'Gold',Random(100));
-  /*$ENDIF*/
-}
+/*$IFDEF CHEATS*/
+$(function() {
+  function cheat(label, effect) {
+    $('body').append("<button>"+label+"</button>").click(effect);
+  }
 
-function TMainForm_FinishQuestClick() {
-  /*$IFDEF CHEATS*/
-  QuestBar.reposition(QuestBar.Max);
-  TaskBar.reposition(TaskBar.Max);
-  /*$ENDIF*/
-}
+  cheat("Task", function () {
+    TaskBar.reposition(TaskBar.Max);
+  });
 
-function TMainForm_CheatPlotClick() {
-  /*$IFDEF CHEATS*/
-  PlotBar.reposition(PlotBar.Max);
-  TaskBar.reposition(TaskBar.Max);
-  /*$ENDIF*/
-}
+  cheat("Level", function () {
+    LevelUp();
+  });
+
+  cheat("$$$", function () {
+    WinEquip();
+    WinItem();
+    WinSpell();
+    WinStat();
+    Add(Inventory,'Gold',Random(100));
+  });
+
+  cheat("Quest", function () {
+    QuestBar.reposition(QuestBar.Max);
+    TaskBar.reposition(TaskBar.Max);
+  });
+
+  cheat("Plot", function () {
+    PlotBar.reposition(PlotBar.Max);
+    TaskBar.reposition(TaskBar.Max);
+  });
+
+});
+/*$ENDIF*/
+
 
 function SaveGame() {
   /* TODO
@@ -1141,17 +1141,6 @@ function TMainForm_LoadGame(name) {
   Log('Loaded game: ' + name);
   /*$ENDIF*/
   StartTimer();
-  TriggerAutosizes();
-}
-
-function TMainForm_TriggerAutosizes() {
-  Plots.Width = 100;
-  Quests.Width = 100;
-  Inventory.Width = 100;
-  Equips.Width = 100;
-  Spells.Width = 100;
-  Traits.Width = 100;
-  Stats.Width = 100;
 }
 
 function TMainForm_FormClose() {
@@ -1203,7 +1192,7 @@ function TMainForm_FormKeyDown() {
 }
 
 function Navigate(url) {
-  ShellExecute(GetDesktopWindow(), 'open', PChar(url), nil, '', SW_SHOW);
+  window.open(url);
 }
 
 function LFSR(pt, salt) {
@@ -1225,8 +1214,8 @@ function Brag(trigger) {
   with (Traits) for (i = 0; i <= Items.length-1; ++i) 
     url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
   url = url + '&x=' + IntToStr(ExpBar.Position);
-  url = url + '&i=' + UrlEncode(Get(Equips,Equips.Tag));
-  if (Equips.Tag > 1) url = url + '+' + Equips[Equips.Tag].Caption;
+  url = url + '&i=' + UrlEncode(Get(Equips, game.bestequip));
+  if (game.bestequip > 1) url = url + '+' + Equips[game.bestequip].Caption;
   var best = 0;
   if (Spells.length > 0) with (Spells) {
     for (i = 1; i <= Items.length-1; ++i)
@@ -1239,7 +1228,7 @@ function Brag(trigger) {
   for (var i = 1; i <= 5; ++i)
     if (GetI(Stats,i) > GetI(Stats,best)) best = i;
   url = url + '&k=' + Stats[best].Caption + '+' + Get(Stats,best);
-  url = url + '&a=' + UrlEncode(Plots[Plots.length-1].Caption);
+  url = url + '&a=' + UrlEncode(Plots.last().text());
   url = url + '&h=' + UrlEncode(GetHostName);
   url = url + RevString;
   url = url + '&p=' + IntToStr(LFSR(url, GetPasskey));

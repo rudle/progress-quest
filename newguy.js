@@ -134,25 +134,6 @@ function TNewGuyForm_SoldClick() {
 */
 
 
-function GenerateName() {
-  var KParts = [
-    'br|cr|dr|fr|gr|j|kr|l|m|n|pr||||r|sh|tr|v|wh|x|y|z',
-    'a|a|e|e|i|i|o|o|u|u|ae|ie|oo|ou',
-    'b|ck|d|g|k|m|n|p|t|v|x|z'];
-
-  function Pick(s) {
-    var count = 1;
-    for (var i = 0; i < s.length; ++i)
-      if (s[i] == '|') ++count;
-    return s.split("|")[Random(count)];
-  }
-
-  var result = '';
-  for (var i = 0; i <= 5; ++i)
-    result += Pick(KParts[i % 3]);
-  return result.charAt(0).toUpperCase() + result.slice(1);
-}
-
 function GenClick() {
   $("#Name").attr("value", GenerateName());
 }
