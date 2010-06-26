@@ -65,6 +65,10 @@ th:first-child {
   border-right: solid 1px grey;
 }
 
+thead.mid { 
+  border-top: solid 1px grey;
+}
+
 .listbox { 
   border: solid 1px black;
   width: 250px;
