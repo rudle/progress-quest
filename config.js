@@ -570,7 +570,7 @@ K.Monsters = [
   "Unicorn|4|blood",
   "Vampire|8|pancreas",
   "Wight|4|lung",
-  "Will-o-the-Wisp|9|wisp",
+  "Will-o'-the-Wisp|9|wisp",
   "Wraith|5|finger",
   "Wyvern|7|wing",
   "Xorn|7|jaw",

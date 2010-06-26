@@ -78,7 +78,7 @@ function PickLow(s) {
 }
 
 function Copy(s, b, l) {
-  return s.substr(b, l);
+  return s.substr(b-1, l);
 }
 
 function Length(s) {
@@ -318,22 +318,23 @@ function Dequeue() {
       if (Split(game.task,3) == '*') {
         WinItem();
       } else if (Split(game.task,3) != '') {
-        Add(Inventory,LowerCase(Split(game.task,1) + ' ' + ProperCase(Split(game.task,3))),1);
+        Add(Inventory,LowerCase(Split(game.task,1) + ' ' + 
+                                ProperCase(Split(game.task,3))),1);
       }
     } else if (game.task == 'buying') {
       // buy some equipment
       Add(Inventory,'Gold',-EquipPrice());
       WinEquip();
     } else if ((game.task == 'market') || (game.task == 'sell')) {
-      if (game.task = 'sell') {
+      if (game.task == 'sell') {
         var amt = GetI(Inventory, 1) * GetI(Traits,'Level');
-        if (Pos(' of ', Inventory.label(1) > 0))
+        if (Pos(' of ', Inventory.label(1)) > 0)
           amt *= (1+RandomLow(10)) * (1+RandomLow(GetI(Traits,'Level')));
         Inventory.scrollToTop();
-        Inventory.poptop();
+        Inventory.remove(1);
         Add(Inventory, 'Gold', amt);
       }
-      if (Items.length() > 1) {
+      if (Inventory.length() > 1) {
         Task('Selling ' + Indefinite(Inventory.label(1), GetI(Inventory,1)), 
              1 * 1000);
         game.task = 'sell';
@@ -484,8 +485,8 @@ function ListBox(id) {
     return this.rows().length;
   }
 
-  this.poptop = function () {
-    this.box.find("tr").first().remove();
+  this.remove = function (n) {
+    this.box.find("tr").eq(n).remove();
   }
 
   this.save = function (game) {
@@ -499,6 +500,10 @@ function ListBox(id) {
     this.rows().remove();
     for (var i = 0; i < game[this.id].length; ++i)
       this.box.appeand(game[this.id][i]);
+  }
+
+  this.label = function (n) {
+    return this.item(n).children().first().text();
   }
 };
 
@@ -655,8 +660,8 @@ function CompleteQuest() {
     /*$ENDIF*/
     Quests.last().wrap("<s/>");
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
-    while (Quest.box.children().length > 99)
-      Quest.poptop();
+    while (Quests.length() > 99)
+      Quests.remove(0);
 
     game.questmonster = '';
     var caption;
@@ -701,14 +706,13 @@ function CompleteQuest() {
       game.questmonster = '';  // We're trying to placate them, after all
       break;
     }
-    Quest.Add(caption);
+    Quests.Add(caption);
 
     /*$IFDEF LOGGING*/
     Log('Commencing quest: ' + caption);
     /*$ENDIF*/
     Quests.scrollToBottom();
   }
-  Quest.Width = Quest.Width - 1;  // trigger a column resize
   SaveGame();
 }
 
@@ -839,8 +843,8 @@ function TMainForm_CharSheet() {
       WrLn( '  ' + LeftStr(Equips[i].Caption + '            ', 12) + Get(Equips,i));
   WrLn();
   WrLn( 'Spell Book:');
-  for (var i = 1; i <= Items.length()-1; ++i)
-    WrLn( '  ' + Spells[i].Caption + ' ' + Get(Spells,i));
+  for (var i = 0; i < Spells.length(); ++i)
+    WrLn('  ' + Spells.label(i) + ' ' + Get(Spells,i));
   WrLn();
   WrLn( 'Inventory (' + EncumBar.Hint + '):');
   WrLn( '  ' + Indefinite('gold piece', GetI(Inventory, 'Gold')));
@@ -944,7 +948,7 @@ function RoughTime(s) {
   else return s.div(3600 * 24) + ' days';
 }
 
-function Pos(haystack, needle) {
+function Pos(needle, haystack) {
   return haystack.indexOf(needle) + 1;
 }
 
@@ -955,7 +959,7 @@ function Timer1Timer() {
     if (Kill.text() == 'Loading....') TaskBar.Max = 0;
       
     // gain XP / level up
-    var gain = Pos('kill|',game.task) == 1;
+    var gain = Pos('kill|', game.task) == 1;
     if (gain) {
       if (ExpBar.done()) 
         LevelUp();
