@@ -101,6 +101,7 @@ fieldset table td {
 .head {
   font-weight: bold;
   font-size: 9pt;
+  margin: 2px 0 2px 0;
 }
 
 div.progress-container { 
@@ -131,7 +132,7 @@ div.progress-container > div.bar {
 
 .window { 
   background-color: #eee; 
-  width: 800px;
+  width: 820px; 
   border: outset 2px silver;
   padding: 2px;
   margin: 1em;
@@ -142,9 +143,10 @@ div.progress-container > div.bar {
  }
 
 div.scroll { 
-  overflow: auto;
+  overflow: scroll;
   height: 100px;
   width: 250px;
+  overflow-x: hidden;
 }
 
 div.scroll > table { 
@@ -154,3 +156,4 @@ div.scroll > table {
 .selected { 
   background-color: yellow;
 }
+

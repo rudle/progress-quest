@@ -525,12 +525,15 @@ function GoButtonClick() {
   PlotBar.reset(26);
   Plots.Add('Prologue');
 
+  Put(Inventory, "Gold", 0);
+  Put(Equips, "Hauberk", "-3 Burlap");
+
   StartTimer();
   SaveGame();
   Brag('s');
   
-  AddR(Spells, "Lasers", 3);
-  alert("DEBUG " + GetI(Stats, 3));
+  //AddR(Spells, "Lasers", 3);
+  //alert("DEBUG " + GetI(Stats, 3));
 }
 
 
@@ -566,7 +569,7 @@ function Abs(x) {
 }
 
 function WinEquip() {
-  var posn = Random(Equips.box.find("tr").length);
+  var posn = Random(Equips.length());
   game.bestequip = posn; // remember as the "best item"
   if (posn == 0) {
     stuff = K.Weapons;
@@ -575,12 +578,9 @@ function WinEquip() {
   } else {
     better = K.DefenseAttrib;
     worse = K.DefenseBad;
-    if (posn == 1) 
-      stuff = K.Shields
-    else 
-      stuff = K.Armors;
+    stuff = (posn == 1) ? K.Shields:  K.Armors;
   }
-  var name = LPick(stuff,GetI(Traits,'Level'));
+  var name = LPick(stuff, GetI(Traits,'Level'));
   var qual = StrToInt(Split(name,1));
   name = Split(name,0);
   var plus = GetI(Traits,'Level') - qual;
@@ -762,7 +762,6 @@ function toArabic(s) {
 }
 
 function CompleteAct() {
-  PlotBar.reposition(0);
   Plots.last().wrap("<s/>");
   PlotBar.reset(60 * 60 * (1 + 5 * Plots.length())); // 1 hr + 5/act
   PlotBar.Hint = 'Cutscene omitted';
@@ -1103,14 +1102,6 @@ $(function() {
     LevelUp();
   });
 
-  cheat("$$$", function () {
-    WinEquip();
-    WinItem();
-    WinSpell();
-    WinStat();
-    Add(Inventory,'Gold',Random(100));
-  });
-
   cheat("Quest", function () {
     QuestBar.reposition(QuestBar.Max);
     TaskBar.reposition(TaskBar.Max);
@@ -1128,6 +1119,30 @@ $(function() {
     } else {
       StartTimer();
     }
+  });
+
+  cheat("Equip", function () {
+    WinEquip();
+  });
+
+  cheat("Item", function () {
+    WinItem();
+  });
+
+  cheat("Spell", function () {
+    WinSpell();
+  });
+
+  cheat("Stat", function () {
+    WinStat();
+  });
+
+  cheat("$$$", function () {
+    Add(Inventory,'Gold',Random(100));
+  });
+
+  cheat("ad hoc", function () {
+    Put(Equips, "Vambraces", "Holy shittles");
   });
 
 });
