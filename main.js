@@ -196,7 +196,7 @@ function InterplotCinematic() {
 
 
 function StrToInt(s) {
-  return s.valueOf();
+  return parseInt(s);
 }
 
 function IntToStr(i) {
@@ -520,12 +520,18 @@ function GoButtonClick() {
   Q("task|6|Much is revealed about that wise old bastard you'd underestimated");
   Q('task|6|A shocking series of events leaves you alone and bewildered, but resolute');
   Q('task|4|Drawing upon an unexpected reserve of determination, you set out on a long and dangerous journey');
-  Q('task|2|Loading');
+  Q('plot|2|Loading');
 
   PlotBar.reset(26);
   Plots.Add('Prologue');
 
+  QuestBar.reset(1);
+
+  EncumBar.reset(GetI(Stats, "STR") + 10);
+
   Put(Inventory, "Gold", 0);
+  Put(Inventory, "Moon Mead", 2);
+
   Put(Equips, "Hauberk", "-3 Burlap");
 
   StartTimer();
@@ -894,8 +900,10 @@ function Min(a,b) {
 
 function Sum(list) {
   var result = 0;
-  for (var i = 0; i <= list.length - 1; ++i)
-    Result += GetI(list,i);
+  list.rows().each(function (index) {
+    result += StrToInt($(this).children().last().text());
+  });
+  return result;
 }
 
 Number.prototype.div = function (divisor) {
@@ -941,13 +949,13 @@ function Pos(haystack, needle) {
 }
 
 function Timer1Timer() {
-  var gain = Pos('kill|',game.task) == 1;
   if (TaskBar.done()) {
     ClearAllSelections();
       
     if (Kill.text() == 'Loading....') TaskBar.Max = 0;
       
     // gain XP / level up
+    var gain = Pos('kill|',game.task) == 1;
     if (gain) {
       if (ExpBar.done()) 
         LevelUp();
@@ -970,8 +978,10 @@ function Timer1Timer() {
       
     // advance plot
     if (gain) {
-      if (PlotBar.done()) InterplotCinematic();
-      else PlotBar.increment(TaskBar.Max / 1000);
+      if (PlotBar.done()) 
+        InterplotCinematic();
+      else 
+        PlotBar.increment(TaskBar.Max / 1000);
 
       PlotBar.Hint = RoughTime(PlotBar.Max-PlotBar.Position) + ' remaining';
     }
@@ -991,7 +1001,7 @@ function FormCreate() {
   PlotBar = new ProgressBar("PlotBar");
   TaskBar = new ProgressBar("TaskBar");
   QuestBar = new ProgressBar("QuestBar");
-  EncumBar = new ProgressBar("QuestBar");
+  EncumBar = new ProgressBar("EncumBar");
 
   Traits = new ListBox("Traits");
   Stats = new ListBox("Stats");
