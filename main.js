@@ -275,7 +275,7 @@ function MonsterTask(level) {
     i = 10+(level-lev);
     i = 5-Random(i+1);
     result = Sick(i,Young((lev-level)-i,result));
-  } else if (((level-lev) < 0) && (Random(2) = 1)) {
+  } else if (((level-lev) < 0) && (Random(2) == 1)) {
     result = Sick(level-lev,result);
   } else if (((level-lev) < 0)) {
     result = Young(level-lev,result);
@@ -285,7 +285,7 @@ function MonsterTask(level) {
     i = 10-(level-lev);
     i = 5-Random(i+1);
     result = Big(i,Special((level-lev)-i,result));
-  } else if (((level-lev) > 0) && (Random(2) = 1)) {
+  } else if (((level-lev) > 0) && (Random(2) == 1)) {
     result = Big(level-lev,result);
   } else if (((level-lev) > 0)) {
     result = Special(level-lev,result);
@@ -298,6 +298,9 @@ function MonsterTask(level) {
   return { 'description': result, 'level': level };
 }
 
+function LowerCase(s) {
+  return s.toLowerCase();
+}
 
 function ProperCase(s) {
   return Copy(s,1,1).toUpperCase() + Copy(s,2,10000);
@@ -1188,7 +1191,7 @@ function TMainForm_FormClose() {
 
 function TMainForm_GameSaveName()
 {
-  if (FSaveFileName = '') {
+  if (FSaveFileName == '') {
     FSaveFileName = Get(Traits,'Name');
     if (GetHostName != '')
       FSaveFileName = FSaveFileName + ' [' + GetHostName + ']';
@@ -1199,25 +1202,25 @@ function TMainForm_GameSaveName()
 }
 
 function TMainForm_FormKeyDown() {
-  if ((FindWindow('TAppBuilder', nil) > 0) && (ssCtrl in Shift) && (ssShift in Shift) && (Key = ord('C'))) {
+  if ((FindWindow('TAppBuilder', nil) > 0) && (ssCtrl in Shift) && (ssShift in Shift) && (Key == ord('C'))) {
     /*$IFDEF CHEATS*/
     Cheats.Visible = ! Cheats.Visible;
     /*$ENDIF*/
   }
-  if ((ssCtrl in Shift) && (Key = ord('A'))) {
+  if ((ssCtrl in Shift) && (Key == ord('A'))) {
     ShowMessage(CharSheet);
   }
-  if (GetPasskey = 0) Exit; // no need for these things
-  if ((ssCtrl in Shift) && (Key = ord('B'))) {
+  if (GetPasskey() == 0) Exit; // no need for these things
+  if ((ssCtrl in Shift) && (Key == ord('B'))) {
     Brag('b');
     Navigate(GetHostAddr + 'name=' + UrlEncode(Get(Traits,'Name')));
   }
-  if ((ssCtrl in Shift) && (Key = ord('M'))) {
+  if ((ssCtrl in Shift) && (Key == ord('M'))) {
     SetMotto(InputBox('Progress Quest', 'Declare your motto!', GetMotto));
     Brag('m');
     Navigate(GetHostAddr + 'name=' + UrlEncode(Get(Traits,'Name')));
   }
-  if ((ssCtrl in Shift) && (Key = ord('G'))) {
+  if ((ssCtrl in Shift) && (Key == ord('G'))) {
     SetGuild(InputBox('Progress Quest', 'Choose a guild.\r\rMake sure you undestand the guild rules before you join one. To learn more about guilds, visit http://progressquest.com/guilds.php', GetGuild));
     Guildify;
   }
@@ -1241,7 +1244,7 @@ function Brag(trigger) {
   var flat = 1;
   if (FExportSheets)
     ExportCharSheet;
-  if (GetPasskey = 0) return; // not a online game!
+  if (GetPasskey() == 0) return; // not a online game!
   var url = 'cmd=b&t=' + trigger;
   with (Traits) for (i = 0; i <= Items.length()-1; ++i) 
     url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
@@ -1263,12 +1266,12 @@ function Brag(trigger) {
   url = url + '&a=' + UrlEncode(Plots.last().text());
   url = url + '&h=' + UrlEncode(GetHostName);
   url = url + RevString;
-  url = url + '&p=' + IntToStr(LFSR(url, GetPasskey));
+  url = url + '&p=' + IntToStr(LFSR(url, GetPasskey()));
   url = url + '&m=' + UrlEncode(GetMotto);
   url = AuthenticateUrl(GetHostAddr + url);
   try {
     body = DownloadString(url);
-    if ((LowerCase(Split(body,0)) = 'report'))
+    if ((LowerCase(Split(body,0)) == 'report'))
       ShowMessage(Split(body,1));
   } catch (EWebError) {
     // 'ats okay.
@@ -1277,21 +1280,21 @@ function Brag(trigger) {
 }
 
 function TMainForm_AuthenticateUrl(url) {
-  if ((GetLogin != '') || (GetPassword != ''))
-    return StuffString(url, 8, 0, GetLogin+':'+GetPassword+'@')
+  if ((GetLogin() != '') || (GetPassword() != ''))
+    return StuffString(url, 8, 0, GetLogin()+':'+GetPassword()+'@')
   else
     return url;
 }
 
 function TMainForm_Guildify() {
-  if (GetPasskey = 0) return; // not a online game!
+  if (GetPasskey() == 0) return; // not a online game!
   var url = 'cmd=guild';
   with (Traits) for (i = 0; i <= Items.length()-1; ++i)
     url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
-  url = url + '&h=' + UrlEncode(GetHostName);
+  url = url + '&h=' + UrlEncode(GetHostName());
   url = url + RevString;
-  url = url + '&guild=' + UrlEncode(GetGuild);
-  url = url + '&p=' + IntToStr(LFSR(url, GetPasskey));
+  url = url + '&guild=' + UrlEncode(GetGuild());
+  url = url + '&p=' + IntToStr(LFSR(url, GetPasskey()));
   url = AuthenticateUrl(GetHostAddr + url);
   try {
     b = DownloadString(url);
