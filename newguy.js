@@ -22,7 +22,7 @@ var stats = {"history":[]};
 function RollEm() {
   var Total = $("#Total");
   var ReRoll = $("#ReRoll");
-  stats.seed = randseed;
+  stats.seed = randseed();
   stats.total = 
     Roll("STR") +
     Roll("CON") +
@@ -79,7 +79,7 @@ $(document).ready(function () {
 
 
 function UnrollClick() {
-  randseed = stats.history.pop();
+  randseed(stats.history.pop());
   $("#Unroll").attr("disabled", !stats.history.length);
   RollEm();
 }
