@@ -109,7 +109,7 @@ function Split(s, field, separator) {
 
 function Indefinite(s, qty) {
   if (qty == 1) {
-    if (Pos(s[1], 'AEIOUÜaeiouü') > 0) 
+    if (Pos(s.charAt(0), 'AEIOUÜaeiouü') > 0) 
       return 'an ' + s;
     else 
       return 'a ' + s;
@@ -328,11 +328,11 @@ function Dequeue() {
         var amt = GetI(Inventory, 1) * GetI(Traits,'Level');
         if (Pos(' of ', Inventory.label(1)) > 0)
           amt *= (1+RandomLow(10)) * (1+RandomLow(GetI(Traits,'Level')));
-        Inventory.scrollToTop();
         Inventory.remove(1);
         Add(Inventory, 'Gold', amt);
       }
       if (Inventory.length() > 1) {
+        Inventory.scrollToTop();
         Task('Selling ' + Indefinite(Inventory.label(1), GetI(Inventory,1)), 
              1 * 1000);
         game.task = 'sell';
@@ -382,6 +382,7 @@ function Put(list, key, value) {
   var item = list.item(key);
   item.children().last().text(value);
   item.addClass("selected");
+  item.each(function () {this.scrollIntoView();});
 
   if (key === 'STR') {
     EncumBar.Max = 10 + value;
@@ -443,7 +444,9 @@ function ListBox(id) {
   this.box = $("#"+ id);
 
   this.Add = function (caption) {
-    var tr = this.box.append("<tr><td>" + caption + "</td></tr>");
+    var tr = $("<tr><td>" + caption + "</td></tr>");
+    tr.appendTo(this.box);
+    tr.each(function () {this.scrollIntoView();});
     return tr;
   };
 
@@ -470,11 +473,8 @@ function ListBox(id) {
     return this.rows().last();
   };
 
-  this.scrollToBottom = function () {
-    // TODO
-  };
   this.scrollToTop = function () {
-    // TODO
+    this.box.parents(".scroll").scrollTop(0);
   };
 
   this.rows = function () {
@@ -688,7 +688,7 @@ function CompleteQuest() {
       caption = 'Deliver this ' + BoringItem();
       break;
     case 3: 
-      Caption = 'Fetch me ' + Indefinite(BoringItem(), 1);
+      caption = 'Fetch me ' + Indefinite(BoringItem(), 1);
       break;
     case 4: 
       var mlev = 0;
@@ -702,7 +702,7 @@ function CompleteQuest() {
           game.questmonster = m;
         }
       }
-      Caption = 'Placate ' + Definite(Split(game.questmonster,0),2);
+      caption = 'Placate ' + Definite(Split(game.questmonster,0),2);
       game.questmonster = '';  // We're trying to placate them, after all
       break;
     }
@@ -711,7 +711,6 @@ function CompleteQuest() {
     /*$IFDEF LOGGING*/
     Log('Commencing quest: ' + caption);
     /*$ENDIF*/
-    Quests.scrollToBottom();
   }
   SaveGame();
 }
@@ -776,7 +775,6 @@ function CompleteAct() {
   PlotBar.reset(60 * 60 * (1 + 5 * Plots.length())); // 1 hr + 5/act
   PlotBar.Hint = 'Cutscene omitted';
   Plots.Add('Act ' + toRoman(Plots.length()));
-  Plots.scrollToBottom();
 
   WinItem();
   WinEquip();
