@@ -65,10 +65,6 @@ function RandSign() {
   return Random(2) * 2 - 1;
 }
 
-function Pick(s) {
-  return s[Random(s.length)];
-}
-
 function RandomLow(below) {
   return Min(Random(below), Random(below));
 }
@@ -85,8 +81,8 @@ function Length(s) {
   return s.length;
 }
 
-String.prototype.prefix = function(s) {
-  return 0 == this.indexOf(s);
+function Starts(s, pre) {
+  return 0 === s.indexOf(pre);
 }
 
 function Ends(s, e) {
@@ -95,15 +91,15 @@ function Ends(s, e) {
 
 function Plural(s) {
   if (Ends(s,'y')) 
-    return Copy(s,1,Length(s)-1) + 'ies'
+    return Copy(s,1,Length(s)-1) + 'ies';
   else if (Ends(s,'us')) 
-    return Copy(s,1,Length(s)-2) + 'i'
+    return Copy(s,1,Length(s)-2) + 'i';
   else if (Ends(s,'ch') || Ends(s,'x') || Ends(s,'s')) 
-    return s + 'es'
+    return s + 'es';
   else if (Ends(s,'f')) 
-    return Copy(s,1,Length(s)-1) + 'ves'
+    return Copy(s,1,Length(s)-1) + 'ves';
   else if (Ends(s,'man') || Ends(s,'Man')) 
-    return Copy(s,1,Length(s)-2) + 'en'
+    return Copy(s,1,Length(s)-2) + 'en';
   else return s + 's';
 }
 
@@ -113,9 +109,10 @@ function Split(s, field, separator) {
 
 function Indefinite(s, qty) {
   if (qty == 1) {
-    if (Pos(s[1], 'AEIOUÜaeiouü') > 0
-   ) return 'an ' + s
-    else return 'a ' + s;
+    if (Pos(s[1], 'AEIOUÜaeiouü') > 0) 
+      return 'an ' + s;
+    else 
+      return 'a ' + s;
   } else {
     return IntToStr(qty) + ' ' + Plural(s);
   }
@@ -129,7 +126,7 @@ function Definite(s, qty) {
 
 function prefix(a, m, s, sep) {
   if (sep == undefined) sep = ' ';
-  m = Abs(m)
+  m = Abs(m);
   if (m < 1 || m > a.length) return s;  // In case of screwups
   return a[m-1] + sep + s;
 }
@@ -182,12 +179,12 @@ function InterplotCinematic() {
     Q('task|2|You awake in a friendly place, but the road awaits');
     break;
   case 2: 
-    var nemesis = ImpressiveGuy();
-    Q("task|2|Oh sweet relief! You've reached the protection of the good " + nemesis);
-    Q('task|3|There is rejoicing, and an unnerving encouter with ' + nemesis + ' in private');
+    var nemesis2 = ImpressiveGuy();
+    Q("task|2|Oh sweet relief! You've reached the protection of the good " + nemesis2);
+    Q('task|3|There is rejoicing, and an unnerving encouter with ' + nemesis2 + ' in private');
     Q('task|2|You forget your ' + BoringItem() + ' and go back to get it');
     Q("task|2|What's this!? You overhear something shocking!");
-    Q('task|2|Could ' + nemesis + ' be a dirty double-dealer?');
+    Q('task|2|Could ' + nemesis2 + ' be a dirty double-dealer?');
     Q('task|3|Who can possibly be trusted with this news!? ... Oh yes, of course');
     break;
   }
@@ -196,7 +193,7 @@ function InterplotCinematic() {
 
 
 function StrToInt(s) {
-  return parseInt(s);
+  return parseInt(s, 10);
 }
 
 function IntToStr(i) {
@@ -208,7 +205,7 @@ function NamedMonster(level) {
   var result = '';
   for (var i = 0; i < 5; ++i) {
     var m = Pick(K.Monsters);
-    if (result == '' || (Abs(level-StrToInt(Split(m,1))) < Abs(level-lev))) {
+    if (!result || (Abs(level-StrToInt(Split(m,1))) < Abs(level-lev))) {
       result = Split(m,0);
       lev = StrToInt(Split(m,1));
     }
@@ -230,26 +227,27 @@ function MonsterTask(level) {
   if (level < 1) level = 1;
   // level = level of puissance of opponent(s) we'll return
 
+  var monster, lev;
   if (Odds(1,25)) {
     // Use an NPC every once in a while
-    var monster = ' ' + Pick(K.Races);
+    monster = ' ' + Pick(K.Races);
     if (Odds(1,2)) {
       monster = 'passing' + monster + ' ' + Pick(K.Klasses);
     } else {
       monster = PickLow(K.Titles) + ' ' + GenerateName() + ' the' + monster;
       definite = true;
     }
-    var lev = level;
+    lev = level;
     monster = monster + '|' + IntToStr(level) + '|*';
-  } else if ((game.questmonster != '') && Odds(1,4)) {
+  } else if (game.questmonster && Odds(1,4)) {
     // Use the quest monster
-    var monster = k.Monsters[game.questmonsterindex];
-    var lev = StrToInt(Split(monster,1));
+    monster = K.Monsters[game.questmonsterindex];
+    lev = StrToInt(Split(monster,1));
   } else {
     // Pick the monster out of so many random ones closest to the level we want
-    var monster = Pick(K.Monsters);
-    var lev = StrToInt(Split(monster,1));
-    for (var i = 0; i < 5; ++i) {
+    monster = Pick(K.Monsters);
+    lev = StrToInt(Split(monster,1));
+    for (var ii = 0; ii < 5; ++ii) {
       var m1 = Pick(K.Monsters);
       if (Abs(level-StrToInt(Split(m1,1))) < Abs(level-lev)) {
         monster = m1;
@@ -307,9 +305,9 @@ function ProperCase(s) {
 }
 
 function EquipPrice() {
-  return  5 * GetI(Traits,'Level') * GetI(Traits,'Level')
-          + 10 * GetI(Traits,'Level')
-          + 20;
+  return  5 * GetI(Traits,'Level') * GetI(Traits,'Level') + 
+    10 * GetI(Traits,'Level') + 
+    20;
 }
 
 function Dequeue() {
@@ -317,7 +315,7 @@ function Dequeue() {
     if (Split(game.task,0) == 'kill') {
       if (Split(game.task,3) == '*') {
         WinItem();
-      } else if (Split(game.task,3) != '') {
+      } else if (Split(game.task,3)) {
         Add(Inventory,LowerCase(Split(game.task,1) + ' ' + 
                                 ProperCase(Split(game.task,3))),1);
       }
@@ -370,11 +368,11 @@ function Dequeue() {
         game.task = 'heading';
       }
     } else {
-      var n = GetI(Traits, 'Level');
-      var t = MonsterTask(n);
+      var nn = GetI(Traits, 'Level');
+      var t = MonsterTask(nn);
       var InventoryLabelAlsoGameStyleTag = 3;
-      var n = Math.floor((2 * InventoryLabelAlsoGameStyleTag * t.level * 1000) / n);
-      Task('Executing ' + t.description, n);
+      nn = Math.floor((2 * InventoryLabelAlsoGameStyleTag * t.level * 1000) / nn);
+      Task('Executing ' + t.description, nn);
     }
   }
 }
@@ -409,34 +407,36 @@ function ProgressBar(id) {
   this.reset = function (newmax) {
     this.Max = newmax;
     this.reposition(0);
-  }
+  };
 
   this.reposition = function (newpos) {
     this.Position = newpos;
-    this.bar.css("width", 100 * this.Position / this.Max + "%")
-  }
+    this.bar.css("width", 100 * this.Position / this.Max + "%");
+  };
 
   this.increment = function (inc) {
     this.reposition(this.Position + inc);
-  }
+  };
 
   this.done = function () {
     return this.Position >= this.Max;
-  }
+  };
 
   this.save = function (game) {
     game[id] = {position: this.Position, max: this.Max};
-  }
+  };
   
   this.load = function (game) {
     this.Max = game[id].max;
     this.reposition(game[id].position);
-  }
-};
+  };
+}
+
 
 function alert(k) {
   Plots.Add(k);
 }
+
 
 function ListBox(id) {
   this.id = id;
@@ -445,11 +445,11 @@ function ListBox(id) {
   this.Add = function (caption) {
     var tr = this.box.append("<tr><td>" + caption + "</td></tr>");
     return tr;
-  }
+  };
 
   this.ClearSelection = function () {
     this.box.find("tr").removeClass("selected");
-  }
+  };
 
   this.item = function (key) {
     if (typeof key == typeof 'string') {
@@ -464,48 +464,48 @@ function ListBox(id) {
     } else {
       return this.box.find("tr").eq(key);
     }
-  }
+  };
 
   this.last = function () {
     return this.rows().last();
-  }
+  };
 
   this.scrollToBottom = function () {
     // TODO
-  }
+  };
   this.scrollToTop = function () {
     // TODO
-  }
+  };
 
   this.rows = function () {
     return this.box.find("tr").has("td");
-  }
+  };
 
   this.length = function () {
     return this.rows().length;
-  }
+  };
 
   this.remove = function (n) {
     this.box.find("tr").eq(n).remove();
-  }
+  };
 
   this.save = function (game) {
     game[this.id] = {items: []};
     this.rows().each(function (index) {
       game[this.id].items.push($(this).html());
     });
-  }
+  };
 
   this.load = function (game) {
     this.rows().remove();
     for (var i = 0; i < game[this.id].length; ++i)
       this.box.appeand(game[this.id][i]);
-  }
+  };
 
   this.label = function (n) {
     return this.item(n).children().first().text();
-  }
-};
+  };
+}
 
 
 var ExpBar, PlotBar, TaskBar, QuestBar;
@@ -549,7 +549,7 @@ function GoButtonClick() {
 
 
 function StrToIntDef(s, def) {
-  var result = parseInt(s);
+  var result = parseInt(s, 10);
   return isNaN(result) ? def : result;
 }
 
@@ -582,7 +582,7 @@ function Abs(x) {
 function WinEquip() {
   var posn = Random(Equips.length());
   game.bestequip = posn; // remember as the "best item"
-  if (posn == 0) {
+  if (!posn) {
     stuff = K.Weapons;
     better = K.OffenseAttrib;
     worse = K.OffenseBad;
@@ -597,7 +597,7 @@ function WinEquip() {
   var plus = GetI(Traits,'Level') - qual;
   if (plus < 0) better = worse;
   var count = 0;
-  while ((count < 2) && (plus != 0)) {
+  while (count < 2 && plus) {
     var modifier = Pick(better);
     qual = StrToInt(Split(modifier, 1));
     modifier = Split(modifier, 0);
@@ -607,7 +607,7 @@ function WinEquip() {
     plus -= qual;
     ++count;
   }
-  if (plus != 0) name = plus + ' ' + name;
+  if (plus) name = plus + ' ' + name;
   if (plus > 0) name = '+' + name;
 
   Put(Equips, posn, name);
@@ -617,8 +617,9 @@ function WinEquip() {
 function Square(x) { return x * x; }
 
 function WinStat() {
+  var i;
   if (Odds(1,2))  {
-    var i = Stats.rows().eq(Random(Stats.length()));
+    i = Stats.rows().eq(Random(Stats.length()));
   } else {
     // Favor the best stat so it will tend to clump
     var t = 0;
@@ -626,7 +627,6 @@ function WinStat() {
       t += Square(StrToInt($(this).children().last().text()));
     });
     t = Random(t);
-    var i;
     Stats.rows().each(function (index,elt) {
       i = this;
       t -= Square(StrToInt($(this).children().last().text()));
@@ -691,14 +691,14 @@ function CompleteQuest() {
       Caption = 'Fetch me ' + Indefinite(BoringItem(), 1);
       break;
     case 4: 
-      var lev = 0;
+      var mlev = 0;
       level = GetI(Traits,'Level');
-      for (var i = 1; i <= 2; ++i) {
+      for (var ii = 1; ii <= 2; ++ii) {
         montag = Random(K.Monsters.length);
         m = K.Monsters[montag];
         l = StrToInt(Split(m,1));
-        if ((i == 1) || (Abs(l - level) < Abs(lev - level))) {
-          lev = l;
+        if ((ii == 1) || (Abs(l - level) < Abs(mlev - level))) {
+          mlev = l;
           game.questmonster = m;
         }
       }
@@ -717,7 +717,7 @@ function CompleteQuest() {
 }
 
 function toRoman(n) {
-  if (n == 0) return "N";
+  if (!n) return "N";
   var s = "";
   function _rome(dn,ds) {
     if (n >= dn) {
@@ -730,19 +730,19 @@ function toRoman(n) {
     s = "-";
     n = -n;
   }
-  while (_rome(1000,"M")) {}
+  while (_rome(1000,"M")) {0;}
   _rome(900,"CM");
   _rome(500,"D");
   _rome(400,"CD");
-  while (_rome(100,"C")) {}
+  while (_rome(100,"C")) {0;}
   _rome(90,"XC");
   _rome(50,"L");
   _rome(40,"XL");
-  while (_rome(10,"X")) {}
+  while (_rome(10,"X")) {0;}
   _rome(9,"IX");
   _rome(5,"V");
   _rome(4,"IV");
-  while (_rome(1,"I")) {}
+  while (_rome(1,"I")) {0;}
   return s;
 }
 
@@ -750,24 +750,24 @@ function toArabic(s) {
   n = 0;
   s = s.toUpperCase();
   function _arab(ds,dn) {
-    if (!s.prefix(ds)) return false;
+    if (!Starts(s, ds)) return false;
     s = s.substr(ds.length);
     n += dn;
     return true;
   }
-  while (_arab("M",1000)) {}
+  while (_arab("M",1000)) {0;}
   _arab("CM",900);
   _arab("D",500);
   _arab("CD",400);
-  while (_arab("C",100)) {}
+  while (_arab("C",100)) {0;}
   _arab("XC",90);
   _arab("L",50);
   _arab("XL",40);
-  while (_arab("X",10)) {}
+  while (_arab("X",10)) {0;}
   _arab("IX",9);
   _arab("V",5);
   _arab("IV",4);
-  while (_arab("I",1)) {}
+  while (_arab("I",1)) {0;}
   return n;
 }
 
@@ -817,8 +817,8 @@ function TMainForm_CharSheet() {
   function WrLn(a) { if (a != undefined) Wr(a); Wr("\r\n"); }
 
   Wr(Get(Traits,'Name'));
-  if (GetHostName != '')
-    Wr(' [' + GetHostName + ']');
+  if (GetHostName())
+    Wr(' [' + GetHostName() + ']');
   WrLn;
   WrLn(Get(Traits,'Race') + ' ' +  Get(Traits,'Class'));
   WrLn(Format('Level %d (exp. %d/%d)', [GetI(Traits,'Level'), ExpBar.Position, ExpBar.Max]));
@@ -838,21 +838,22 @@ function TMainForm_CharSheet() {
   WrLn( Format('  CHA%7d      MP Max%7d', [GetI(Stats,'CHA'), GetI(Stats,'MP Max')]));
   WrLn();
   WrLn( 'Equipment:');
-  for (var i = 1; i <= Equips.length()-1; ++i)
-    if (Get(Equips,i) != '')
+  for (var i = 1; i <= Equips.length()-1; ++i) {
+    if (Get(Equips,i))
       WrLn( '  ' + LeftStr(Equips[i].Caption + '            ', 12) + Get(Equips,i));
+  }
   WrLn();
   WrLn( 'Spell Book:');
-  for (var i = 0; i < Spells.length(); ++i)
-    WrLn('  ' + Spells.label(i) + ' ' + Get(Spells,i));
+  for (var s = 0; s < Spells.length(); ++s)
+    WrLn('  ' + Spells.label(s) + ' ' + Get(Spells,s));
   WrLn();
   WrLn( 'Inventory (' + EncumBar.Hint + '):');
   WrLn( '  ' + Indefinite('gold piece', GetI(Inventory, 'Gold')));
-  for (var i = 2; i <= Items.length()-1; ++i) {
-    if (Pos(' of ', Inventory[i].Caption) > 0) 
-      WrLn( '  ' + Definite(Inventory[i].Caption, GetI(Inventory,i)));
+  for (var ii = 2; ii <= Items.length()-1; ++ii) {
+    if (Pos(' of ', Inventory[ii].Caption) > 0) 
+      WrLn( '  ' + Definite(Inventory[ii].Caption, GetI(Inventory,ii)));
     else 
-      WrLn( '  ' + Indefinite(Items[i].Caption, GetI(Inventory,i)));
+      WrLn( '  ' + Indefinite(Items[ii].Caption, GetI(Inventory,ii)));
   }
   WrLn();
   WrLn( '-- ' + DateTimeToStr(Now));
@@ -873,7 +874,7 @@ function Add(list, key, value) {
   Put(list, key, value + GetI(list,key));
 
   /*$IFDEF LOGGING*/
-  if (value == 0) return;
+  if (!value) return;
   var line = (value > 0) ? "Gained" : "Lost";
   if (key == 'Gold') {
     key = "gold piece";
@@ -913,7 +914,7 @@ function Sum(list) {
 Number.prototype.div = function (divisor) {
   var dividend = this / divisor;
   return (dividend < 0 ? Math.ceil : Math.floor)(dividend);
-}
+};
 
 
 function LevelUp() {
@@ -923,10 +924,8 @@ function LevelUp() {
   WinStat();
   WinStat();
   WinSpell();
-  with (ExpBar) {
-    Position = 0;
-    Max = LevelUpTime(GetI(Traits,'Level'));
-  }
+  ExpBar.Position = 0;
+  ExpBar.reset(LevelUpTime(GetI(Traits,'Level')));
   SaveGame();
   Brag('l');
 }
@@ -942,9 +941,9 @@ function ClearAllSelections() {
 }
 
 function RoughTime(s) {
-  if (s < 120) return s + ' seconds'
-  else if (s < 60 * 120) return s.div(60) + ' minutes'
-  else if (s < 60 * 60 * 48) return s.div(3600) + ' hours'
+  if (s < 120) return s + ' seconds';
+  else if (s < 60 * 120) return s.div(60) + ' minutes';
+  else if (s < 60 * 60 * 48) return s.div(3600) + ' hours';
   else return s.div(3600 * 24) + ' days';
 }
 
@@ -1031,13 +1030,14 @@ function TMainForm_RollCharacter() {
     if (! NewGuyForm.Go())
       return false;
     Put(Traits, 'Name', NewGuyForm.Name.Text);
-    if (FileExists(GameSaveName) &&
-        (mrNo = MessageDlg('The saved game "' + GameSaveName + '" already exists. Do you want to overwrite it?', mtWarning, [mbYes,mbNo], 0))) {
+    if (FileExists(GameSaveName()) &&
+        (mrNo = MessageDlg('The saved game "' + GameSaveName() + '" already exists. Do you want to overwrite it?', mtWarning, [mbYes,mbNo], 0))) {
       // go around again
+      0;
     } else {
-      f = FileCreate(GameSaveName);
-      if (f = -1) {
-        ShowMessage("The thought police don't like the name '" + GameSaveName + "'. Choose a name without \\ / : * ? \" < > || | in it.");
+      f = FileCreate(GameSaveName());
+      if (f == -1) {
+        ShowMessage("The thought police don't like the name '" + GameSaveName() + "'. Choose a name without \\ / : * ? \" < > || | in it.");
       } else {
         FileClose(f);
         break;
@@ -1045,6 +1045,7 @@ function TMainForm_RollCharacter() {
     }
   }
 
+  /* TODO: something like this
   with (NewGuyForm) {
     Put(Traits,'Name',Name.Text);
     Put(Traits,'Race',Race[Race.ItemIndex]);
@@ -1060,9 +1061,11 @@ function TMainForm_RollCharacter() {
     Put(Stats,'MP Max',Random(8) + INT.Tag.div(6));
     Put(Equips,'Weapon','Sharp Stick');
     Put(Inventory,'Gold',0);
-    ClearAllSelections;
+    ClearAllSelections();
     GoButtonClick(NewGuyForm);
   }
+*/
+  return true;
 }
 
 
@@ -1210,9 +1213,10 @@ function TMainForm_LoadGame(name) {
 function TMainForm_FormClose() {
   if (Timer1.Enabled) {
     Timer1.Enabled = false;
-    if (SaveGame())
+    if (SaveGame()) {
       if (FReportSave)
         ShowMessage('Game saved as ' + GameSaveName);
+    }
   }
   FReportSave = true;
   Action = caFree;
@@ -1220,9 +1224,9 @@ function TMainForm_FormClose() {
 
 function TMainForm_GameSaveName()
 {
-  if (FSaveFileName == '') {
+  if (!FSaveFileName) {
     FSaveFileName = Get(Traits,'Name');
-    if (GetHostName != '')
+    if (GetHostName())
       FSaveFileName = FSaveFileName + ' [' + GetHostName + ']';
     FSaveFileName = FSaveFileName + kFileExt;
     FSaveFileName = ExpandFileName(PChar(FSaveFileName));
@@ -1239,7 +1243,7 @@ function TMainForm_FormKeyDown() {
   if ((ssCtrl in Shift) && (Key == ord('A'))) {
     ShowMessage(CharSheet);
   }
-  if (GetPasskey() == 0) Exit; // no need for these things
+  if (!GetPasskey()) Exit; // no need for these things
   if ((ssCtrl in Shift) && (Key == ord('B'))) {
     Brag('b');
     Navigate(GetHostAddr + 'name=' + UrlEncode(Get(Traits,'Name')));
@@ -1263,7 +1267,7 @@ function LFSR(pt, salt) {
   var result = salt;
   for (var k = 1; k <= Length(pt); ++k)
     result = Ord(pt[k]) ^ (result << 1) ^ (1 && ((result >> 31) ^ (result >> 5)));
-  for (var k = 1; k <= 10; ++k)
+  for (var kk = 1; kk <= 10; ++kk)
     result = (result << 1) ^ (1 && ((result >> 31) ^ (result >> 5)));
 }
 
@@ -1293,7 +1297,7 @@ function Brag(trigger) {
     if (GetI(Stats,i) > GetI(Stats,best)) best = i;
   url = url + '&k=' + Stats[best].Caption + '+' + Get(Stats,best);
   url = url + '&a=' + UrlEncode(Plots.last().text());
-  url = url + '&h=' + UrlEncode(GetHostName);
+  url = url + '&h=' + UrlEncode(GetHostName());
   url = url + RevString;
   url = url + '&p=' + IntToStr(LFSR(url, GetPasskey()));
   url = url + '&m=' + UrlEncode(GetMotto);
@@ -1309,28 +1313,28 @@ function Brag(trigger) {
 }
 
 function TMainForm_AuthenticateUrl(url) {
-  if ((GetLogin() != '') || (GetPassword() != ''))
-    return StuffString(url, 8, 0, GetLogin()+':'+GetPassword()+'@')
+  if ((GetLogin()) || (GetPassword()))
+    return StuffString(url, 8, 0, GetLogin()+':'+GetPassword()+'@');
   else
     return url;
 }
 
 function TMainForm_Guildify() {
-  if (GetPasskey() == 0) return; // not a online game!
+  if (!GetPasskey()) return; // not a online game!
   var url = 'cmd=guild';
-  with (Traits) for (i = 0; i <= Items.length()-1; ++i)
-    url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
+  for (i = 0; i < Traits.length(); ++i)
+    url = url + '&' + LowerCase(Traits[i].Caption[1]) + '=' + UrlEncode(Traits[i].Subitems[0]);
   url = url + '&h=' + UrlEncode(GetHostName());
   url = url + RevString;
   url = url + '&guild=' + UrlEncode(GetGuild());
   url = url + '&p=' + IntToStr(LFSR(url, GetPasskey()));
-  url = AuthenticateUrl(GetHostAddr + url);
+  url = AuthenticateUrl(GetHostAddr() + url);
   try {
     b = DownloadString(url);
     s = Take(b);
-    if (s != '') ShowMessage(s);
+    if (s) ShowMessage(s);
     s = Take(b);
-    if (s != '') Navigate(s);
+    if (s) Navigate(s);
   } catch (EWebError) {
     // 'ats okay.
     Abort();
@@ -1344,7 +1348,7 @@ function TMainForm_OnQueryEndSession() {
 }
 
 function TMainForm_OnEndSession() {
-  if (Msg.wParam != 0) {
+  if (Msg.wParam) {
     FReportSave = false;
     FormClose(Self, Action);
   }

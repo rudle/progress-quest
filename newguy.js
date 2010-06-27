@@ -70,7 +70,7 @@ $(document).ready(function () {
   RollEm();
 
   $("#RandomName").click(GenClick);
-  if ($("#Name").text() == '') {
+  if (!$("#Name").text()) {
     GenClick();
     $("#Name")[0].focus();
     $("#Name")[0].select();
@@ -80,7 +80,7 @@ $(document).ready(function () {
 
 function UnrollClick() {
   randseed = stats.history.pop();
-  $("#Unroll").attr("disabled", stats.history.length == 0);
+  $("#Unroll").attr("disabled", !stats.history.length);
   RollEm();
 }
 

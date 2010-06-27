@@ -15,18 +15,17 @@ function Rand32Rough() {
   return (randseed = X % T32);
 }
 
+
+function Pick(a) {
+  return a[Random(a.length)];
+}
+
+
 function GenerateName() {
   var KParts = [
     'br|cr|dr|fr|gr|j|kr|l|m|n|pr||||r|sh|tr|v|wh|x|y|z',
     'a|a|e|e|i|i|o|o|u|u|ae|ie|oo|ou',
     'b|ck|d|g|k|m|n|p|t|v|x|z'];
-
-  function Pick(s) {
-    var count = 1;
-    for (var i = 0; i < s.length; ++i)
-      if (s[i] == '|') ++count;
-    return s.split("|")[Random(count)];
-  }
 
   var result = '';
   for (var i = 0; i <= 5; ++i)
