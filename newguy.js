@@ -144,7 +144,7 @@ function sold() {
   $.each('STR,CON,DEX,INT,WIS,CHA'.split(','), function (index,value) {
       newguy[value] = stats[value];
     });
-  alert(JSON.stringify(newguy));
+  addToRoster(JSON.stringify(newguy));
 }
 
 function GenClick() {

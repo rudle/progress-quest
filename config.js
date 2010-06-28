@@ -120,6 +120,25 @@ function GenerateName() {
 }
 
 
+function loadRoster() {
+  if (!window.localStorage) {
+    return;
+  } else {
+    var roster = window.localStorage.getItem("roster");
+    roster = roster ? JSON.parse(roster) : [];
+    //if (!$.isArray(roster)) 
+      //  roster = [];
+    return roster;
+  }
+}
+
+function storeRoster(roster) {
+  window.localStorage.setItem("roster", JSON.stringify(roster));
+}
+
+function addToRoster(newguy) {
+  storeRoster(loadRoster().concat([newguy]));
+}
 
 var K = {};
 

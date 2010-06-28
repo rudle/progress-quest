@@ -1,0 +1,43 @@
+<script src="jquery.js"></script>
+<script src="config.js"></script>
+
+<dl id=roster>
+Here it goes
+</dl>
+
+<script>
+   $(document).ready(function () {
+       var roster = $("#roster");
+       roster.text("Loading...");
+       
+       var games = loadRoster()
+       if (!games) {
+         roster.text("No local storage");
+         return;
+       }
+       $.each(games, function (index, element) {
+           var p = $("<dt/>");
+           p.appendTo(roster);
+           p.text(element.name);
+           p = $("<dd/>");
+           p.appendTo(roster);
+           p.text(JSON.stringify(element));
+         });
+       
+       var b = $("<button>Test</button>");
+       b.appendTo(roster);
+       b.click(function () {
+           games.push({testy: "betsy"});
+           storeRoster(games);
+         });
+
+       var b = $("<button>Clear</button>");
+       b.appendTo(roster);
+       b.click(function () {
+           games = [];
+           storeRoster();
+         });
+     });
+</script>
+
+  
