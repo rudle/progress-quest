@@ -75,6 +75,7 @@ $(document).ready(function () {
     $("#Name")[0].focus();
     $("#Name")[0].select();
   }
+  $('#Sold').click(sold);
 });
 
 
@@ -133,6 +134,18 @@ function TNewGuyForm_SoldClick() {
 }
 */
 
+function sold() {
+  var newguy = {
+    name: $("#Name").val(),
+    race: $("input:radio[name=Race]:checked").val(),
+    'class': $("input:radio[name=Class]:checked").val(),
+    seed: stats.seed,
+  };
+  $.each('STR,CON,DEX,INT,WIS,CHA'.split(','), function (index,value) {
+      newguy[value] = stats[value];
+    });
+  alert(JSON.stringify(newguy));
+}
 
 function GenClick() {
   $("#Name").attr("value", GenerateName());
