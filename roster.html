@@ -4,6 +4,19 @@
 <script src="jquery.js"></script>
 <script src="config.js"></script>
 <script src="roster.js"></script>
+<style>
+div.brag {
+  font: 9pt Verdana
+}
+
+div.rc {
+  font: 8pt Verdana
+}
+
+div.best {
+  font: 7pt Verdana
+}
+</style>
 </head>
 
 <body>
@@ -16,3 +29,12 @@ Here it goes
 <button id=clear>Clear</button>
 </body>
 </html>
+
+
+<script id="bumble" type="text/html">
+<div class="brag">
+  <a><b>$traits.Name</b></a> of $realm ($plots.act)
+</div>
+<div class="rc">Level $traits.Level $traits.Race $traits.Class</div>
+<div class="bs">$equips.best / $spells.best / $stats.best</div>
+</script>
