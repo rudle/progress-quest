@@ -124,11 +124,15 @@ function loadRoster() {
   if (!window.localStorage) {
     return;
   } else {
-    var roster = window.localStorage.getItem("roster");
-    roster = roster ? JSON.parse(roster) : [];
+    var r = window.localStorage.getItem("roster");
+    try {
+      r = JSON.parse(r);
+    } catch (err) {
+      r = [];
+    }
     //if (!$.isArray(roster)) 
       //  roster = [];
-    return roster;
+    return r;
   }
 }
 

@@ -555,7 +555,6 @@ function StrToIntDef(s, def) {
 
 
 $(document).ready(FormCreate);
-$(document).ready(GoButtonClick);
 
 
 function WinSpell() {
@@ -1019,51 +1018,45 @@ function FormCreate() {
   TaskBar.reposition(0);
   ExpBar.reposition(0);
   EncumBar.reposition(0);
+
+  LoadCharacter();
 }
 
 
-function TMainForm_RollCharacter() {
-  var reuslt = true;
-  for (;;) {
-    if (! NewGuyForm.Go())
-      return false;
-    Put(Traits, 'Name', NewGuyForm.Name.Text);
-    if (FileExists(GameSaveName()) &&
-        (mrNo = MessageDlg('The saved game "' + GameSaveName() + '" already exists. Do you want to overwrite it?', mtWarning, [mbYes,mbNo], 0))) {
-      // go around again
-      0;
-    } else {
-      f = FileCreate(GameSaveName());
-      if (f == -1) {
-        ShowMessage("The thought police don't like the name '" + GameSaveName() + "'. Choose a name without \\ / : * ? \" < > || | in it.");
-      } else {
-        FileClose(f);
-        break;
-      }
+function LoadCharacter() {
+  var result = true;
+  var name = window.location.href.split('#')[1];
+  var games = loadRoster();
+  var ch;
+  $.each(games, function (index,sheet) {
+    if (sheet.name === name) {
+      ch = sheet;
+      return true;
     }
+  });
+  if (!ch.level) {
+    ch.level = 1;
+    ch['HP Max'] = Random(8) + ch.CON.div(6);
+    ch['MP Max'] = Random(8) + ch.INT.div(6);
+    ch.equips = {'Weapon': 'Sharp Stick'};
   }
+  Put(Traits, 'Name', ch.name);
+  Put(Traits, 'Level', ch.level);
+  Put(Traits, 'Race', ch.race);
+  Put(Traits, 'Class', ch['class']);
+  Put(Stats, 'STR', ch.STR);
+  Put(Stats, 'CON', ch.CON);
+  Put(Stats, 'DEX', ch.DEX);
+  Put(Stats, 'INT', ch.INT);
+  Put(Stats, 'WIS', ch.WIS);
+  Put(Stats, 'CHA', ch.CHA);
+  Put(Stats, 'HP Max', ch['HP Max']);
+  Put(Stats, 'MP Max', ch['MP Max']);
+  Put(Equips, 'Weapon', ch.equips.Weapon);
+  Put(Inventory,'Gold',0);
+  ClearAllSelections();
 
-  /* TODO: something like this
-  with (NewGuyForm) {
-    Put(Traits,'Name',Name.Text);
-    Put(Traits,'Race',Race[Race.ItemIndex]);
-    Put(Traits,'Class',Klass[Klass.ItemIndex]);
-    Put(Traits,'Level',1);
-    Put(Stats,'STR',STR.Tag);
-    Put(Stats,'CON',CON.Tag);
-    Put(Stats,'DEX',DEX.Tag);
-    Put(Stats,'INT',INT.Tag);
-    Put(Stats,'WIS',WIS.Tag);
-    Put(Stats,'CHA',CHA.Tag);
-    Put(Stats,'HP Max',Random(8) + CON.Tag.div(6));
-    Put(Stats,'MP Max',Random(8) + INT.Tag.div(6));
-    Put(Equips,'Weapon','Sharp Stick');
-    Put(Inventory,'Gold',0);
-    ClearAllSelections();
-    GoButtonClick(NewGuyForm);
-  }
-*/
-  return true;
+  GoButtonClick();
 }
 
 
