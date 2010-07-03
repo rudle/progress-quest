@@ -128,10 +128,8 @@ function loadRoster() {
     try {
       r = JSON.parse(r);
     } catch (err) {
-      r = [];
+      r = {};
     }
-    //if (!$.isArray(roster)) 
-      //  roster = [];
     return r;
   }
 }
@@ -141,7 +139,9 @@ function storeRoster(roster) {
 }
 
 function addToRoster(newguy) {
-  storeRoster(loadRoster().concat([newguy]));
+  var r = loadRoster();
+  r[newguy.name] = newguy;
+  storeRoster(r);
 }
 
 var K = {};

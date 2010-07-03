@@ -38,11 +38,12 @@ function RollEm() {
     (stats.total < (3 * 18)) ? 'silver' :
     'white';
   Total.css("background-color", color);
+
+  $("#Unroll").attr("disabled", !stats.history.length);
 }
 
 function RerollClick() {
   stats.history.push(stats.seed);
-  $("#Unroll").attr("disabled", false);
   RollEm();
 }
 
@@ -76,12 +77,12 @@ $(document).ready(function () {
     $("#Name")[0].select();
   }
   $('#Sold').click(sold);
+  $('#Cancel').click(cancel);
 });
 
 
 function UnrollClick() {
   randseed(stats.history.pop());
-  $("#Unroll").attr("disabled", !stats.history.length);
   RollEm();
 }
 
@@ -144,8 +145,12 @@ function sold() {
   $.each('STR,CON,DEX,INT,WIS,CHA'.split(','), function (index,value) {
       newguy[value] = stats[value];
     });
-  alert(JSON.stringify(newguy));
   addToRoster(newguy);
+  window.location = "main.html#" + newguy.name;
+}
+
+function cancel() {
+  window.location = "roster.html";
 }
 
 function GenClick() {

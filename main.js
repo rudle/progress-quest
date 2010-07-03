@@ -1019,6 +1019,11 @@ function FormCreate() {
   ExpBar.reposition(0);
   EncumBar.reposition(0);
 
+  $("#quit").click(function () {
+    window.location = "roster.html";
+    // TODO: save
+  });
+
   LoadCharacter();
 }
 

@@ -12,13 +12,21 @@ $(document).ready(function () {
       roster.text("Err...no local storage");
       return;
     }
-    $.each(games, function (index, c) {
+    $.each(games, function (key, c) {
       var p = $("<dt/>");
       p.appendTo(roster);
-      p.text(c.name);
       var a = $("<a/>", {href: "main.html#" + c.name})
       a.text(c.name);
       a.appendTo(p);
+      var rm = $("<button/>");
+      rm.text("X");
+      rm.css("color", "red");
+      rm.appendTo(p);
+      rm.click(function () {
+        delete games[c.name];
+        storeRoster(games);
+        load();
+      });
       p = $("<dd/>");
       p.appendTo(roster);
       p.text("Level " + (c.level || 1) + " " + c.race + " " + c['class']);
@@ -27,14 +35,19 @@ $(document).ready(function () {
 
   load();
   
+  $("#roll").click(function () {
+    window.location = "newguy.html";
+  });
+  
   $("#test").click(function () {
-    games.push({testy:"cul", "name":"betsy"});
+    var n = GenerateName();
+    games[n] = {level: -10,name:n,race:GenerateName(),"class":GenerateName()};
     storeRoster(games);
     load();
   });
   
   $("#clear").click(function () {
-    storeRoster([]);
+    storeRoster({});
     load();
   });
 });
