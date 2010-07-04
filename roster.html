@@ -5,36 +5,63 @@
 <script src="config.js"></script>
 <script src="roster.js"></script>
 <style>
-td.brag {
-  font: 9pt Verdana;
+.brag td {
+  font: 9pt Helvetica, sans-serif;
   background-color: #ddddff;
   padding: 5px;
+}
+
+.brag {
   display: inline;
 }
 
 div.rc {
-  font: 8pt Verdana
+  font-size: 8pt;
 }
 
 div.bs {
-  font: 7pt Verdana
+  font-size: 7pt;
 }
 
-td.brag button {
+button.x {
   color: red;
+}
+body {
+  text-align: center;
+}
+#roster {
+  margin-left: 10%;
+  margin-right: 10%;
+  text-align: left;
+}
+#roll {
+}
+#newc {
+  text-align: center;
+}
+a, a:visited {
+  color: blue;
 }
 </style>
 </head>
 
 <body>
 
-<img src="logo.png" alt="Progress Quest">
+<img src="pq.gif" alt="Progress Quest">
 
-<dl id=roster>
-Here it goes
-</dl>
+<h1>Character Roster</h1>
 
+<p id=roster>
+</p>
+
+<table class="brag"><tr>
+<td id="newc">
+<b>New Character</b> <br>
+<img src=die.jpg><br>
 <button id=roll>Roll One Up</button>
+</td></tr></table>
+
+<p>
 <button id=test>Test</button>
 <button id=clear>Clear</button>
 </body>
@@ -42,10 +69,10 @@ Here it goes
 
 
 <script id="bumble" type="text/html">
-  <table><tr><td class="brag">
+  <table class="brag"><tr><td>
         <div>
-          <a><b>$Traits.Name</b></a> of Localhost ($Plots.last) 
-          <button>X</button>
+          <a><b>$Traits.Name</b></a> of Localrealm ($Plots.last) 
+          <button class="x">X</button>
         </div>
         <div class="rc">Level $Traits.Level $Traits.Race $Traits.Class</div>
         <div class="bs">$Equips.best / $Spells.best / $Stats.best</div>

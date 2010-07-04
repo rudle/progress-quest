@@ -24,9 +24,11 @@ $(document).ready(function () {
         load();
       });
  
+      /*
       var p = $("<p style='font:6pt verdana'/>");
       p.appendTo(roster);
       p.text(JSON.stringify(c));
+      */
     });
   }
 
