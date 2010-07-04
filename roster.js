@@ -49,14 +49,14 @@ $(document).ready(function () {
   
   $("#test").click(function () {
     var n = GenerateName();
-    games[n] = {traits: {level: -10},name:n,race:GenerateName(),"class":GenerateName()};
+    games[n] = {Traits: {Level: -10,Name:n,Race:GenerateName(),Class:GenerateName()}};
     storeRoster(games);
     load();
   });
   
   function brag(sheet) {
     var tmpl = $("#bumble").html();
-    var brag = tmpl.replace(/\$([a-z.]+)/g, function (str, p1) {
+    var brag = tmpl.replace(/\$([A-Za-z.]+)/g, function (str, p1) {
       var dict = sheet;
       $.each(p1.split("."), function (i,v) {
         if (!dict) return true;

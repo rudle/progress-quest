@@ -24,7 +24,7 @@ function StartTimer() {
     game.timerid = setInterval(Timer1Timer, 100);
   }
   // BS location for this, but...
-  // MainForm.Caption = 'ProgressQuest - ' + ChangeFileExt(ExtractFileName(MainForm.GameSaveName), '');
+  // MainForm.Caption = 'ProgressQuest - ' + ChangeFileExt(ExtractFileName(MainForm.GameSaveName()), '');
 }
 
 function GetPasskey() { return game.passkey; }
@@ -439,9 +439,11 @@ function alert(k) {
 }
 
 
-function ListBox(id) {
+function ListBox(id, columns, fixedkeys) {
   this.id = id;
   this.box = $("#"+ id);
+  this.columns = columns;
+  this.fixedkeys = fixedkeys;
 
   this.Add = function (caption) {
     var tr = $("<tr><td>" + caption + "</td></tr>");
@@ -490,16 +492,18 @@ function ListBox(id) {
   };
 
   this.save = function (game) {
-    game[this.id] = {items: []};
-    this.rows().each(function (index) {
-      game[this.id].items.push($(this).html());
-    });
+    var dict = {html: this.box.html()};
+    if (this.columns == 2) {
+      this.rows().each(function (index) {
+        dict[$(this).children().first().text()] = 
+          $(this).children().last().text();
+      });
+    }
+    game[this.id] = dict;
   };
 
   this.load = function (game) {
-    this.rows().remove();
-    for (var i = 0; i < game[this.id].length; ++i)
-      this.box.appeand(game[this.id][i]);
+    this.box.html(game[this.id].html);
   };
 
   this.label = function (n) {
@@ -508,9 +512,10 @@ function ListBox(id) {
 }
 
 
-var ExpBar, PlotBar, TaskBar, QuestBar;
+var ExpBar, PlotBar, TaskBar, QuestBar, EncumBar;
 var Traits,Stats,Spells,Equips,Inventory,Plots,Quests;
 var Kill;
+var AllBars, AllLists;
     
     
 function GoButtonClick() {
@@ -786,7 +791,7 @@ function CompleteAct() {
 function Log(line) {
   /* TODO
   if (FLogEvents) {
-    var logname = ChangeFileExt(GameSaveName, '.log');
+    var logname = ChangeFileExt(GameSaveName(), '.log');
     DateTimeToString(stamp, '[yyyy-mm-dd hh:nn:ss]', Now);
     AssignFile(log, logname);
     if (FileExists(logname)) Append(log); else Rewrite(log);
@@ -800,7 +805,7 @@ function Log(line) {
 
 function ExportCharSheet() {
   /* TODO
-  AssignFile(f, ChangeFileExt(GameSaveName, '.sheet'));
+  AssignFile(f, ChangeFileExt(GameSaveName(), '.sheet'));
   Rewrite(f);
   Write(f, CharSheet());
   Flush(f);
@@ -1003,25 +1008,25 @@ function FormCreate() {
   QuestBar = new ProgressBar("QuestBar");
   EncumBar = new ProgressBar("EncumBar");
 
-  Traits = new ListBox("Traits");
-  Stats = new ListBox("Stats");
-  Spells = new ListBox("Spells");
-  Equips = new ListBox("Equips");
-  Inventory = new ListBox("Inventory");
-  Plots = new ListBox("Plots");
-  Quests = new ListBox("Quests");
+  AllBars = [ExpBar,PlotBar,TaskBar,QuestBar,EncumBar];
+
+  $.each(AllBars, function (i,bar) { bar.reposition(0); });
+  
+  Traits = new ListBox("Traits", 2, true);
+  Stats = new ListBox("Stats", 2, true);
+  Spells = new ListBox("Spells", 2, false);
+  Equips = new ListBox("Equips", 2, true);
+  Inventory = new ListBox("Inventory", 2, false);
+  Plots = new ListBox("Plots", 1);
+  Quests = new ListBox("Quests", 1);
+
+  AllLists = [Traits,Stats,Spells,Equips,Inventory,Plots,Quests];
 
   Kill = $("#Kill");
 
-  QuestBar.reposition(0);
-  PlotBar.reposition(0);
-  TaskBar.reposition(0);
-  ExpBar.reposition(0);
-  EncumBar.reposition(0);
-
   $("#quit").click(function () {
+    SaveGame();
     window.location = "roster.html";
-    // TODO: save
   });
 
   LoadCharacter();
@@ -1031,37 +1036,31 @@ function FormCreate() {
 function LoadCharacter() {
   var result = true;
   var name = window.location.href.split('#')[1];
-  var games = loadRoster();
-  var ch;
-  $.each(games, function (index,sheet) {
-    if (sheet.name === name) {
-      ch = sheet;
-      return true;
-    }
-  });
-  if (!ch.level) {
-    ch.level = 1;
-    ch['HP Max'] = Random(8) + ch.CON.div(6);
-    ch['MP Max'] = Random(8) + ch.INT.div(6);
-    ch.equips = {'Weapon': 'Sharp Stick'};
-  }
-  Put(Traits, 'Name', ch.name);
-  Put(Traits, 'Level', ch.level);
-  Put(Traits, 'Race', ch.race);
-  Put(Traits, 'Class', ch['class']);
-  Put(Stats, 'STR', ch.STR);
-  Put(Stats, 'CON', ch.CON);
-  Put(Stats, 'DEX', ch.DEX);
-  Put(Stats, 'INT', ch.INT);
-  Put(Stats, 'WIS', ch.WIS);
-  Put(Stats, 'CHA', ch.CHA);
-  Put(Stats, 'HP Max', ch['HP Max']);
-  Put(Stats, 'MP Max', ch['MP Max']);
-  Put(Equips, 'Weapon', ch.equips.Weapon);
-  Put(Inventory,'Gold',0);
-  ClearAllSelections();
+  var sheet = loadRoster()[name];
 
-  GoButtonClick();
+  if (!sheet.Traits) {
+    // New game
+    game = sheet;
+    Put(Traits, 'Name', sheet.name);
+    Put(Traits, 'Level', 1);
+    Put(Traits, 'Race', sheet.race);
+    Put(Traits, 'Class', sheet['class']);
+    Put(Stats, 'STR', sheet.STR);
+    Put(Stats, 'CON', sheet.CON);
+    Put(Stats, 'DEX', sheet.DEX);
+    Put(Stats, 'INT', sheet.INT);
+    Put(Stats, 'WIS', sheet.WIS);
+    Put(Stats, 'CHA', sheet.CHA);
+    Put(Stats, 'HP Max', Random(8) + sheet.CON.div(6));
+    Put(Stats, 'MP Max', Random(8) + sheet.INT.div(6));
+    Put(Equips, 'Weapon', 'Sharp Stick');
+    Put(Inventory,'Gold',0);
+    SaveGame();
+    ClearAllSelections();
+    GoButtonClick();
+  } else {
+    LoadGame(sheet);
+  }
 }
 
 
@@ -1163,46 +1162,15 @@ $(function() {
 
 
 function SaveGame() {
-  /* TODO
   Log('Saving game: ' + GameSaveName());
-  try {
-    if (FMakeBackups) {
-      DeleteFile(ChangeFileExt(GameSaveName, '.bak'));
-      MoveFile(PChar(GameSaveName), PChar(ChangeFileExt(GameSaveName, '.bak')));
-    }
-    f = TFileStream.Create(GameSaveName, fmCreate);
-  } catch (EfCreateError) {
-    return false;
-  }
-
-  //ClearAllSelections;
-  var m = TMemoryStream.Create;
-  for (var i = 0; i < ComponentCount-1; ++i)
-    m.WriteComponent(Components[i]);
-
-  m.Seek(0, soFromBeginning);
-  ZCompressStream(m, f);
-
-  m.Free();
-  f.Free()
-  return true;;
-  */
+  $.each(AllBars.concat(AllLists), function (i, e) { e.save(game); });
+  addToRoster(game);
 }
 
-function TMainForm_LoadGame(name) {
-  FSaveFileName = name;
-  var m = TMemoryStream.Create;
-  var f = TFileStream.Create(name, fmOpenRead);
-  Traits.Clear();
-  Stats.Clear();
-  Equips.Clear();
-  m.Seek(0, soFromBeginning);
-  for (i = 0; i <= ComponentCount-1; ++i)
-    m.ReadComponent(Components[i]);
-  m.Free();
-  /*$IFDEF LOGGING*/
+function LoadGame(sheet) {
+  game = sheet;
+  $.each(AllBars.concat(AllLists), function (i, e) { e.load(game); });
   Log('Loaded game: ' + name);
-  /*$ENDIF*/
   StartTimer();
 }
 
@@ -1211,24 +1179,23 @@ function TMainForm_FormClose() {
     Timer1.Enabled = false;
     if (SaveGame()) {
       if (FReportSave)
-        ShowMessage('Game saved as ' + GameSaveName);
+        ShowMessage('Game saved as ' + GameSaveName());
     }
   }
   FReportSave = true;
   Action = caFree;
 }
 
-function TMainForm_GameSaveName()
-{
-  if (!FSaveFileName) {
-    FSaveFileName = Get(Traits,'Name');
+
+function GameSaveName() {
+  if (!game.saveName) {
+    game.saveName = Get(Traits, 'Name');
     if (GetHostName())
-      FSaveFileName = FSaveFileName + ' [' + GetHostName + ']';
-    FSaveFileName = FSaveFileName + kFileExt;
-    FSaveFileName = ExpandFileName(PChar(FSaveFileName));
+      game.saveName += ' [' + GetHostName() + ']';
   }
-  return FSaveFileName;
+  return game.saveName;
 }
+
 
 function TMainForm_FormKeyDown() {
   if ((FindWindow('TAppBuilder', nil) > 0) && (ssCtrl in Shift) && (ssShift in Shift) && (Key == ord('C'))) {

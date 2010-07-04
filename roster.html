@@ -5,8 +5,11 @@
 <script src="config.js"></script>
 <script src="roster.js"></script>
 <style>
-div.brag {
-  font: 9pt Verdana
+td.brag {
+  font: 9pt Verdana;
+  background-color: #ddddff;
+  padding: 5px;
+  display: inline;
 }
 
 div.rc {
@@ -32,9 +35,11 @@ Here it goes
 
 
 <script id="bumble" type="text/html">
-<div class="brag">
-  <a><b>$traits.Name</b></a> of $realm ($plots.act)
-</div>
-<div class="rc">Level $traits.Level $traits.Race $traits.Class</div>
-<div class="bs">$equips.best / $spells.best / $stats.best</div>
+  <table><tr><td class="brag">
+        <div>
+          <a><b>$Traits.Name</b></a> of Localhost ($Plots.act)
+        </div>
+        <div class="rc">Level $Traits.Level $Traits.Race $Traits.Class</div>
+        <div class="bs">$Equips.best / $Spells.best / $Stats.best</div>
+  </td></tr></table>
 </script>
