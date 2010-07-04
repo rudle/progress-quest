@@ -5,7 +5,6 @@ $(document).ready(function () {
   function load() {
     var roster = $("#roster");
     roster.empty();
-    roster.text("Loading...");
     
     games = loadRoster()
     if (!games) {
@@ -13,31 +12,21 @@ $(document).ready(function () {
       return;
     }
     $.each(games, function (key, c) {
-      roster.append(brag(c));
+      var name = c.Traits.Name;
 
-      var p = $("<p/>");
-      p.appendTo(roster);
-      p.text(JSON.stringify(c));
-      
-      var p = $("<dt/>");
-      p.appendTo(roster);
-      var a = $("<a/>", {href: "main.html#" + c.name})
-      a.text(c.name);
-      a.appendTo(p);
+      var br = brag(c);
+      roster.append(br);
+      br.find("a").attr("href", "main.html#" + name)
 
-      var rm = $("<button/>");
-      rm.text("X");
-      rm.css("color", "red");
-      rm.appendTo(roster);
-      rm.click(function () {
-        delete games[c.name];
+      br.find("button").click(function () {
+        delete games[name];
         storeRoster(games);
         load();
       });
-
-      p = $("<dd/>");
+ 
+      var p = $("<p style='font:6pt verdana'/>");
       p.appendTo(roster);
-      p.text("Level " + (c.level || 1) + " " + c.race + " " + c['class']);
+      p.text(JSON.stringify(c));
     });
   }
 

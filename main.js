@@ -12,16 +12,16 @@
 var RevString = '&rev=6';
 
 var game = {}; // queue: [] };
-
+var lasttick, timerid;
 
 function timeGetTime() {
   return new Date().getTime();
 }
 
 function StartTimer() {
-  if (!game.timerid) {
-    game.lasttick = timeGetTime();
-    game.timerid = setInterval(Timer1Timer, 100);
+  if (!timerid) {
+    lasttick = timeGetTime();
+    timerid = setInterval(Timer1Timer, 100);
   }
   // BS location for this, but...
   // MainForm.Caption = 'ProgressQuest - ' + ChangeFileExt(ExtractFileName(MainForm.GameSaveName()), '');
@@ -449,6 +449,7 @@ function ListBox(id, columns, fixedkeys) {
     var tr = $("<tr><td>" + caption + "</td></tr>");
     tr.appendTo(this.box);
     tr.each(function () {this.scrollIntoView();});
+    game[this.id].last = caption;
     return tr;
   };
 
@@ -492,14 +493,16 @@ function ListBox(id, columns, fixedkeys) {
   };
 
   this.save = function (game) {
-    var dict = {html: this.box.html()};
+    if (!game[this.id])
+      game[this.id] = {};
+    var dict = game[this.id];
+    dict.html = this.box.html();
     if (this.columns == 2) {
       this.rows().each(function (index) {
         dict[$(this).children().first().text()] = 
           $(this).children().last().text();
       });
     }
-    game[this.id] = dict;
   };
 
   this.load = function (game) {
@@ -565,6 +568,16 @@ $(document).ready(FormCreate);
 function WinSpell() {
   AddR(Spells, K.Spells[RandomLow(Min(GetI(Stats,'WIS')+GetI(Traits,'Level'),
                                       K.Spells.length))], 1);
+
+  // Now figure out which spell is best
+  // TODO: really only need to check the one we just ++'d
+  var flat = 1;  // Flattening constant
+  var best = 0;
+  for (var i = 1; i < Spells.length(); ++i)
+    if ((i+flat) * toArabic(Get(Spells,i)) >
+        (best+flat) * toArabic(Get(Spells,best)))
+      best = i;
+  game.Spells.best = Spells.label(best) + ' ' + Get(Spells, best);
 }
 
 function LPick(list, goal) {
@@ -585,7 +598,7 @@ function Abs(x) {
 
 function WinEquip() {
   var posn = Random(Equips.length());
-  game.bestequip = posn; // remember as the "best item"
+
   if (!posn) {
     stuff = K.Weapons;
     better = K.OffenseAttrib;
@@ -615,6 +628,8 @@ function WinEquip() {
   if (plus > 0) name = '+' + name;
 
   Put(Equips, posn, name);
+  game.Equips.best = name;
+  if (posn > 1) game.Equips.best += ' ' + Equips.label(posn);
 }
 
 
@@ -638,6 +653,13 @@ function WinStat() {
     });
   }
   Add(Stats, $(i).find("td").first().text(), 1);
+
+  var best = 0;
+  for (var i = 1; i <= 5; ++i) {
+    if (GetI(Stats,i) > GetI(Stats,best)) 
+      best = i;
+  }
+  game.Stats.best = Stats.label(best) + ' ' + GetI(Stats, best);
 }
 
 function SpecialItem() {
@@ -993,12 +1015,12 @@ function Timer1Timer() {
      
     Dequeue();
   } else {
-    var elapsed = timeGetTime() - game.lasttick;
+    var elapsed = timeGetTime() - lasttick;
     if (elapsed > 100) elapsed = 100;
     if (elapsed < 0) elapsed = 0;
     TaskBar.increment(elapsed);
   }
-  game.lasttick = timeGetTime();
+  lasttick = timeGetTime();
 }
 
 function FormCreate() {
@@ -1065,7 +1087,7 @@ function LoadCharacter() {
 
 
 function FormShow() {
-  if (game.timerid) return;
+  if (timerid) return;
   var done = false;
   var exportandexit = false;
 
@@ -1125,9 +1147,9 @@ $(function() {
   });
 
   cheat("Pause", function () {
-    if (game.timerid) {
-      clearTimeout(game.timerid);
-      game.timerid = null;
+    if (timerid) {
+      clearTimeout(timerid);
+      timerid = null;
     } else {
       StartTimer();
     }
@@ -1245,8 +1267,7 @@ function Brag(trigger) {
   with (Traits) for (i = 0; i <= Items.length()-1; ++i) 
     url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
   url = url + '&x=' + IntToStr(ExpBar.Position);
-  url = url + '&i=' + UrlEncode(Get(Equips, game.bestequip));
-  if (game.bestequip > 1) url = url + '+' + Equips[game.bestequip].Caption;
+  url = url + '&i=' + UrlEncode(game.Equips.best);
   var best = 0;
   if (Spells.length() > 0) with (Spells) {
     for (i = 1; i <= Items.length()-1; ++i)
