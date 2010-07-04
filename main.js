@@ -888,9 +888,8 @@ function TMainForm_CharSheet() {
 
 function Task(caption, msec) {
   Kill.text(caption + '...');
-  /*$IFDEF LOGGING*/
   Log(Kill.text());
-  /*$ENDIF*/
+  game.kill = Kill.text();
   TaskBar.reset(msec);
 }
 
@@ -1192,6 +1191,7 @@ function SaveGame() {
 function LoadGame(sheet) {
   game = sheet;
   $.each(AllBars.concat(AllLists), function (i, e) { e.load(game); });
+  Kill.text(game.kill);
   Log('Loaded game: ' + name);
   StartTimer();
 }
