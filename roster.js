@@ -40,7 +40,12 @@ $(document).ready(function () {
   
   $("#test").click(function () {
     var n = GenerateName();
-    games[n] = {Traits: {Level: -10,Name:n,Race:GenerateName(),Class:GenerateName()}};
+    games[n] = {Traits: {Level: -10,Name:n,Race:GenerateName(),
+                         Class:GenerateName()},
+                Stats: {best: "STR 99"},
+                Plot: {last: "Act VII"},
+                Spells: {best: "Bad Schwarma XIV"},
+                Equips: {best: "Cottonwood Sollerets"}};
     storeRoster(games);
     load();
   });

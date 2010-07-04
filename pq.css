@@ -136,10 +136,26 @@ div.progress-container > div.bar {
 
 .window { 
   background-color: #eee; 
-  width: 820px; 
   border: outset 2px silver;
   padding: 2px;
   margin: 1em;
+  text-align: left;
+  display: inline-block;
+}
+
+
+#main.window { 
+  width: 820px; 
+}
+
+#newguy.window { 
+  width: 580px; 
+}
+
+body { 
+  background: url(back.jpg);
+  text-align: center;
+  margin-top: 1em;
 }
 
 #taskbar { 
