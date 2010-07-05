@@ -21,7 +21,6 @@ var stats = {"history":[]};
 
 function RollEm() {
   var Total = $("#Total");
-  var ReRoll = $("#ReRoll");
   stats.seed = randseed();
   stats.total = 
     Roll("STR") +
@@ -32,7 +31,8 @@ function RollEm() {
     Roll("CHA");
   Total.text(stats.total);
 
-  var color = (stats.total >= (63+18)) ? 'red' :
+  var color = 
+    (stats.total >= (63+18)) ? 'red'    :
     (stats.total > (4 * 18)) ? 'yellow' :
     (stats.total <= (63-18)) ? 'grey'   :
     (stats.total < (3 * 18)) ? 'silver' :
@@ -48,6 +48,11 @@ function RerollClick() {
 }
 
 
+function UnrollClick() {
+  randseed(stats.history.pop());
+  RollEm();
+}
+
 function fill(e, a, n) {
   var def = Random(a.length);
   for (var i = 0; i < a.length; ++i) {
@@ -62,29 +67,26 @@ $(document).ready(function () {
   fill("#races", K.Races, "Race");
   fill("#classes", K.Klasses, "Class");
 
-  $("#Reroll").click(function(){RerollClick();});
-  $("#Unroll").click(function(){UnrollClick();});
+  $("#Reroll").click(RerollClick);
+  $("#Unroll").click(UnrollClick);
+  $("#RandomName").click(GenClick);
+  $('#Sold').click(sold);
+  $('#Cancel').click(cancel);
 
   //var caption = 'Progress Quest - New Character';
   //if (MainForm.GetHostName != '')
   //  caption = caption + ' [' + MainForm.GetHostName + ']';
-  RollEm();
 
-  $("#RandomName").click(GenClick);
   if (!$("#Name").text()) {
     GenClick();
     $("#Name")[0].focus();
     $("#Name")[0].select();
   }
-  $('#Sold').click(sold);
-  $('#Cancel').click(cancel);
+
+  seed = new Alea();
+  RollEm();
 });
 
-
-function UnrollClick() {
-  randseed(stats.history.pop());
-  RollEm();
-}
 
 
 /* Multiplayer:
