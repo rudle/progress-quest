@@ -19,9 +19,12 @@ $(document).ready(function () {
       br.find("a").attr("href", "main.html#" + name)
 
       br.find("button").click(function () {
-        delete games[name];
-        storeRoster(games);
-        load();
+        if (confirm("Terminate " + Pick(["faithful","noble","loyal","brave"])+ 
+                    " " + name + "?")) {
+          delete games[name];
+          storeRoster(games);
+          load();
+        }
       });
  
       /*
