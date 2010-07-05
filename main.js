@@ -27,6 +27,11 @@ function StartTimer() {
   // MainForm.Caption = 'ProgressQuest - ' + ChangeFileExt(ExtractFileName(MainForm.GameSaveName()), '');
 }
 
+function StopTimer() {
+  clearTimeout(timerid);
+  timerid = null;
+}
+
 function GetPasskey() { return game.passkey; }
 function SetPasskey(v) { game.passkey = v; }
 
@@ -1131,8 +1136,7 @@ $(function() {
 
   cheat("Pause", function () {
     if (timerid) {
-      clearTimeout(timerid);
-      timerid = null;
+      StopTimer();
     } else {
       StartTimer();
     }
@@ -1189,7 +1193,7 @@ function SaveGame() {
   Log('Saving game: ' + GameSaveName());
   $.each(AllBars.concat(AllLists), function (i, e) { e.save(game); });
   HotOrNot();
-  addToRoster(game);
+  return addToRoster(game);
 }
 
 function LoadGame(sheet) {
@@ -1200,17 +1204,10 @@ function LoadGame(sheet) {
   StartTimer();
 }
 
-function TMainForm_FormClose() {
-  if (Timer1.Enabled) {
-    Timer1.Enabled = false;
-    if (SaveGame()) {
-      if (FReportSave)
-        ShowMessage('Game saved as ' + GameSaveName());
-    }
-  }
-  FReportSave = true;
-  Action = caFree;
-}
+$(document).unload(function () {
+  StopTimer();
+  SaveGame();
+});
 
 
 function GameSaveName() {
