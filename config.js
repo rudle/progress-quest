@@ -121,16 +121,14 @@ function GenerateName() {
 
 
 function loadRoster() {
-  if (!window.localStorage) {
-    return;
-  } else {
+  if (window.localStorage) {
     var r = window.localStorage.getItem("roster");
+    if (!r) return {};
     try {
-      r = JSON.parse(r);
+      return JSON.parse(r);
     } catch (err) {
-      r = {};
+      return {}
     }
-    return r;
   }
 }
 
