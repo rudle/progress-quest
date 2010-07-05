@@ -568,16 +568,6 @@ $(document).ready(FormCreate);
 function WinSpell() {
   AddR(Spells, K.Spells[RandomLow(Min(GetI(Stats,'WIS')+GetI(Traits,'Level'),
                                       K.Spells.length))], 1);
-
-  // Now figure out which spell is best
-  // TODO: really only need to check the one we just ++'d
-  var flat = 1;  // Flattening constant
-  var best = 0;
-  for (var i = 1; i < Spells.length(); ++i)
-    if ((i+flat) * toArabic(Get(Spells,i)) >
-        (best+flat) * toArabic(Get(Spells,best)))
-      best = i;
-  game.Spells.best = Spells.label(best) + ' ' + Get(Spells, best);
 }
 
 function LPick(list, goal) {
@@ -653,13 +643,6 @@ function WinStat() {
     });
   }
   Add(Stats, $(i).find("td").first().text(), 1);
-
-  var best = 0;
-  for (var i = 1; i <= 5; ++i) {
-    if (GetI(Stats,i) > GetI(Stats,best)) 
-      best = i;
-  }
-  game.Stats.best = Stats.label(best) + ' ' + GetI(Stats, best);
 }
 
 function SpecialItem() {
@@ -1074,7 +1057,8 @@ function LoadCharacter() {
     Put(Stats, 'CHA', sheet.CHA);
     Put(Stats, 'HP Max', Random(8) + sheet.CON.div(6));
     Put(Stats, 'MP Max', Random(8) + sheet.INT.div(6));
-    Put(Equips, 'Weapon', 'Sharp Stick');
+    game.Equips = {best: 'Sharp Stick'};
+    Put(Equips, 'Weapon', game.Equips.best);
     Put(Inventory,'Gold',0);
     SaveGame();
     ClearAllSelections();
@@ -1181,10 +1165,30 @@ $(function() {
 });
 /*$ENDIF*/
 
+function HotOrNot() {
+  // Figure out which spell is best
+  var flat = 1;  // Flattening constant
+  var best = 0, i;
+  for (i = 1; i < Spells.length(); ++i)
+    if ((i+flat) * toArabic(Get(Spells,i)) >
+        (best+flat) * toArabic(Get(Spells,best)))
+      best = i;
+  game.Spells.best = Spells.label(best) + ' ' + Get(Spells, best);
+
+  /// And which stat is best?
+  best = 0;
+  for (i = 1; i <= 5; ++i) {
+    if (GetI(Stats,i) > GetI(Stats,best)) 
+      best = i;
+  }
+  game.Stats.best = Stats.label(best) + ' ' + GetI(Stats, best);
+}
+
 
 function SaveGame() {
   Log('Saving game: ' + GameSaveName());
   $.each(AllBars.concat(AllLists), function (i, e) { e.save(game); });
+  HotOrNot();
   addToRoster(game);
 }
 
