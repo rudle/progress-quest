@@ -69,6 +69,10 @@ thead.mid {
   border-top: solid 1px grey;
 }
 
+.label { 
+  margin-top: 3px;
+}
+
 .listbox { 
   border: solid 1px black;
   width: 250px;
