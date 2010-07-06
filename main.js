@@ -355,12 +355,12 @@ function Dequeue() {
       var n = StrToInt(Split(game.queue[0],1));
       var s = Split(game.queue[0],2);
       if (a == 'task' || a == 'plot') {
+        game.queue.shift();
         if (a == 'plot') {
           CompleteAct();
           s = 'Loading ' + Plots.last().text();
         }
         Task(s, n * 1000);
-        game.queue.shift();
       } else {
         throw 'bah!' + a;
       }
