@@ -1,6 +1,20 @@
 // TODO These code bits don't really belong here, but this is the only shared bit of js
 
 
+function template(id, data) {
+  var tmpl = $("#" + id).html();
+  var brag = tmpl.replace(/\$([_A-Za-z.]+)/g, function (str, p1) {
+    var dict = data;
+    $.each(p1.split("."), function (i,v) {
+      if (!dict) return true;
+      dict = dict[v];
+      return null;
+    });
+    return dict || '';
+  });
+  return brag;
+}
+
 // From http://baagoe.com/en/RandomMusings/javascript/
   // Johannes BaagÃ¸e <baagoe@baagoe.com>, 2010
 function Mash() {

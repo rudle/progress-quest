@@ -815,53 +815,7 @@ function ExportCharSheet() {
 }
 
 function CharSheet() {
-  var f = '';
-  function Wr(a) { f = f + a; }
-  function WrLn(a) { if (a != undefined) Wr(a); Wr("\r\n"); }
-
-  Wr(Get(Traits,'Name'));
-  if (GetHostName())
-    Wr(' [' + GetHostName() + ']');
-  WrLn;
-  WrLn(Get(Traits,'Race') + ' ' +  Get(Traits,'Class'));
-  WrLn(Format('Level %d (exp. %d/%d)', [GetI(Traits,'Level'), ExpBar.Position, ExpBar.Max]));
-  //WrLn('Level ' + Get(Traits,'Level') + ' (' + ExpBar.Hint + ')');
-  WrLn;
-  if (Plots.length() > 0)
-    WrLn('Plot stage: ' + Plots.last().text() + ' (' + PlotBar.Hint + ')');
-  if (Quests.length() > 0)
-    WrLn('Quest: ' + Quests.last().text() + ' (' + QuestBar.Hint + ')');
-  WrLn();
-  WrLn( 'Stats:');
-  WrLn( Format('  STR%7d', [GetI(Stats,'STR')]));
-  WrLn( Format('  CON%7d', [GetI(Stats,'CON')]));
-  WrLn( Format('  DEX%7d', [GetI(Stats,'DEX')]));
-  WrLn( Format('  INT%7d', [GetI(Stats,'INT')]));
-  WrLn( Format('  WIS%7d      HP Max%7d', [GetI(Stats,'WIS'), GetI(Stats,'HP Max')]));
-  WrLn( Format('  CHA%7d      MP Max%7d', [GetI(Stats,'CHA'), GetI(Stats,'MP Max')]));
-  WrLn();
-  WrLn( 'Equipment:');
-  for (var i = 1; i <= Equips.length()-1; ++i) {
-    if (Get(Equips,i))
-      WrLn( '  ' + LeftStr(Equips[i].Caption + '            ', 12) + Get(Equips,i));
-  }
-  WrLn();
-  WrLn( 'Spell Book:');
-  for (var s = 0; s < Spells.length(); ++s)
-    WrLn('  ' + Spells.label(s) + ' ' + Get(Spells,s));
-  WrLn();
-  WrLn( 'Inventory (' + EncumBar.Hint + '):');
-  WrLn( '  ' + Indefinite('gold piece', GetI(Inventory, 'Gold')));
-  for (var ii = 2; ii <= Items.length()-1; ++ii) {
-    if (Pos(' of ', Inventory[ii].Caption) > 0) 
-      WrLn( '  ' + Definite(Inventory[ii].Caption, GetI(Inventory,ii)));
-    else 
-      WrLn( '  ' + Indefinite(Items[ii].Caption, GetI(Inventory,ii)));
-  }
-  WrLn();
-  WrLn( '-- ' + DateTimeToStr(Now));
-  WrLn( '-- Progress Quest 6.2 - http://progressquest.com/');
-  return f;
+  return template("sheet", game);
 }
 
 

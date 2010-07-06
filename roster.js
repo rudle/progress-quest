@@ -54,17 +54,7 @@ $(document).ready(function () {
   });
   
   function brag(sheet) {
-    var tmpl = $("#badge").html();
-    var brag = tmpl.replace(/\$([A-Za-z.]+)/g, function (str, p1) {
-      var dict = sheet;
-      $.each(p1.split("."), function (i,v) {
-        if (!dict) return true;
-        dict = dict[v];
-        return null;
-      });
-      return dict || '';
-    });
-    brag = $(brag);
+    var brag = $(template("badge", sheet));
     if (sheet.motto) 
       brag.find(".bs").text('"' + sheet.motto + '"');
     return brag;
