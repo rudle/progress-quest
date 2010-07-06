@@ -178,6 +178,7 @@ K.Spells = [
   "Vitreous Humor",
   "Roger's Grand Illusion",
   "Covet",
+  "Black Idaho",
   "Astral Miasma",
   "Spectral Oyster",
   "Acrid Hands",

@@ -469,7 +469,7 @@ function ListBox(id, columns, fixedkeys) {
       });
       if (!result.length) {
         result = $("<tr><td>" + key + "</td><td/></tr>");
-        this.box.find("tr").last().after(result);
+        this.box.append(result);
       }
       return result;
     } else {
@@ -942,13 +942,7 @@ function LevelUp() {
 }
 
 function ClearAllSelections() {
-  Equips.ClearSelection();
-  Spells.ClearSelection();
-  Stats.ClearSelection();
-  Traits.ClearSelection();
-  Inventory.ClearSelection();
-  Plots.ClearSelection();
-  Quests.ClearSelection();
+  $.each(AllLists, function () {this.ClearSelection();});
 }
 
 function RoughTime(s) {
@@ -1203,6 +1197,7 @@ function LoadGame(sheet) {
   Kill.text(game.kill);
   Log('Loaded game: ' + name);
   StartTimer();
+  ClearAllSelections();
 }
 
 $(document).unload(function () {
