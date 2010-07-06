@@ -1,10 +1,10 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
-// TODO: All these Hints
 // TODO: Test use of seed as DNA
 // TODO: Layout newguy and main better
 // TODO: fix Prologue plot bar
 // TODO: limit number of Acts
+// TODO: get first quest
 
 // revs:
 // 6: pq 6.3/web 
@@ -103,7 +103,7 @@ function Plural(s) {
     return Copy(s,1,Length(s)-1) + 'ies';
   else if (Ends(s,'us')) 
     return Copy(s,1,Length(s)-2) + 'i';
-  else if (Ends(s,'ch') || Ends(s,'x') || Ends(s,'s')) 
+  else if (Ends(s,'ch') || Ends(s,'x') || Ends(s,'s') || Ends(s, 'sh')) 
     return s + 'es';
   else if (Ends(s,'f')) 
     return Copy(s,1,Length(s)-1) + 'ves';
@@ -398,10 +398,8 @@ function Put(list, key, value) {
     EncumBar.reposition(EncumBar.Position);
   }
 
-  if (list === Inventory) {
+  if (list === Inventory)
     EncumBar.reposition(Sum(Inventory) - GetI(Inventory,'Gold'));
-    EncumBar.Hint = IntToStr(EncumBar.Position) + '/' + IntToStr(EncumBar.Max) + ' cubits';
-  }
 }
 
 function LevelUpTime(level) {  // seconds 
@@ -413,6 +411,7 @@ function LevelUpTime(level) {  // seconds
 function ProgressBar(id) {
   this.id = id;
   this.bar = $("#"+ id + " > .bar");
+  this.hint = '';
 
   this.reset = function (newmax) {
     this.Max = newmax;
@@ -420,8 +419,16 @@ function ProgressBar(id) {
   };
 
   this.reposition = function (newpos) {
-    this.Position = newpos;
+    this.Position = Min(newpos, this.Max);
     this.bar.css("width", 100 * this.Position / this.Max + "%");
+
+    // Recompute hint
+    var label = $("#" + this.id).find(".hint");
+    this.percent = (100 * this.Position).div(this.Max);
+    this.remaining = Math.floor(this.Max - this.Position);
+    this.time = RoughTime(this.Max - this.Position);
+    this.hint = template(label.attr("template"), this);
+    label.text(this.hint);
   };
 
   this.increment = function (inc) {
@@ -433,7 +440,9 @@ function ProgressBar(id) {
   };
 
   this.save = function (game) {
-    game[id] = {position: this.Position, max: this.Max};
+    game[id] = {position: this.Position, 
+                max: this.Max,
+                hint: this.hint};
   };
   
   this.load = function (game) {
@@ -784,7 +793,6 @@ function toArabic(s) {
 function CompleteAct() {
   Plots.rows().find("input:checkbox").attr("checked", "true");
   PlotBar.reset(60 * 60 * (1 + 5 * Plots.length())); // 1 hr + 5/act
-  PlotBar.Hint = 'Cutscene omitted';
   Plots.Add('Act ' + toRoman(Plots.length()));
 
   WinItem();
@@ -801,7 +809,7 @@ function Log(line) {
 }
 
 function CharSheet() {
-  return template("sheet", game);
+  return template($("#sheet").html(), game);
   // TODO: make this a separate page
 }
 
@@ -902,7 +910,6 @@ function Timer1Timer() {
       else 
         ExpBar.increment(TaskBar.Max / 1000);
     }
-    ExpBar.Hint = Math.floor(ExpBar.Max-ExpBar.Position) + ' XP needed for next level';
 
     // advance quest
     if (gain) {
@@ -911,7 +918,6 @@ function Timer1Timer() {
           CompleteQuest();
         } else if (Quests.length() > 0) {
           QuestBar.increment(TaskBar.Max / 1000);
-          QuestBar.Hint = IntToStr(100 * QuestBar.Position.div(QuestBar.Max)) + '% complete';
         }
       }
     }
@@ -922,8 +928,6 @@ function Timer1Timer() {
         InterplotCinematic();
       else 
         PlotBar.increment(TaskBar.Max / 1000);
-
-      PlotBar.Hint = RoughTime(PlotBar.Max-PlotBar.Position) + ' remaining';
     }
      
     Dequeue();

@@ -54,7 +54,7 @@ $(document).ready(function () {
   });
   
   function brag(sheet) {
-    var brag = $(template("badge", sheet));
+    var brag = template($("#badge").html(), sheet));
     if (sheet.motto) 
       brag.find(".bs").text('"' + sheet.motto + '"');
     return brag;

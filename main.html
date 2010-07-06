@@ -71,7 +71,9 @@
     </table>
     
     <span class="label" >Experience</span>
+
     <div class="progress-container" id="ExpBar">
+      <div class="hint" template="$remaining XP needed for next level"></div>
       <div class="bar" style="width: 50%"></div>
     </div>
 
@@ -126,6 +128,7 @@
 
     <span class="label">Encumbrance</span>
     <div class="progress-container" id="EncumBar">
+      <div class="hint" template="$Position/$Max cubits"></div>
       <div class="bar" style="width: 50%"></div>
     </div>
   </div>
@@ -142,6 +145,7 @@
     </div>
 
     <div class="progress-container" id="PlotBar">
+      <div class="hint" template="$time remaining"></div>
       <div class="bar" style="width: 50%"></div>
     </div>
 
@@ -154,6 +158,7 @@
     </div>
 
     <div class="progress-container" id="QuestBar">
+      <div class="hint" template="$percent% complete"></div>
       <div class="bar" style="width: 50%"></div>
     </div>
   </div>
@@ -163,13 +168,14 @@
 <div id="Kill" class="label">Executing a Greater Wolog</div>
 
 <div class="progress-container" id="TaskBar">
+  <div class="hint" template="$percent%"></div>
   <div class="bar" style="width: 50%"></div>
 </div>
 
 </div>
 
 <br>
-Cheats: 
+Cheat
 </body>
 
 
@@ -177,10 +183,10 @@ Cheats:
 $Traits.Name the $Traits.Race [$hostname]
 $motto
 
-Level $Traits.Level $Traits.Class (exp. $ExpBar.position/$ExpBar.max)
+Level $Traits.Level $Traits.Class (exp. $ExpBar.position / $ExpBar.max)
 
-Plot stage: $Plots.last ($PlotBar.Hint)
-Quest: $Quests.last ($QuestBar.Hint)
+Plot stage: $Plots.last ($PlotBar.hint)
+Quest: $Quests.last ($QuestBar.hint)
 
 Stats:
    STR $Stats.STR
@@ -194,7 +200,7 @@ Equipment:
 $Equips.___
 Spell Book:
 $Spells.___
-Inventory ($EncumBar.Hint):
+Inventory ($EncumBar.hint):
 $Inventory.___
 -- $date
 -- Progress Quest 6.3.web - http://progressquest.com/

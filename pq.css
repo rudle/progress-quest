@@ -123,6 +123,20 @@ div.progress-container > div.bar {
   width: 50%;
 }
 
+div.hint { 
+  z-index: 20;
+  position: absolute;
+  margin-top: 1px;
+  visibility: hidden;
+  width: 250px;
+  text-align: center;
+  color: #060;
+}
+
+div.progress-container:hover div.hint { 
+  visibility: visible;
+}
+
 
 #titlebar { 
   background-color: blue;
@@ -159,8 +173,8 @@ body {
   margin-top: 1em;
 }
 
-#taskbar { 
-  width: 99%;
+#TaskBar, #TaskBar .hint { 
+  width: 800px;
  }
 
 div.scroll { 

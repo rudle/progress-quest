@@ -11,8 +11,7 @@ function tabulate(html) {
 }
 
 
-function template(id, data) {
-  var tmpl = $("#" + id).html();
+function template(tmpl, data) {
   var brag = tmpl.replace(/\$([_A-Za-z.]+)/g, function (str, p1) {
     var dict = data;
     $.each(p1.split("."), function (i,v) {
