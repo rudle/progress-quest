@@ -142,7 +142,9 @@ function sold() {
     name: $("#Name").val(),
     race: $("input:radio[name=Race]:checked").val(),
     'class': $("input:radio[name=Class]:checked").val(),
-    seed: stats.seed
+    seed: stats.seed,
+    birthday: ''+new Date(),
+    birthstamp: +new Date();
   };
   $.each('STR,CON,DEX,INT,WIS,CHA'.split(','), function (index,value) {
       newguy[value] = stats[value];

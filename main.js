@@ -1135,6 +1135,8 @@ function SaveGame() {
   Log('Saving game: ' + GameSaveName());
   $.each(AllBars.concat(AllLists), function (i, e) { e.save(game); });
   HotOrNot();
+  game.date = ''+new Date();
+  game.stamp = +new Date();
   return addToRoster(game);
 }
 
@@ -1173,6 +1175,7 @@ function InputBox(message, def) {
 
 function FormKeyDown(e) {
   if (e.which == 1) { // ^A
+    SaveGame();
     alert(CharSheet());
   }
 
