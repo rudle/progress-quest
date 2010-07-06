@@ -58,8 +58,8 @@ function fill(e, a, n) {
   for (var i = 0; i < a.length; ++i) {
     var v = a[i].split("|")[0];
     var check = def == i ? " checked " : " ";
-    $("<div><input type=radio name=\"" + n + "\" value=\"" + v + "\" " +
-                      check  +">" + v + "</div>").appendTo(e);
+    $("<div><input type=radio id='" + v + "' name=\"" + n + "\" value=\"" + v + "\" " +
+      check  +"><label for='" + v + "'>" + v + "</label></div>").appendTo(e);
   }
 }
 
