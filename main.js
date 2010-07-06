@@ -1,8 +1,8 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
 // TODO: Test use of seed as DNA
-// TODO: Layout newguy and main better
-// TODO: Loot bug for creatures named with "the"
+// TODO: Layout main better
+// TODO: Test in all browsers
 
 // revs:
 // 6: pq 6.3/web 

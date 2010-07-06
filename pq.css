@@ -175,6 +175,9 @@ div.progress-container:hover div.hint {
 body { 
   background: url(back.jpg) no-repeat;
   background-size: 100% 100%;
+  -webkit-background-size: 100% 100%;
+  -o-background-size: 100% 100%;
+  -moz-background-size: 100%, 100%;
   text-align: center;
   margin-top: 1em;
 }
