@@ -143,14 +143,20 @@ div.progress-container:hover div.hint {
 
 
 #titlebar { 
-  background-color: blue;
+  background-color: rgb(35,91,217);
   color: white;
   font-weight: bold;
   font-size: 9pt;
   padding-bottom: 4px;
   margin-bottom: 1ex;
- }
+}
 
+#titlebar > img { 
+  vertical-align: bottom;
+  margin: 2 0 0 2;
+}
+
+ 
 
 .window { 
   background-color: #eee; 

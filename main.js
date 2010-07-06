@@ -2,6 +2,7 @@
 
 // TODO: Test use of seed as DNA
 // TODO: Layout newguy and main better
+// TODO: Loot bug for creatures named with "the"
 
 // revs:
 // 6: pq 6.3/web 
