@@ -23,7 +23,8 @@ function template(tmpl, data) {
       }
       return null;
     });
-    return dict || '';
+    if (dict === undefined) dict = '';
+    return dict;
   });
   return brag;
 }

@@ -3,7 +3,6 @@
 // TODO: Test use of seed as DNA
 // TODO: Layout newguy and main better
 // TODO: fix Prologue plot bar
-// TODO: limit number of Acts
 // TODO: get first quest
 
 // revs:
@@ -535,7 +534,34 @@ var Kill;
 var AllBars, AllLists;
     
     
-function GoButtonClick() {
+function InitializeCharacter(sheet) {
+  game = sheet;
+
+  Put(Traits, 'Name', sheet.name);
+  Put(Traits, 'Level', 1);
+  Put(Traits, 'Race', sheet.race);
+  Put(Traits, 'Class', sheet['class']);
+
+  Put(Stats, 'STR', sheet.STR);
+  Put(Stats, 'CON', sheet.CON);
+  Put(Stats, 'DEX', sheet.DEX);
+  Put(Stats, 'INT', sheet.INT);
+  Put(Stats, 'WIS', sheet.WIS);
+  Put(Stats, 'CHA', sheet.CHA);
+  Put(Stats, 'HP Max', Random(8) + sheet.CON.div(6));
+  Put(Stats, 'MP Max', Random(8) + sheet.INT.div(6));
+
+  game.Equips = {best: 'Sharp Stick'};
+  Put(Equips, 'Weapon', game.Equips.best);
+
+  Put(Inventory,'Gold',0);
+
+  SaveGame();
+
+  ClearAllSelections();
+
+  // GoButtonClick();
+  
   ExpBar.reset(LevelUpTime(1));
 
   game.task = '';
@@ -551,12 +577,12 @@ function GoButtonClick() {
 
   PlotBar.reset(26);
   Plots.Add('Prologue');
+  game.act = 0;
 
+  //debugger;
   QuestBar.reset(1);
 
   EncumBar.reset(GetI(Stats, "STR") + 10);
-
-  Put(Inventory, "Gold", 0);
 
   Put(Equips, "Hauberk", "-3 Burlap");
   
@@ -793,8 +819,11 @@ function toArabic(s) {
 
 function CompleteAct() {
   Plots.rows().find("input:checkbox").attr("checked", "true");
-  PlotBar.reset(60 * 60 * (1 + 5 * Plots.length())); // 1 hr + 5/act
-  Plots.Add('Act ' + toRoman(Plots.length()));
+  game.act += 1;
+  PlotBar.reset(60 * 60 * (1 + 5 * game.act)); // 1 hr + 5/act
+  while (Plots.length() > 99)
+    Plots.remove(0);
+  Plots.Add('Act ' + toRoman(game.act));
 
   WinItem();
   WinEquip();
@@ -924,7 +953,7 @@ function Timer1Timer() {
     }
       
     // advance plot
-    if (gain) {
+    if (gain || !game.act) {
       if (PlotBar.done()) 
         InterplotCinematic();
       else 
@@ -982,25 +1011,7 @@ function LoadCharacter() {
 
   if (!sheet.Traits) {
     // New game
-    game = sheet;
-    Put(Traits, 'Name', sheet.name);
-    Put(Traits, 'Level', 1);
-    Put(Traits, 'Race', sheet.race);
-    Put(Traits, 'Class', sheet['class']);
-    Put(Stats, 'STR', sheet.STR);
-    Put(Stats, 'CON', sheet.CON);
-    Put(Stats, 'DEX', sheet.DEX);
-    Put(Stats, 'INT', sheet.INT);
-    Put(Stats, 'WIS', sheet.WIS);
-    Put(Stats, 'CHA', sheet.CHA);
-    Put(Stats, 'HP Max', Random(8) + sheet.CON.div(6));
-    Put(Stats, 'MP Max', Random(8) + sheet.INT.div(6));
-    game.Equips = {best: 'Sharp Stick'};
-    Put(Equips, 'Weapon', game.Equips.best);
-    Put(Inventory,'Gold',0);
-    SaveGame();
-    ClearAllSelections();
-    GoButtonClick();
+    InitializeCharacter(sheet);
   } else {
     LoadGame(sheet);
   }
