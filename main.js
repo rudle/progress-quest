@@ -814,7 +814,7 @@ function ExportCharSheet() {
 */
 }
 
-function TMainForm_CharSheet() {
+function CharSheet() {
   var f = '';
   function Wr(a) { f = f + a; }
   function WrLn(a) { if (a != undefined) Wr(a); Wr("\r\n"); }
@@ -1024,6 +1024,8 @@ function FormCreate() {
   });
 
   LoadCharacter();
+
+  $(document).keypress(FormKeyDown);
 }
 
 
@@ -1210,29 +1212,34 @@ function GameSaveName() {
 }
 
 
-function TMainForm_FormKeyDown() {
-  if ((FindWindow('TAppBuilder', nil) > 0) && (ssCtrl in Shift) && (ssShift in Shift) && (Key == ord('C'))) {
-    /*$IFDEF CHEATS*/
-    Cheats.Visible = ! Cheats.Visible;
-    /*$ENDIF*/
+function InputBox(message, def) {
+  var i = prompt(message, def || '');
+  return (i !== null) ? i : def;
+}
+
+function FormKeyDown(e) {
+  if (e.which == 1) { // ^A
+    alert(CharSheet());
   }
-  if ((ssCtrl in Shift) && (Key == ord('A'))) {
-    ShowMessage(CharSheet);
+
+  if (e.which == 13) { // ^M
+    game.motto = InputBox('Declare your motto!', game.motto);
+    // Brag('m');
+    // Navigate(GetHostAddr + 'name=' + UrlEncode(Get(Traits,'Name')));
   }
-  if (!GetPasskey()) Exit; // no need for these things
-  if ((ssCtrl in Shift) && (Key == ord('B'))) {
-    Brag('b');
-    Navigate(GetHostAddr + 'name=' + UrlEncode(Get(Traits,'Name')));
+
+  if (!GetPasskey()) return; // no need for these things
+
+  if (e.which == 2) { // ^B
+    //Brag('b');
+    //Navigate(GetHostAddr + 'name=' + UrlEncode(Get(Traits,'Name')));
   }
-  if ((ssCtrl in Shift) && (Key == ord('M'))) {
-    SetMotto(InputBox('Progress Quest', 'Declare your motto!', GetMotto));
-    Brag('m');
-    Navigate(GetHostAddr + 'name=' + UrlEncode(Get(Traits,'Name')));
+  
+  if (e.which == 7) { // ^G
+    game.guild = InputBox('Choose a guild.\r\rMake sure you undestand the guild rules before you join one. To learn more about guilds, visit http://progressquest.com/guilds.php', game.guild);
+    // Guildify();
   }
-  if ((ssCtrl in Shift) && (Key == ord('G'))) {
-    SetGuild(InputBox('Progress Quest', 'Choose a guild.\r\rMake sure you undestand the guild rules before you join one. To learn more about guilds, visit http://progressquest.com/guilds.php', GetGuild));
-    Guildify;
-  }
+
 }
 
 function Navigate(url) {
@@ -1314,19 +1321,5 @@ function TMainForm_Guildify() {
     // 'ats okay.
     Abort();
   }
-}
-
-function TMainForm_OnQueryEndSession() {
-  FReportSave = false;
-  FormClose(Self, Action);
-  ReplyMessage(-1);
-}
-
-function TMainForm_OnEndSession() {
-  if (Msg.wParam) {
-    FReportSave = false;
-    FormClose(Self, Action);
-  }
-  ReplyMessage(0);
 }
 

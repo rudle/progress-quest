@@ -64,7 +64,10 @@ $(document).ready(function () {
       });
       return dict || '';
     });
-    return $(brag);
+    brag = $(brag);
+    if (sheet.motto) 
+      brag.find(".bs").text('"' + sheet.motto + '"');
+    return brag;
   }
   
   $("#clear").click(function () {
