@@ -439,11 +439,6 @@ function ProgressBar(id) {
 }
 
 
-function alert(k) {
-  Plots.Add(k);
-}
-
-
 function ListBox(id, columns, fixedkeys) {
   this.id = id;
   this.box = $("#"+ id);
@@ -451,7 +446,8 @@ function ListBox(id, columns, fixedkeys) {
   this.fixedkeys = fixedkeys;
 
   this.Add = function (caption) {
-    var tr = $("<tr><td>" + caption + "</td></tr>");
+    var tr = $("<tr><td><input type=checkbox disabled> " + 
+               caption + "</td></tr>");
     tr.appendTo(this.box);
     tr.each(function () {this.scrollIntoView();});
     game[this.id].last = caption;
@@ -555,9 +551,6 @@ function GoButtonClick() {
   StartTimer();
   SaveGame();
   Brag('s');
-  
-  //AddR(Spells, "Lasers", 3);
-  //alert("DEBUG " + GetI(Stats, 3));
 }
 
 
@@ -672,60 +665,60 @@ function CompleteQuest() {
     /*$IFDEF LOGGING*/
     Log('Quest completed: ' + Quests.last().text());
     /*$ENDIF*/
-    Quests.last().wrap("<s/>");
+    
+    Quests.rows().find("input:checkbox").attr("checked", "true");
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
-    while (Quests.length() > 99)
-      Quests.remove(0);
-
-    game.questmonster = '';
-    var caption;
-    switch (Random(5)) {
-    case 0: 
-      var level = GetI(Traits,'Level');
-      var lev = 0;
-      for (var i = 1; i <= 4; ++i) {
-        var montag = Random(K.Monsters.length);
-        var m = K.Monsters[montag];
-        var l = StrToInt(Split(m,1));
-        if (i == 1 || Abs(l - level) < Abs(lev - level)) {
-          lev = l;
-          game.questmonster = m;
-          game.questmonsterindex = montag;
-        }
-      }
-      caption = 'Exterminate ' + Definite(Split(game.questmonster,0),2);
-      break;
-    case 1:
-      caption = 'Seek ' + Definite(InterestingItem(), 1);
-      break;
-    case 2: 
-      caption = 'Deliver this ' + BoringItem();
-      break;
-    case 3: 
-      caption = 'Fetch me ' + Indefinite(BoringItem(), 1);
-      break;
-    case 4: 
-      var mlev = 0;
-      level = GetI(Traits,'Level');
-      for (var ii = 1; ii <= 2; ++ii) {
-        montag = Random(K.Monsters.length);
-        m = K.Monsters[montag];
-        l = StrToInt(Split(m,1));
-        if ((ii == 1) || (Abs(l - level) < Abs(mlev - level))) {
-          mlev = l;
-          game.questmonster = m;
-        }
-      }
-      caption = 'Placate ' + Definite(Split(game.questmonster,0),2);
-      game.questmonster = '';  // We're trying to placate them, after all
-      break;
-    }
-    Quests.Add(caption);
-
-    /*$IFDEF LOGGING*/
-    Log('Commencing quest: ' + caption);
-    /*$ENDIF*/
   }
+  while (Quests.length() > 99)
+    Quests.remove(0);
+
+  game.questmonster = '';
+  var caption;
+  switch (Random(5)) {
+  case 0: 
+    var level = GetI(Traits,'Level');
+    var lev = 0;
+    for (var i = 1; i <= 4; ++i) {
+      var montag = Random(K.Monsters.length);
+      var m = K.Monsters[montag];
+      var l = StrToInt(Split(m,1));
+      if (i == 1 || Abs(l - level) < Abs(lev - level)) {
+        lev = l;
+        game.questmonster = m;
+        game.questmonsterindex = montag;
+      }
+    }
+    caption = 'Exterminate ' + Definite(Split(game.questmonster,0),2);
+    break;
+  case 1:
+    caption = 'Seek ' + Definite(InterestingItem(), 1);
+    break;
+  case 2: 
+    caption = 'Deliver this ' + BoringItem();
+    break;
+  case 3: 
+    caption = 'Fetch me ' + Indefinite(BoringItem(), 1);
+    break;
+  case 4: 
+    var mlev = 0;
+    level = GetI(Traits,'Level');
+    for (var ii = 1; ii <= 2; ++ii) {
+      montag = Random(K.Monsters.length);
+      m = K.Monsters[montag];
+      l = StrToInt(Split(m,1));
+      if ((ii == 1) || (Abs(l - level) < Abs(mlev - level))) {
+        mlev = l;
+        game.questmonster = m;
+      }
+    }
+    caption = 'Placate ' + Definite(Split(game.questmonster,0),2);
+    game.questmonster = '';  // We're trying to placate them, after all
+    break;
+  }
+  Quests.Add(caption);
+  
+  Log('Commencing quest: ' + caption);
+
   SaveGame();
 }
 
@@ -785,7 +778,7 @@ function toArabic(s) {
 }
 
 function CompleteAct() {
-  Plots.last().wrap("<s/>");
+  Plots.rows().find("input:checkbox").attr("checked", "true");
   PlotBar.reset(60 * 60 * (1 + 5 * Plots.length())); // 1 hr + 5/act
   PlotBar.Hint = 'Cutscene omitted';
   Plots.Add('Act ' + toRoman(Plots.length()));
@@ -797,7 +790,6 @@ function CompleteAct() {
 }
 
 
-/*$IFDEF LOGGING*/
 function Log(line) {
   /* TODO
   if (FLogEvents) {
@@ -811,7 +803,6 @@ function Log(line) {
   }
   */
 }
-/*$ENDIF*/
 
 function ExportCharSheet() {
   /* TODO
@@ -1195,9 +1186,12 @@ function LoadGame(sheet) {
   game = sheet;
   $.each(AllBars.concat(AllLists), function (i, e) { e.load(game); });
   Kill.text(game.kill);
+  ClearAllSelections();
+  $.each([Plots,Quests], function () {
+    this.rows().find("input:checkbox").not(':last').attr("checked", "true");
+  });
   Log('Loaded game: ' + name);
   StartTimer();
-  ClearAllSelections();
 }
 
 $(document).unload(function () {
