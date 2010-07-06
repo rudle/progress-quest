@@ -1004,6 +1004,8 @@ function LoadCharacter() {
   } else {
     LoadGame(sheet);
   }
+
+  $("#titlebar span").text("Progress Quest - " + GameSaveName());
 }
 
 
