@@ -27,6 +27,11 @@ $(document).ready(function () {
         }
       });
  
+      br.find("a.sheet").click(function () {
+        alert(template($("#sheet").html(), games[name]));
+        // TODO: put in a window or whatev
+      });
+ 
       /*
       var p = $("<p style='font:6pt verdana'/>");
       p.appendTo(roster);

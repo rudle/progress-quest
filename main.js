@@ -837,12 +837,6 @@ function Log(line) {
   // TODO: and now what?
 }
 
-function CharSheet() {
-  return template($("#sheet").html(), game);
-  // TODO: make this a separate page
-}
-
-
 function Task(caption, msec) {
   Kill.text(caption + '...');
   Log(Kill.text());
@@ -1177,11 +1171,6 @@ function InputBox(message, def) {
 }
 
 function FormKeyDown(e) {
-  if (e.which == 1) { // ^A
-    SaveGame();
-    alert(CharSheet());
-  }
-
   if (e.which == 13) { // ^M
     game.motto = InputBox('Declare your motto!', game.motto);
     // Brag('m');
@@ -1218,8 +1207,6 @@ function LFSR(pt, salt) {
 function Brag(trigger) {
   /* TODO
   var flat = 1;
-  if (FExportSheets)
-    ExportCharSheet;
   if (GetPasskey() == 0) return; // not a online game!
   var url = 'cmd=b&t=' + trigger;
   with (Traits) for (i = 0; i <= Items.length()-1; ++i) 
