@@ -1173,10 +1173,11 @@ function HotOrNot() {
   // Figure out which spell is best
   var flat = 1;  // Flattening constant
   var best = 0, i;
-  for (i = 1; i < Spells.length(); ++i)
+  for (i = 1; i < Spells.length(); ++i) {
     if ((i+flat) * toArabic(Get(Spells,i)) >
         (best+flat) * toArabic(Get(Spells,best)))
       best = i;
+  }
   game.Spells.best = Spells.label(best) + ' ' + Get(Spells, best);
 
   /// And which stat is best?

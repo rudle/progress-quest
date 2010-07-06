@@ -35,7 +35,7 @@ function Alea() {
     var s2 = 0;
     var c = 1;
     
-    if (args.length == 0) {
+    if (!args.length) {
       args = [+new Date];
     }
     var mash = Mash();
@@ -80,14 +80,13 @@ function Alea() {
         s1 = newstate[1];
         s2 = newstate[2];
         c = newstate[3];
-      } else {
-        return [s0,s1,s2,c];
       }
+      return [s0,s1,s2,c];
     };
     return random;
     
   } (Array.prototype.slice.call(arguments)));
-};
+}
 
 
 var seed = new Alea();
@@ -127,7 +126,7 @@ function loadRoster() {
     try {
       return JSON.parse(r);
     } catch (err) {
-      return {}
+      return {};
     }
   }
 }

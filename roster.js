@@ -6,7 +6,7 @@ $(document).ready(function () {
     var roster = $("#roster");
     roster.empty();
     
-    games = loadRoster()
+    games = loadRoster();
     if (!games) {
       roster.text("Err...no local storage");
       return;
@@ -16,7 +16,7 @@ $(document).ready(function () {
 
       var br = brag(c);
       roster.append(br);
-      br.find("a").attr("href", "main.html#" + name)
+      br.find("a").attr("href", "main.html#" + name);
 
       br.find("button").click(function () {
         if (confirm("Terminate " + Pick(["faithful","noble","loyal","brave"])+ 
@@ -60,6 +60,7 @@ $(document).ready(function () {
       $.each(p1.split("."), function (i,v) {
         if (!dict) return true;
         dict = dict[v];
+        return null;
       });
       return dict || '';
     });
