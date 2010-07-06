@@ -5,27 +5,25 @@
 <script src="config.js"></script>
 <script src="roster.js"></script>
 <style>
-.brag td {
-  font: 9pt Helvetica, sans-serif;
-  background-color: #ddddff;
-  padding: 5px;
-}
 
 .brag {
   display: inline;
+  background-color: #ddddff;
+  margin: 5px;
+  border: solid 2px #ccccee;
 }
-
+.brag td {
+  font: 9pt Helvetica, sans-serif;
+  vertical-align: top; 
+}
 div.rc {
-  font-size: 8pt;
+  font-size: 9pt;
 }
 
 div.bs {
   font-size: 7pt;
 }
 
-button.x {
-  color: red;
-}
 body {
   text-align: center;
 }
@@ -39,8 +37,15 @@ body {
 #newc {
   text-align: center;
 }
-a, a:visited {
+.brag a, .brag a:visited {
   color: blue;
+  text-decoration: none;
+}
+a.icon {
+  font-size: 3em;
+}
+a.x {
+  font-size: 12pt;
 }
 </style>
 </head>
@@ -65,16 +70,23 @@ a, a:visited {
 <button id=test>Test</button>
 <button id=clear>Clear</button>
 </body>
-</html>
 
 
-<script id="bumble" type="text/html">
-  <table class="brag"><tr><td>
+<script id="badge" type="text/html">
+  <table class="brag">
+    <tr>
+      <td><a class="icon go">&#x2694;</a></td>
+      <td>
         <div>
-          <a><b>$Traits.Name</b></a> of Localrealm ($Plots.last) 
-          <button class="x">X</button>
+          <a class="go"><b>$Traits.Name</b></a> the $Traits.Race ($Plots.last) 
         </div>
-        <div class="rc">Level $Traits.Level $Traits.Race $Traits.Class</div>
+        <div class="rc">Level $Traits.Level $Traits.Class</div>
         <div class="bs">$Equips.best / $Spells.best / $Stats.best</div>
-  </td></tr></table>
+      </td>
+      <td><a class="x" href="#">&#x2620</a></td>
+    </tr>    
+  </table>
 </script>
+
+
+</html>

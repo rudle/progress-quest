@@ -16,9 +16,9 @@ $(document).ready(function () {
 
       var br = brag(c);
       roster.append(br);
-      br.find("a").attr("href", "main.html#" + name);
+      br.find("a.go").attr("href", "main.html#" + name);
 
-      br.find("button").click(function () {
+      br.find("a.x").click(function () {
         if (confirm("Terminate " + Pick(["faithful","noble","loyal","brave"])+ 
                     " " + name + "?")) {
           delete games[name];
@@ -46,7 +46,7 @@ $(document).ready(function () {
     games[n] = {Traits: {Level: -10,Name:n,Race:GenerateName(),
                          Class:GenerateName()},
                 Stats: {best: "STR 99"},
-                Plot: {last: "Act VII"},
+                Plots: {last: "Act VII"},
                 Spells: {best: "Bad Schwarma XIV"},
                 Equips: {best: "Cottonwood Sollerets"}};
     storeRoster(games);
@@ -54,7 +54,7 @@ $(document).ready(function () {
   });
   
   function brag(sheet) {
-    var tmpl = $("#bumble").html();
+    var tmpl = $("#badge").html();
     var brag = tmpl.replace(/\$([A-Za-z.]+)/g, function (str, p1) {
       var dict = sheet;
       $.each(p1.split("."), function (i,v) {
