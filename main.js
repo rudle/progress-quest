@@ -1155,7 +1155,7 @@ function LoadGame(sheet) {
   StartTimer();
 }
 
-$(document).unload(function () {
+$(window).unload(function () {
   StopTimer();
   SaveGame();
 });

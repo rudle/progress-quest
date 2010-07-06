@@ -503,7 +503,7 @@ K.Monsters = [
   "Beholder|10|eyestalk",
   "Black Pudding|10|saliva",
   "Blink Dog|4|eyelid",
-  "Cub Scout|1|neckercheif",
+  "Cub Scout|1|neckerchief",
   "Girl Scout|2|cookie",
   "Boy Scout|3|merit badge",
   "Eagle Scout|4|merit badge",
