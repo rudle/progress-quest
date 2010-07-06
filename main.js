@@ -2,6 +2,9 @@
 
 // TODO: All these Hints
 // TODO: Test use of seed as DNA
+// TODO: Layout newguy and main better
+// TODO: fix Prologue plot bar
+// TODO: limit number of Acts
 
 // revs:
 // 6: pq 6.3/web 
