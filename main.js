@@ -557,9 +557,10 @@ function GoButtonClick() {
   EncumBar.reset(GetI(Stats, "STR") + 10);
 
   Put(Inventory, "Gold", 0);
-  Put(Inventory, "Moon Mead", 2);
 
   Put(Equips, "Hauberk", "-3 Burlap");
+  
+  ClearAllSelections();
 
   StartTimer();
   SaveGame();

@@ -145,7 +145,7 @@ function sold() {
     dna: stats.seed,
     seed: stats.seed,
     birthday: ''+new Date(),
-    birthstamp: +new Date();
+    birthstamp: +new Date()
   };
   $.each('STR,CON,DEX,INT,WIS,CHA'.split(','), function (index,value) {
       newguy[value] = stats[value];
