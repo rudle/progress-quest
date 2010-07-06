@@ -726,7 +726,8 @@ K.Monsters = [
   "Poroid|4|node",
   "Moakum|8|frenum",
   "Fly|0|*",
-  "Hogbird|3|curl"];
+  "Hogbird|3|curl",
+  "Wolog|4|lemma"];
 
 K.MonMods = [
   "-4 fœtal *",
