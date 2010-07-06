@@ -1,6 +1,7 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
 // TODO: All these Hints
+// TODO: Test use of seed as DNA
 
 // revs:
 // 6: pq 6.3/web 
@@ -791,31 +792,14 @@ function CompleteAct() {
 
 
 function Log(line) {
-  /* TODO
-  if (FLogEvents) {
-    var logname = ChangeFileExt(GameSaveName(), '.log');
-    DateTimeToString(stamp, '[yyyy-mm-dd hh:nn:ss]', Now);
-    AssignFile(log, logname);
-    if (FileExists(logname)) Append(log); else Rewrite(log);
-    WriteLn(log, stamp + ' ' + line);
-    Flush(log);
-    CloseFile(log);
-  }
-  */
-}
-
-function ExportCharSheet() {
-  /* TODO
-  AssignFile(f, ChangeFileExt(GameSaveName(), '.sheet'));
-  Rewrite(f);
-  Write(f, CharSheet());
-  Flush(f);
-  CloseFile(f);
-*/
+  if (game.log)
+    game.log[+new Date()] = line;
+  // TODO: and now what?
 }
 
 function CharSheet() {
   return template("sheet", game);
+  // TODO: make this a separate page
 }
 
 
@@ -1137,11 +1121,13 @@ function SaveGame() {
   HotOrNot();
   game.date = ''+new Date();
   game.stamp = +new Date();
+  game.seed = randseed();
   return addToRoster(game);
 }
 
 function LoadGame(sheet) {
   game = sheet;
+  randseed(game.seed);
   $.each(AllBars.concat(AllLists), function (i, e) { e.load(game); });
   Kill.text(game.kill);
   ClearAllSelections();

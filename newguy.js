@@ -142,6 +142,7 @@ function sold() {
     name: $("#Name").val(),
     race: $("input:radio[name=Race]:checked").val(),
     'class': $("input:radio[name=Class]:checked").val(),
+    dna: stats.seed,
     seed: stats.seed,
     birthday: ''+new Date(),
     birthstamp: +new Date();
