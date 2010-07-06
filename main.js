@@ -237,9 +237,9 @@ function MonsterTask(level) {
   var monster, lev;
   if (Odds(1,25)) {
     // Use an NPC every once in a while
-    monster = ' ' + Pick(K.Races);
+      monster = ' ' + Split(Pick(K.Races), 0);
     if (Odds(1,2)) {
-      monster = 'passing' + monster + ' ' + Pick(K.Klasses);
+      monster = 'passing' + monster + ' ' + Split(Pick(K.Klasses), 0);
     } else {
       monster = PickLow(K.Titles) + ' ' + GenerateName() + ' the' + monster;
       definite = true;
@@ -1077,6 +1077,7 @@ $(function() {
     TaskBar.reposition(TaskBar.Max);
   });
 
+
   cheat("Pause", function () {
     if (timerid) {
       StopTimer();
@@ -1105,9 +1106,7 @@ $(function() {
     Add(Inventory,'Gold',Random(100));
   });
 
-  cheat("ad hoc", function () {
-    Put(Equips, "Vambraces", "Holy shittles");
-  });
+  cheat("Save", SaveGame);
 
 });
 /*$ENDIF*/
