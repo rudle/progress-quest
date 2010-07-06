@@ -1,13 +1,27 @@
 // TODO These code bits don't really belong here, but this is the only shared bit of js
 
 
+function tabulate(html) {
+  var result = '';
+  $("<table>").html(html).find("tr").each(function () {
+    result += "   " + $(this).children().first().text() + ": " + 
+      $(this).children().last().text() + "\n";
+  });
+  return result;
+}
+
+
 function template(id, data) {
   var tmpl = $("#" + id).html();
   var brag = tmpl.replace(/\$([_A-Za-z.]+)/g, function (str, p1) {
     var dict = data;
     $.each(p1.split("."), function (i,v) {
       if (!dict) return true;
-      dict = dict[v];
+      if (v == "___") {
+        dict = tabulate(dict.html);
+      } else {
+        dict = dict[v.replace("_"," ")];
+      }
       return null;
     });
     return dict || '';
