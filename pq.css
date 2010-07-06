@@ -172,10 +172,6 @@ div.progress-container:hover div.hint {
   width: 820px; 
 }
 
-#newguy.window { 
-  width: 580px; 
-}
-
 body { 
   background: url(back.jpg) no-repeat;
   background-size: 100% 100%;
@@ -202,3 +198,33 @@ div.scroll > table {
   background-color: yellow;
 }
 
+/* New guy form TODO: move this */
+
+#newguy.window { 
+  width: 508px; 
+}
+
+#newguy > .client { 
+  padding: 4px;
+}
+
+#newguy > #titlebar { 
+  margin-bottom: 0;
+}
+
+#races, #classes { 
+  width: 185px;
+}
+
+#classes, #stats { 
+  height: 365px;
+}
+
+#stats { 
+  width: 109px;
+}
+
+.window#newguy .vbox button { 
+  width: 75px;
+  margin: 4px;
+}

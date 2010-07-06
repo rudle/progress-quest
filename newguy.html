@@ -23,10 +23,11 @@ input, button { display: inline; }
     <span>Progress Quest - New Character</span>
   </div> 
 
+  <div class="client">
   <div class="hbox">
-      Name
-      <input id="Name">
-      <button id="RandomName">?</button>
+    Name
+    <input id="Name">
+    <button id="RandomName">?</button>
   </div>
 
   <div class=hbox>
@@ -34,42 +35,50 @@ input, button { display: inline; }
     <fieldset class="vbox groupbox" id="races">
       <legend>Race</legend>
     </fieldset>
-    
-    <fieldset class="vbox groupbox" id="classes">
-      <legend>Class</legend>
-    </fieldset>
-    
-    <fieldset class="vbox groupbox">
-      <legend>Stats</legend>
+
+    <div class=vbox>
+      <div class=hbox>
+        <fieldset class="vbox groupbox" id="classes">
+          <legend>Class</legend>
+        </fieldset>
+        
+        <fieldset class="vbox groupbox" id="stats">
+          <legend>Stats</legend>
+          
+          <table>
+            <tr> <th> STR <td id="STR">13</tr>
+            <tr> <th> CON <td id="CON">23</tr>
+            <tr> <th> DEX <td id="DEX">34</tr>
+            <tr> <th> INT <td id="INT">12</tr>
+            <tr> <th> WIS <td id="WIS">4</tr>
+            <tr> <th> CHA <td id="CHA">12</tr>
+            <tr> <th colspan=2> &nbsp; </tr>
+            <tr> <th> Total <td id="Total">48</tr>
+          </table>
+          
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          
+          <center>
+            <button id="Reroll">Roll</button> <br>
+            <button id="Unroll" disabled>Unroll</button>
+          </center>
+          <br>
+          
+        </fieldset>
+      </div>
       
-      <table>
-        <tr> <th> STR <td id="STR">13</tr>
-        <tr> <th> CON <td id="CON">23</tr>
-        <tr> <th> DEX <td id="DEX">34</tr>
-        <tr> <th> INT <td id="INT">12</tr>
-        <tr> <th> WIS <td id="WIS">4</tr>
-        <tr> <th> CHA <td id="CHA">12</tr>
-        <tr> <th colspan=2> &nbsp; </tr>
-        <tr> <th> Total <td id="Total">48</tr>
-      </table>
-
-      <br>
-      <br>
-      <br>
-      <br>
-      
-      <button id="Reroll">Roll</button>
-      <button id="Unroll" disabled>Unroll</button>
-
-    </fieldset>
-
+      <div class=hbox style="text-align:right;padding-top:15px">
+        <button id=Sold>Sold!</button>
+        <button id=Cancel>Cancel</button>
+      </div>
+    </div>
   </div>
-
-  <div class=hbox style="text-align:right">
-    <button id=Sold type="submit">Sold!</button>
-    <button id=Cancel>Cancel</button>
   </div>
-
 </div>
 
 </body>
