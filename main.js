@@ -2,8 +2,6 @@
 
 // TODO: Test use of seed as DNA
 // TODO: Layout newguy and main better
-// TODO: fix Prologue plot bar
-// TODO: get first quest
 
 // revs:
 // 6: pq 6.3/web 
@@ -942,13 +940,11 @@ function Timer1Timer() {
     }
 
     // advance quest
-    if (gain) {
-      if (Plots.length() > 1) {
-        if (QuestBar.done()) {
-          CompleteQuest();
-        } else if (Quests.length() > 0) {
-          QuestBar.increment(TaskBar.Max / 1000);
-        }
+    if (gain && game.act >= 1) {
+      if (QuestBar.done() || !Quests.length()) {
+        CompleteQuest();
+      } else {
+        QuestBar.increment(TaskBar.Max / 1000);
       }
     }
       
