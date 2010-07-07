@@ -978,6 +978,18 @@ function LoadCharacter() {
   var name = window.location.href.split('#')[1];
   var sheet = loadSheet(name);
 
+  if (!sheet) {
+    alert("Error loading " + name);
+    window.location = "roster.html";
+    return;
+  }
+
+  if (true || !window.localStorage) {
+    // Cookies can't hold a whole game save
+    storage.removeItem("roster");
+    storage = null;
+  }
+
   if (!sheet.Traits) {
     // New game
     InitializeCharacter(sheet);
@@ -1101,7 +1113,12 @@ function LoadGame(sheet) {
   StartTimer();
 }
 
-$(window).unload(function () {
+$(document).bind('beforeunload', function () {
+  if (!storage)
+    return "Are you sure you want to quit? All your progress will be lost!";
+});
+
+$(window).unload(function (event) {
   StopTimer();
   SaveGame();
 });

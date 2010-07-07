@@ -146,48 +146,50 @@ function GenerateName() {
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
-var cookieStorage = {
-  getItem: function(key) {
+function CookieStorage() {
+  this.getItem = function(key) {
     try {
-      var sheet = JSON.parse(unescape(document.cookie));
-      var result = {};
-      result[sheet.name] = sheet;
+      var result;
+      $.each(document.cookie.split(";"), function (i,cook) {
+        if (cook.split("=")[0] === key)
+          result = unescape(cook.split("=")[1]);
+      });
       return result;
     } catch (err) {
       // Probably a JSON parse error
-      return {}
     }
-  },
+  };
   
-  setItem: function (key, value) {
-    document.cookie = escape(JSON.stringify(value[something]));
+  this.setItem = function (key, value) {
+    document.cookie = key + "=" + escape(value);
+  };
+
+  this.removeItem = function (key) {
+    document.cookie = key + "=; expires=Thu, 01-Jan-70 00:00:01 GMT;";
   }
 };
     
 
 var storage = window.localStorage;
+if (!storage)
+  storage = new CookieStorage();
 
 function loadRoster() {
   if (storage) {
     var r = storage.getItem("roster");
-    if (!r) return {};
-    try {
-      return JSON.parse(r);
-    } catch (err) {
-      return {};
+    if (r) {
+      try {
+        return JSON.parse(r);
+      } catch (err) {
+        // aight
+      }
     }
   }
+  return {};
 }
 
 function loadSheet(name) {
-  if (storage) {
-    return loadRoster()[name];
-  } else try {
-    return JSON.parse(unescape(document.cookie));
-  } catch (err) {
-    alert("Cookies must be enabled");
-    window.location = "roster.html";
-  }
+  return loadRoster()[name];
 }
 
 function storeRoster(roster) {
@@ -200,8 +202,6 @@ function addToRoster(newguy) {
     var r = loadRoster();
     r[newguy.name] = newguy;
     storeRoster(r);
-  } else {
-    document.cookie = escape(JSON.stringify(newguy));
   }
 }
 
