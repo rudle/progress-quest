@@ -8,7 +8,7 @@ $(document).ready(function () {
     
     games = loadRoster();
     if (!games) {
-      roster.text("Err...no local storage");
+      roster.html("<b>This browser does not support local storage. You may still play fast and loose: the game will last only as long as the page stays open in your browser.");
       return;
     }
     $.each(games, function (key, c) {

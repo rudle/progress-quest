@@ -160,13 +160,16 @@ function loadRoster() {
 }
 
 function storeRoster(roster) {
-  window.localStorage.setItem("roster", JSON.stringify(roster));
+  if (window.localStorage)
+    window.localStorage.setItem("roster", JSON.stringify(roster));
 }
 
 function addToRoster(newguy) {
-  var r = loadRoster();
-  r[newguy.name] = newguy;
-  storeRoster(r);
+  if (window.localStorage) {
+    var r = loadRoster();
+    r[newguy.name] = newguy;
+    storeRoster(r);
+  }
 }
 
 var K = {};
