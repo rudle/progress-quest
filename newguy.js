@@ -85,6 +85,9 @@ $(document).ready(function () {
 
   seed = new Alea();
   RollEm();
+
+  if (window.location.href.indexOf("?sold") > 0)
+    sold();  // TODO: cheesy
 });
 
 
@@ -147,11 +150,15 @@ function sold() {
     birthday: ''+new Date(),
     birthstamp: +new Date()
   };
-  $.each('STR,CON,DEX,INT,WIS,CHA'.split(','), function (index,value) {
-      newguy[value] = stats[value];
-    });
+  $.each(K.Stats, function (index,value) {
+    newguy[value] = stats[value];
+  });
   addToRoster(newguy);
-  window.location = "main.html#" + newguy.name;
+  
+  // TODO: cheesy
+  var args = (window.location.href.indexOf("?sold") > 0) ? "?quit" : "";
+
+  window.location = "main.html" + args + "#" + newguy.name;
 }
 
 function cancel() {

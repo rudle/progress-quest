@@ -171,6 +171,8 @@ function addToRoster(newguy) {
 
 var K = {};
 
+K.Stats = ["STR","CON","DEX","INT","WIS","CHA"];
+
 K.Spells = [
   "Slime Finger",
   "Rabbit Punch",

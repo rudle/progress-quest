@@ -19,7 +19,7 @@
 // 1: pq 6.0, some early release I guess;)n't remember
 var RevString = '&rev=6';
 
-var game = {}; // queue: [] };
+var game = {};
 var lasttick, timerid;
 
 function timeGetTime() {
@@ -521,18 +521,14 @@ var AllBars, AllLists;
     
 function InitializeCharacter(sheet) {
   game = sheet;
+  randseed(game.seed);
 
   Put(Traits, 'Name', sheet.name);
   Put(Traits, 'Level', 1);
   Put(Traits, 'Race', sheet.race);
   Put(Traits, 'Class', sheet['class']);
 
-  Put(Stats, 'STR', sheet.STR);
-  Put(Stats, 'CON', sheet.CON);
-  Put(Stats, 'DEX', sheet.DEX);
-  Put(Stats, 'INT', sheet.INT);
-  Put(Stats, 'WIS', sheet.WIS);
-  Put(Stats, 'CHA', sheet.CHA);
+  $.each(K.Stats, function (i,stat) { Put(Stats, stat, sheet[stat]); });
   Put(Stats, 'HP Max', Random(8) + sheet.CON.div(6));
   Put(Stats, 'MP Max', Random(8) + sheet.INT.div(6));
 
@@ -990,6 +986,9 @@ function LoadCharacter() {
   }
 
   $("#titlebar span").text("Progress Quest - " + GameSaveName());
+
+  if (window.location.href.indexOf("?quit#") > 0)
+    $("#quit").click();  // TODO: cheesy
 }
 
 

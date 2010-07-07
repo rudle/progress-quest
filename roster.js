@@ -47,15 +47,7 @@ $(document).ready(function () {
   });
   
   $("#test").click(function () {
-    var n = GenerateName();
-    games[n] = {Traits: {Level: -10,Name:n,Race:GenerateName(),
-                         Class:GenerateName()},
-                Stats: {best: "STR 99"},
-                Plots: {last: "Act VII"},
-                Spells: {best: "Bad Schwarma XIV"},
-                Equips: {best: "Cottonwood Sollerets"}};
-    storeRoster(games);
-    load();
+    window.location = "newguy.html?sold";
   });
   
   function brag(sheet) {
