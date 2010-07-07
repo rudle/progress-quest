@@ -27,11 +27,11 @@
     
     <span class="label head" >Character Sheet</span>
     
-    <table class="listbox">
+    <table class="listbox" id="Trats">
       <thead>
         <tr>
-          <th style="width:25%">Trait</th>
-          <th >Value</th>
+          <th>Trait</th>
+          <th>Value</th>
         </tr>
       </thead>
       <tbody id="Traits">
@@ -79,15 +79,15 @@
     </div>
 
     <span class="label head" >Spell Book</span>
-    <div class="scroll listbox">
+    <div id="Spells" class="scroll listbox">
       <table>
         <thead>
           <tr>
-            <th>Spell</th>
-            <th style="width:10ex">Level</th>
+            <th class="key">Spell</th>
+            <th class="value">Level</th>
           </tr>
         </thead>
-        <tbody id="Spells">
+        <tbody>
         </tbody>
       </table>
     </div>
@@ -96,8 +96,8 @@
   <div class="vbox">
     <span class="label head">Equipment</span>
 
-    <table class="listbox">
-      <tbody id="Equips">
+    <table id="Equips" class="listbox">
+      <tbody>
         <tr><td style="width:12ex">Weapon</td><td></td></tr>
         <tr><td>Shield</td><td></tr>
         <tr><td>Helm<td></tr>
@@ -113,15 +113,15 @@
     </table>
 
     <span class="label head" >Inventory</span>
-    <div class="scroll listbox">
+    <div id="Inventory" class="scroll listbox">
       <table >
         <thead>
           <tr>
-            <th >Item</th>
+            <th>Item</th>
             <th style="width:6ex">Qty</th>
           </tr>
         </thead>
-        <tbody id="Inventory">
+        <tbody>
           <tr><td>Gold<td>0</tr>
         </tbody>
       </table>
@@ -138,9 +138,9 @@
   <div class="vbox">
 
     <span class="label head">Plot Development</span>
-    <div class="scroll listbox">
+    <div id="Plots" class="scroll listbox">
       <table>
-        <tbody id="Plots">
+        <tbody>
         </tbody>
       </table>
     </div>
@@ -150,10 +150,10 @@
       <div class="bar" style="width: 50%"></div>
     </div>
 
-    <span class="label head" >Quests</span>
-    <div class="scroll listbox">
+    <span class="label head">Quests</span>
+    <div id="Quests" class="scroll listbox">
       <table>
-        <tbody id="Quests">
+        <tbody>
         </tbody>
       </table>
     </div>

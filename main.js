@@ -452,7 +452,8 @@ function ProgressBar(id) {
 
 function ListBox(id, columns, fixedkeys) {
   this.id = id;
-  this.box = $("#"+ id);
+  //this.box = $("#"+ id);
+  this.box = $("tbody#_, #_ tbody".replace(/_/g, id));
   this.columns = columns;
   this.fixedkeys = fixedkeys;
 
@@ -1080,6 +1081,9 @@ $(function() {
     }
   });
 
+  cheat("Break", function () {
+    debugger;
+  });
   cheat("Equip", function () {
     WinEquip();
   });

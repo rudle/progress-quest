@@ -11,7 +11,6 @@ thead.mid {
 
 .listbox { 
   border: solid 1px black;
-  width: 250px;
   background-color: white;
 }
 
@@ -25,7 +24,6 @@ thead.mid {
 
 div.progress-container { 
   border: 1px solid #ccc; 
-  width: 250px; 
   margin: 2px 5px 2px 0; 
   padding: 1px; 
   background: white;
@@ -35,7 +33,6 @@ div.progress-container {
 div.progress-container > div.bar { 
   background-color: #ACE97C; 
   height: 12px;
-  width: 50%;
 }
 
 div.hint { 
@@ -43,7 +40,6 @@ div.hint {
   position: absolute;
   margin-top: 1px;
   visibility: hidden;
-  width: 250px;
   text-align: center;
   color: #060;
 }
@@ -56,7 +52,37 @@ div.progress-container:hover div.hint {
   width: 820px; 
 }
 
+#Trats, 
+#Spells, #Spells table,
+#Plots,  #Plots table,
+#Quests, #Quests table { 
+  width: 200px;
+}
+
+#ExpBar, #ExpBar .hint, 
+#PlotBar, #PlotBar .hint,
+#QuestBar, #QuestBar .hint { 
+  width: 198px;
+}
+
+#Equips,
+#Inventory, #Inventory table {
+  width: 272px;
+}
+
+#EncumBar, #EncumBar .hint { 
+  width: 270px;
+}
+
+#Trats thead th:first-child { 
+  width: 55px;
+}
+
+#Spells .value { 
+ width: 15ex;
+}
+
 #TaskBar, #TaskBar .hint { 
   width: 800px;
- }
+}
 

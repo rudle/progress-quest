@@ -46,7 +46,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 }
 
 td, th, .label, tr input, #titlebar, div { 
-  font-family: Helvetica;
+  font-family: Helvetica, sans-serif;
   font-size: 8pt;
 }
 
