@@ -6,11 +6,11 @@ $(document).ready(function () {
     var roster = $("#roster");
     roster.empty();
     
-    games = loadRoster();
-    if (!games) {
+    if (!storage) {
       roster.html("<b>This browser does not support local storage. You may still play fast and loose: the game will last only as long as the page stays open in your browser.");
       return;
     }
+    games = loadRoster() || {};
     $.each(games, function (key, c) {
       var name = c.Traits.Name;
 

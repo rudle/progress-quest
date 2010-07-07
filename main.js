@@ -976,7 +976,7 @@ function FormCreate() {
 function LoadCharacter() {
   var result = true;
   var name = window.location.href.split('#')[1];
-  var sheet = loadRoster()[name];
+  var sheet = loadSheet(name);
 
   if (!sheet.Traits) {
     // New game

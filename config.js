@@ -146,10 +146,30 @@ function GenerateName() {
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
+var cookieStorage = {
+  getItem: function(key) {
+    try {
+      var sheet = JSON.parse(unescape(document.cookie));
+      var result = {};
+      result[sheet.name] = sheet;
+      return result;
+    } catch (err) {
+      // Probably a JSON parse error
+      return {}
+    }
+  },
+  
+  setItem: function (key, value) {
+    document.cookie = escape(JSON.stringify(value[something]));
+  }
+};
+    
+
+var storage = window.localStorage;
 
 function loadRoster() {
-  if (window.localStorage) {
-    var r = window.localStorage.getItem("roster");
+  if (storage) {
+    var r = storage.getItem("roster");
     if (!r) return {};
     try {
       return JSON.parse(r);
@@ -159,16 +179,29 @@ function loadRoster() {
   }
 }
 
+function loadSheet(name) {
+  if (storage) {
+    return loadRoster()[name];
+  } else try {
+    return JSON.parse(unescape(document.cookie));
+  } catch (err) {
+    alert("Cookies must be enabled");
+    window.location = "roster.html";
+  }
+}
+
 function storeRoster(roster) {
-  if (window.localStorage)
-    window.localStorage.setItem("roster", JSON.stringify(roster));
+  if (storage)
+    storage.setItem("roster", JSON.stringify(roster));
 }
 
 function addToRoster(newguy) {
-  if (window.localStorage) {
+  if (storage) {
     var r = loadRoster();
     r[newguy.name] = newguy;
     storeRoster(r);
+  } else {
+    document.cookie = escape(JSON.stringify(newguy));
   }
 }
 
