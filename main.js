@@ -9,15 +9,7 @@
 // TODO: Get better ProgrOS screenshot with just PQ
 // TODO: Charsheet in some more pleasing delivery method
 // TODO: Take a snap of some dice. Probably 4. ::: ::: ::_ ___
-
-// revs:
-// 6: pq 6.3/web 
-// 5: pq 6.3
-// 4: pq 6.2
-// 3: pq 6.1
-// 2: pq 6.0
-// 1: pq 6.0, some early release I guess;)n't remember
-var RevString = '&rev=6';
+// TODO: Use a cookie rather than a fragment to choose char?
 
 var game = {};
 var lasttick, timerid;
@@ -31,8 +23,6 @@ function StartTimer() {
     lasttick = timeGetTime();
     timerid = setInterval(Timer1Timer, 100);
   }
-  // BS location for this, but...
-  // MainForm.Caption = 'ProgressQuest - ' + ChangeFileExt(ExtractFileName(MainForm.GameSaveName()), '');
 }
 
 function StopTimer() {
@@ -803,8 +793,10 @@ function CompleteAct() {
     Plots.remove(0);
   Plots.Add('Act ' + toRoman(game.act));
 
-  WinItem();
-  WinEquip();
+  if (game.act > 1) {
+    WinItem();
+    WinEquip();
+  }
 
   Brag('act');
 }
@@ -984,7 +976,7 @@ function LoadCharacter() {
     return;
   }
 
-  if (true || !window.localStorage) {
+  if (!window.localStorage) {
     // Cookies can't hold a whole game save
     storage.removeItem("roster");
     storage = null;
