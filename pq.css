@@ -65,82 +65,6 @@ th:first-child {
   border-right: solid 1px grey;
 }
 
-thead.mid { 
-  border-top: solid 1px grey;
-}
-
-.label { 
-  margin-top: 3px;
-}
-
-.listbox { 
-  border: solid 1px black;
-  width: 250px;
-  background-color: white;
-}
-
-fieldset { 
-  border: solid 1px #aaa;
-  width: 180px;
-}
-
-fieldset table { 
-  width: 100px;
-  border: none 0px black;
-  border-right: none !IMPORTANT;
-  border-spacing: 10px;
-  border-collapse: separate;
-  background-color: transparent;
-}
-
-fieldset table th { 
-  border: none;
-  margin-bottom: 1ex;
-  border-right: none !IMPORTANT;
-  width: 5ex;
-}
-
-fieldset table td { 
-  border: solid 1px #aaa;
-  text-align: center;
-  width: 4ex;
-}
-
-.head {
-  font-weight: bold;
-  font-size: 9pt;
-  margin: 2px 0 2px 0;
-}
-
-div.progress-container { 
-  border: 1px solid #ccc; 
-  width: 250px; 
-  margin: 2px 5px 2px 0; 
-  padding: 1px; 
-  background: white;
-  overflow: hidden;
-}
-
-div.progress-container > div.bar { 
-  background-color: #ACE97C; 
-  height: 12px;
-  width: 50%;
-}
-
-div.hint { 
-  z-index: 20;
-  position: absolute;
-  margin-top: 1px;
-  visibility: hidden;
-  width: 250px;
-  text-align: center;
-  color: #060;
-}
-
-div.progress-container:hover div.hint { 
-  visibility: visible;
-}
-
 
 #titlebar { 
   background-color: #008;
@@ -168,10 +92,6 @@ div.progress-container:hover div.hint {
 }
 
 
-#main.window { 
-  width: 820px; 
-}
-
 body { 
   background: url(back.jpg) no-repeat;
   background-size: 100% 100%;
@@ -181,10 +101,6 @@ body {
   text-align: center;
   margin-top: 1em;
 }
-
-#TaskBar, #TaskBar .hint { 
-  width: 800px;
- }
 
 div.scroll { 
   overflow: scroll;
@@ -201,33 +117,3 @@ div.scroll > table {
   background-color: yellow;
 }
 
-/* New guy form TODO: move this */
-
-#newguy.window { 
-  width: 508px; 
-}
-
-#newguy > .client { 
-  padding: 4px;
-}
-
-#newguy > #titlebar { 
-  margin-bottom: 0;
-}
-
-#races, #classes { 
-  width: 185px;
-}
-
-#classes, #stats { 
-  height: 365px;
-}
-
-#stats { 
-  width: 109px;
-}
-
-.window#newguy .vbox button { 
-  width: 75px;
-  margin: 4px;
-}

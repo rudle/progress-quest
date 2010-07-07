@@ -1,0 +1,56 @@
+
+#newguy.window { 
+  width: 508px; 
+}
+
+#newguy > .client { 
+  padding: 4px;
+}
+
+#newguy > #titlebar { 
+  margin-bottom: 0;
+}
+
+fieldset { 
+  border: solid 1px #aaa;
+  width: 180px;
+}
+
+fieldset table { 
+  width: 100px;
+  border: none 0px black;
+  border-right: none !IMPORTANT;
+  border-spacing: 10px;
+  border-collapse: separate;
+  background-color: transparent;
+}
+
+fieldset table th { 
+  border: none;
+  margin-bottom: 1ex;
+  border-right: none !IMPORTANT;
+  width: 5ex;
+}
+
+fieldset table td { 
+  border: solid 1px #aaa;
+  text-align: center;
+  width: 4ex;
+}
+
+#races, #classes { 
+  width: 185px;
+}
+
+#classes, #stats { 
+  height: 365px;
+}
+
+#stats { 
+  width: 109px;
+}
+
+.window#newguy .vbox button { 
+  width: 75px;
+  margin: 4px;
+}
