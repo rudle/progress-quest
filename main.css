@@ -53,7 +53,7 @@ div.progress-container:hover div.hint {
 }
 
 #main.window { 
-  width: 740px; 
+  width: 684px; 
 }
 
 #Trats, 
@@ -79,16 +79,19 @@ tr         { height:  15px; }
   width: 198px;
 }
 
-#Equips,
-#Inventory, #Inventory table {
+#Equips {
   width: 272px;
+}
+
+#Inventory, #Inventory table {
+  width: 270px;
 }
 
 #Equips th,             #Equips td             { width: 202px; }
 #Equips th:first-child, #Equips td:first-child { width:  70px; }
 
 #EncumBar, #EncumBar .hint { 
-  width: 270px;
+  width: 268px;
 }
 
 #Spells .value { 
@@ -96,10 +99,17 @@ tr         { height:  15px; }
 }
 
 #TaskBar, #TaskBar .hint { 
-  width: 710px;
+  width: 680px;
 }
 
 #Quests td, #Plots td { 
   padding-left: 0;
 }
+ 
+#Izquierda, #Derecha {
+  width: 202px;
+}
 
+#Centro {
+  width: 274px;
+}

@@ -1,15 +1,18 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
+// Before launch
 // TODO: Test use of seed as DNA
-// TODO: Get rid of wide gutter margins on main
+// TODO: Finalize borders in sections of main
 // TODO: Test in all browsers
-// TODO: Online leader board, game saves
-// TODO: no localstorage mode
-// TODO: Active controls on fake Xp screen
 // TODO: Get better ProgrOS screenshot with just PQ
 // TODO: Charsheet in some more pleasing delivery method
 // TODO: Take a snap of some dice. Probably 4. ::: ::: ::_ ___
 // TODO: Use a cookie rather than a fragment to choose char?
+
+// After launch
+// TODO: Online leader board
+// TODO: Server side saves
+// TODO: Active controls on fake Xp screen
 
 var game = {};
 var lasttick, timerid;
