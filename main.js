@@ -1,7 +1,7 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
 // TODO: Test use of seed as DNA
-// TODO: Layout main better
+// TODO: Get rid of wide gutter margins on main
 // TODO: Test in all browsers
 
 // revs:
@@ -33,27 +33,6 @@ function StopTimer() {
   clearTimeout(timerid);
   timerid = null;
 }
-
-function GetPasskey() { return game.passkey; }
-function SetPasskey(v) { game.passkey = v; }
-
-function GetMotto() { return game.motto; }
-function SetMotto(v) { game.motto = v; }
-
-function GetHostName() { return game.hostname; }
-function SetHostName(v) { game.hostname = v; }
-
-function GetHostAddr() { return game.hostaddr; }
-function SetHostAddr(v) { game.hostaddr = v; }
-
-function GetLogin() { return game.login; }
-function SetLogin(v) { game.login = v; }
-
-function GetPassword() { return game.password; }
-function SetPassword(v) { game.password = v; }
-
-function GetGuild() { return game.guild; }
-function SetGuild(v) { game.guild = v; }
 
 function Q(s) {
   game.queue.push(s);
@@ -505,11 +484,11 @@ function ListBox(id, columns, fixedkeys) {
     this.box.find("tr").eq(n).remove();
   };
 
-  this.save = function (game) {
+  this.save = function (game, compact) {
     if (!game[this.id])
       game[this.id] = {};
     var dict = game[this.id];
-    dict.html = this.box.html();
+    dict.html = compact ? null : this.box.html();
     if (this.columns == 2) {
       this.rows().each(function (index) {
         dict[$(this).children().first().text()] = 
@@ -589,8 +568,8 @@ function InitializeCharacter(sheet) {
   ClearAllSelections();
 
   StartTimer();
-  SaveGame();
-  Brag('s');
+
+  Brag('start');
 }
 
 
@@ -702,10 +681,7 @@ function WinItem() {
 function CompleteQuest() {
   QuestBar.reset(50 + Random(100));
   if (Quests.last().length) {
-    /*$IFDEF LOGGING*/
     Log('Quest completed: ' + Quests.last().text());
-    /*$ENDIF*/
-    
     Quests.rows().find("input:checkbox").attr("checked", "true");
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
   }
@@ -827,8 +803,8 @@ function CompleteAct() {
 
   WinItem();
   WinEquip();
-  SaveGame();
-  Brag('a');
+
+  Brag('act');
 }
 
 
@@ -901,8 +877,7 @@ function LevelUp() {
   WinSpell();
   ExpBar.Position = 0;
   ExpBar.reset(LevelUpTime(GetI(Traits,'Level')));
-  SaveGame();
-  Brag('l');
+  Brag('level');
 }
 
 function ClearAllSelections() {
@@ -1012,38 +987,6 @@ function LoadCharacter() {
 }
 
 
-function FormShow() {
-  if (timerid) return;
-  var done = false;
-  var exportandexit = false;
-
-  while (!done) {
-    SetHostName('');
-    SetHostAddr('');
-    SetLogin('');
-    SetPassword('');
-    switch (FrontForm.ShowModal) {
-    case mrOk: 
-      done = RollCharacter;
-      break;
-    case mrRetry:
-      // load
-      if (FrontForm.OpenDialog1.Execute) {
-        LoadGame(FrontForm.OpenDialog1.Filename);
-        done = true;
-      }
-      break;
-    case mrYesToAll: 
-      done = ServerSelectForm.Go;
-      break;
-    case mrCancel:
-      Close();
-      done = true;
-      break;
-    }
-  }
-}
-
 
 /*$IFDEF CHEATS*/
 $(function() {
@@ -1130,9 +1073,9 @@ function HotOrNot() {
 }
 
 
-function SaveGame() {
+function SaveGame(compact) {
   Log('Saving game: ' + GameSaveName());
-  $.each(AllBars.concat(AllLists), function (i, e) { e.save(game); });
+  $.each(AllBars.concat(AllLists), function (i, e) { e.save(game, compact); });
   HotOrNot();
   game.date = ''+new Date();
   game.stamp = +new Date();
@@ -1162,8 +1105,8 @@ $(window).unload(function () {
 function GameSaveName() {
   if (!game.saveName) {
     game.saveName = Get(Traits, 'Name');
-    if (GetHostName())
-      game.saveName += ' [' + GetHostName() + ']';
+    if (game.realm)
+      game.saveName += ' [' + game.realm + ']';
   }
   return game.saveName;
 }
@@ -1177,20 +1120,17 @@ function InputBox(message, def) {
 function FormKeyDown(e) {
   if (e.which == 13) { // ^M
     game.motto = InputBox('Declare your motto!', game.motto);
-    // Brag('m');
-    // Navigate(GetHostAddr + 'name=' + UrlEncode(Get(Traits,'Name')));
+    Brag('motto');
   }
 
-  if (!GetPasskey()) return; // no need for these things
-
   if (e.which == 2) { // ^B
-    //Brag('b');
-    //Navigate(GetHostAddr + 'name=' + UrlEncode(Get(Traits,'Name')));
+    Brag('brag');
+    //Navigate(GetHostAddr() + 'name=' + UrlEncode(Get(Traits,'Name')));
   }
   
   if (e.which == 7) { // ^G
     game.guild = InputBox('Choose a guild.\r\rMake sure you undestand the guild rules before you join one. To learn more about guilds, visit http://progressquest.com/guilds.php', game.guild);
-    // Guildify();
+    Brag("guild");
   }
 
 }
@@ -1209,68 +1149,14 @@ function LFSR(pt, salt) {
 
 
 function Brag(trigger) {
-  /* TODO
-  var flat = 1;
-  if (GetPasskey() == 0) return; // not a online game!
-  var url = 'cmd=b&t=' + trigger;
-  with (Traits) for (i = 0; i <= Items.length()-1; ++i) 
-    url = url + '&' + LowerCase(Items[i].Caption[1]) + '=' + UrlEncode(Items[i].Subitems[0]);
-  url = url + '&x=' + IntToStr(ExpBar.Position);
-  url = url + '&i=' + UrlEncode(game.Equips.best);
-  var best = 0;
-  if (Spells.length() > 0) with (Spells) {
-    for (i = 1; i <= Items.length()-1; ++i)
-      if ((i+flat) * RomanToInt(Get(Spells,i)) >
-          (best+flat) * RomanToInt(Get(Spells,best)))
-        best = i;
-    url = url + '&z=' + UrlEncode(Items[best].Caption + ' ' + Get(Spells,best));
-  }
-  best = 0;
-  for (var i = 1; i <= 5; ++i)
-    if (GetI(Stats,i) > GetI(Stats,best)) best = i;
-  url = url + '&k=' + Stats[best].Caption + '+' + Get(Stats,best);
-  url = url + '&a=' + UrlEncode(Plots.last().text());
-  url = url + '&h=' + UrlEncode(GetHostName());
-  url = url + RevString;
-  url = url + '&p=' + IntToStr(LFSR(url, GetPasskey()));
-  url = url + '&m=' + UrlEncode(GetMotto);
-  url = AuthenticateUrl(GetHostAddr + url);
-  try {
-    body = DownloadString(url);
-    if ((LowerCase(Split(body,0)) == 'report'))
-      ShowMessage(Split(body,1));
-  } catch (EWebError) {
-    // 'ats okay.
-  }
-  */
-}
-
-function TMainForm_AuthenticateUrl(url) {
-  if ((GetLogin()) || (GetPassword()))
-    return StuffString(url, 8, 0, GetLogin()+':'+GetPassword()+'@');
-  else
-    return url;
-}
-
-function TMainForm_Guildify() {
-  if (!GetPasskey()) return; // not a online game!
-  var url = 'cmd=guild';
-  for (i = 0; i < Traits.length(); ++i)
-    url = url + '&' + LowerCase(Traits[i].Caption[1]) + '=' + UrlEncode(Traits[i].Subitems[0]);
-  url = url + '&h=' + UrlEncode(GetHostName());
-  url = url + RevString;
-  url = url + '&guild=' + UrlEncode(GetGuild());
-  url = url + '&p=' + IntToStr(LFSR(url, GetPasskey()));
-  url = AuthenticateUrl(GetHostAddr() + url);
-  try {
-    b = DownloadString(url);
-    s = Take(b);
-    if (s) ShowMessage(s);
-    s = Take(b);
-    if (s) Navigate(s);
-  } catch (EWebError) {
-    // 'ats okay.
-    Abort();
-  }
+  if (game.isonline) {
+    SaveGame(true);  // Save more compact version
+    game.bragtrigger = trigger;
+    $.post("webrag.php", game, function (data, textStatus, request) {
+      if (data.alert) 
+        alert(data.alert);
+    }, "json");
+  } 
+  SaveGame();  // Save whole game
 }
 
