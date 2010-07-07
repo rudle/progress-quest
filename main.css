@@ -21,6 +21,10 @@ thead.mid {
   margin: 2px 0 2px 0;
 }
 
+input { 
+  height: 10px;
+  color: black;
+}
 
 div.progress-container { 
   border: 1px solid #ccc; 
@@ -49,7 +53,7 @@ div.progress-container:hover div.hint {
 }
 
 #main.window { 
-  width: 820px; 
+  width: 740px; 
 }
 
 #Trats, 
@@ -59,11 +63,19 @@ div.progress-container:hover div.hint {
   width: 200px;
 }
 
+tr         { height:  15px; }
+#Spells    { height: 236px; }
+#Inventory { height: 281px; }
+#Plots     { height: 147px; }
+#Quests    { height: 294px; }
+
+
 #ExpBar, #ExpBar .hint, 
 #PlotBar, #PlotBar .hint,
 #QuestBar, #QuestBar .hint { 
   width: 198px;
 }
+
 
 #Equips,
 #Inventory, #Inventory table {
@@ -83,6 +95,6 @@ div.progress-container:hover div.hint {
 }
 
 #TaskBar, #TaskBar .hint { 
-  width: 800px;
+  width: 710px;
 }
 
