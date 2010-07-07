@@ -99,3 +99,7 @@ tr         { height:  15px; }
   width: 710px;
 }
 
+#Quests td, #Plots td { 
+  padding-left: 0;
+}
+
