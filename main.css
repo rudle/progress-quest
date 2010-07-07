@@ -63,6 +63,9 @@ div.progress-container:hover div.hint {
   width: 200px;
 }
 
+#Trats th,             #Trats td             { width: 145px; }
+#Trats th:first-child, #Trats td:first-child { width:  55px; }
+
 tr         { height:  15px; }
 #Spells    { height: 236px; }
 #Inventory { height: 281px; }
@@ -76,18 +79,16 @@ tr         { height:  15px; }
   width: 198px;
 }
 
-
 #Equips,
 #Inventory, #Inventory table {
   width: 272px;
 }
 
+#Equips th,             #Equips td             { width: 202px; }
+#Equips th:first-child, #Equips td:first-child { width:  70px; }
+
 #EncumBar, #EncumBar .hint { 
   width: 270px;
-}
-
-#Trats thead th:first-child { 
-  width: 55px;
 }
 
 #Spells .value { 
