@@ -15,7 +15,7 @@
 }
 .brag td {
   font: 9pt Helvetica, sans-serif;
-  vertical-align: top; 
+  vertical-align: top;
 }
 div.rc {
   font-size: 9pt;
@@ -48,6 +48,24 @@ a.icon {
 a.x, a.sheet {
   font-size: 12pt;
 }
+.sig {
+  text-align: center;
+  font-size: small;
+  color: #808080;
+}
+.sig a, .sig a:visited {
+  color: #808080;
+  text-decoration: none;
+}
+
+blockquote {
+  margin: 0 10% 0 10%;
+  background-color: #ffd;
+  border: solid 1px #fdb;
+  padding: 1ex;
+font-size: 11pt;
+}
+
 </style>
 </head>
 
@@ -57,19 +75,48 @@ a.x, a.sheet {
 
 <h1>Character Roster</h1>
 
+
+<blockquote align="left">
+In the olden times you'd <a href="download.php">download</a> Progress
+Quest to your computer; now you may instead play Progress Quest
+directly in your browser. Most modern browsers will save your game(s)
+on this page <i>in just this browser</i>; if not, you can play fast and loose: the game will last
+as long as the page stays open. Online leader boards and character
+storage are not implemented at this time.
+</blockquote>
+
 <p id=roster>
 </p>
 
 <table class="brag"><tr>
 <td id="newc">
 <b>New Character</b> <br>
-<img src=die.jpg><br>
-<button id=roll>Roll One Up</button>
+<img src="die.jpg" width="100px"><br>
+<button id="roll">Roll One Up</button>
 </td></tr></table>
 
 <p>
 <button id=test>Test</button>
 <button id=clear>Clear</button>
+
+
+<br>
+<div align="center" id="nabar">
+  <a href="/">Home</a> &middot;
+  <a href="/info.php">Info</a> &middot;
+  <a href="/faq.php">FAQ</a> &middot;
+  <a href="/dl.php">Download</a> &middot;
+  <a href="/realms.php">Realms</a> &middot;
+  <a href="/acct.php">Accounts</a> &middot;
+  <a href="/news.php">News</a> &middot;
+  <a href="http://www.cafepress.com/pqm">Store</a> &middot;
+  <a href="http://forum.progressquest.com/">Forum</a> &middot;
+  <a href="/links.php">Links</a>
+</div>
+<br>
+<div class="sig">&copy;2001-2010 <a class=dim
+   href="mailto:grumdrig@progressquest.com">grumdrig@progressquest.com</a>
+</div>
 </body>
 
 
@@ -79,7 +126,7 @@ a.x, a.sheet {
       <td><a class="icon go">&#x2694;</a></td>
       <td>
         <div>
-          <a class="go"><b>$Traits.Name</b></a> the $Traits.Race ($Plots.last) 
+          <a class="go"><b>$Traits.Name</b></a> the $Traits.Race ($Plots.last)
         </div>
         <div class="rc">Level $Traits.Level $Traits.Class</div>
         <div class="bs">$Equips.best / $Spells.best / $Stats.best</div>
@@ -88,7 +135,7 @@ a.x, a.sheet {
         <a class="x" href="#">&#x2620</a><br>
         <a class="sheet" href="#">&#x270F</a>
       </td>
-    </tr>    
+    </tr>
   </table>
 </script>
 

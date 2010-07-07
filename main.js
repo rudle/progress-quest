@@ -3,6 +3,12 @@
 // TODO: Test use of seed as DNA
 // TODO: Get rid of wide gutter margins on main
 // TODO: Test in all browsers
+// TODO: Online leader board, game saves
+// TODO: no localstorage mode
+// TODO: Active controls on fake Xp screen
+// TODO: Get better ProgrOS screenshot with just PQ
+// TODO: Charsheet in some more pleasing delivery method
+// TODO: Take a snap of some dice. Probably 4. ::: ::: ::_ ___
 
 // revs:
 // 6: pq 6.3/web 
