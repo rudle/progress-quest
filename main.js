@@ -5,14 +5,16 @@
 // TODO: Finalize borders in sections of main
 // TODO: Test in all browsers
 // TODO: Get better ProgrOS screenshot with just PQ
-// TODO: Charsheet in some more pleasing delivery method
 // TODO: Take a snap of some dice. Probably 4. ::: ::: ::_ ___
-// TODO: Use a cookie rather than a fragment to choose char?
+// TODO: Hide charsheet button for now
 
 // After launch
 // TODO: Online leader board
 // TODO: Server side saves
 // TODO: Active controls on fake Xp screen
+// TODO: Refactor logic to run with visible interface as a layer on top
+// TODO: Charsheet in some more pleasing delivery method
+// TODO: Use a cookie rather than a fragment to choose char?
 
 var game = {};
 var lasttick, timerid;
@@ -516,6 +518,8 @@ function InitializeCharacter(sheet) {
   game = sheet;
   randseed(game.seed);
 
+  game.tasks = 0;
+
   Put(Traits, 'Name', sheet.name);
   Put(Traits, 'Level', 1);
   Put(Traits, 'Race', sheet.race);
@@ -894,6 +898,8 @@ function Pos(needle, haystack) {
 
 function Timer1Timer() {
   if (TaskBar.done()) {
+    game.tasks += 1;
+
     ClearAllSelections();
       
     if (Kill.text() == 'Loading....') TaskBar.Max = 0;
