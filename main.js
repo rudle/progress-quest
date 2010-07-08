@@ -519,6 +519,7 @@ function InitializeCharacter(sheet) {
   randseed(game.seed);
 
   game.tasks = 0;
+  game.elapsed = 0;
 
   Put(Traits, 'Name', sheet.name);
   Put(Traits, 'Level', 1);
@@ -899,6 +900,7 @@ function Pos(needle, haystack) {
 function Timer1Timer() {
   if (TaskBar.done()) {
     game.tasks += 1;
+    game.elapsed += TaskBar.Max.div(1000);
 
     ClearAllSelections();
       
