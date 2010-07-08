@@ -1,12 +1,10 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
 // Before launch
-// TODO: Test use of seed as DNA
 // TODO: Finalize borders in sections of main
 // TODO: Test in all browsers
 // TODO: Get better ProgrOS screenshot with just PQ
 // TODO: Take a snap of some dice. Probably 4. ::: ::: ::_ ___
-// TODO: Hide charsheet button for now
 
 // After launch
 // TODO: Online leader board
