@@ -7,7 +7,7 @@ $(document).ready(function () {
     roster.empty();
     
     if (!window.localStorage) {
-      roster.html("<b>This browser does not support local storage. You may still play fast and loose: the game will last only as long as the page stays open in your browser.");
+      roster.html("<b>Hrumph:</b> This browser does not support local storage. You can still play fast and loose: your character will live only as long as the game stays running in your browser.");
       return;
     }
 
