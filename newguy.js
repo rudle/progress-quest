@@ -71,7 +71,7 @@ $(document).ready(function () {
   $("#Unroll").click(UnrollClick);
   $("#RandomName").click(GenClick);
   $('#Sold').click(sold);
-  $('#Cancel').click(cancel);
+  $('#quit').click(cancel);
 
   //var caption = 'Progress Quest - New Character';
   //if (MainForm.GetHostName != '')

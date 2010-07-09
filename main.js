@@ -998,7 +998,7 @@ function LoadCharacter() {
     LoadGame(sheet);
   }
 
-  $("#titlebar span").text("Progress Quest - " + GameSaveName());
+  $("#title").text("Progress Quest - " + GameSaveName());
 
   if (window.location.href.indexOf("?quit#") > 0)
     $("#quit").click();  // TODO: cheesy

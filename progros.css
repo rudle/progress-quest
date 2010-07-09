@@ -86,31 +86,14 @@ th:first-child {
 
 #quit {
   float: right;
-  border: solid 1px white;
-  border-color: white grey grey white;
-  height: 15px;
-  text-align: center;
-  background-color: #e7e7e7;
-  color: black;
-  margin: 2px;
-  padding: 1px 3px 1px 3px;
-  cursor: pointer;
-  
-  position: relative;
-  display: table;
+  background: url(closedown.png);
+  text-decoration: none;
+  border: none 0;
+  margin: 2px 2px 0 0;
 }
 
-/* http://www.jakpsatweb.cz/css/css-vertical-center-solution.html */
-
-#quit div {
-  display: table-cell;
-  vertical-align: middle;
-  width: 100%
-}
-
-#quit:active {
-  border-color: #e7e7e7;
-  padding: 2px 2px 0px 4px;
+#quit:active img {
+  opacity: 0;
 }
 
 .window { 
