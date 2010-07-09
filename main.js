@@ -2,6 +2,7 @@
 
 // Before launch
 // TODO: Test and get working in IE
+// TODO: Hide cheaters
 
 // After launch
 // TODO: Get fully operational in Opera
@@ -13,6 +14,7 @@
 // TODO: Use a cookie rather than a fragment to choose char?
 // TODO: Line up things on main.html perfectly
 // TODO: Finalize borders in sections of main
+// TODO: Better ipad support
 
 var game = {};
 var lasttick, timerid;
@@ -963,16 +965,18 @@ function FormCreate() {
 
   Kill = $("#Kill");
 
-  $("#quit").click(function () {
-    SaveGame();
-    window.location = "roster.html";
-  });
+  $("#quit").click(quit);
 
   LoadCharacter();
 
   $(document).keypress(FormKeyDown);
 }
 
+
+function quit() {
+  SaveGame();
+  window.location = "roster.html";
+}
 
 function LoadCharacter() {
   var result = true;
@@ -1001,7 +1005,7 @@ function LoadCharacter() {
   $("#title").text("Progress Quest - " + GameSaveName());
 
   if (window.location.href.indexOf("?quit#") > 0)
-    $("#quit").click();  // TODO: cheesy
+    quit();  // TODO: cheesy
 }
 
 
@@ -1066,6 +1070,8 @@ $(function() {
   });
 
   cheat("Save", SaveGame);
+
+  cheat("Quit", quit);
 
 });
 /*$ENDIF*/

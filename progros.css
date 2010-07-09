@@ -88,12 +88,13 @@ th:first-child {
   float: right;
   background: url(closedown.png);
   text-decoration: none;
-  border: none 0;
   margin: 2px 2px 0 0;
+  width: 16px;
+  padding: 0;
 }
 
 #quit:active img {
-  opacity: 0;
+  aopacity: 0;
 }
 
 .window { 
