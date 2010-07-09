@@ -193,8 +193,18 @@ function loadSheet(name) {
 }
 
 function storeRoster(roster) {
-  if (storage)
-    storage.setItem("roster", JSON.stringify(roster));
+  if (storage) {
+    try {
+      storage.setItem("roster", JSON.stringify(roster));
+      return true;
+    } catch (err) {
+      if (err.toString().indexOf("QUOTA_EXCEEDED_ERR") != -1) {
+        alert("The limited storage available on this device has been filled. This game can lo longer be saved.")
+        storage = null;;
+        return false;
+      }
+    }
+  }
 }
 
 function addToRoster(newguy) {

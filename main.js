@@ -5,6 +5,7 @@
 // TODO: Hide cheaters
 
 // After launch
+// TODO: Stop using HTML to save the game
 // TODO: Get fully operational in Opera
 // TODO: Online leader board
 // TODO: Server side saves
