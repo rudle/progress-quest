@@ -1,17 +1,18 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
 // Before launch
-// TODO: Finalize borders in sections of main
-// TODO: Test in all browsers
-// TODO: Get better ProgrOS screenshot with just PQ
+// TODO: Test and get working in IE
 
 // After launch
+// TODO: Get fully operational in Opera
 // TODO: Online leader board
 // TODO: Server side saves
 // TODO: Active controls on fake Xp screen
 // TODO: Refactor logic to run with visible interface as a layer on top
 // TODO: Charsheet in some more pleasing delivery method
 // TODO: Use a cookie rather than a fragment to choose char?
+// TODO: Line up things on main.html perfectly
+// TODO: Finalize borders in sections of main
 
 var game = {};
 var lasttick, timerid;

@@ -53,15 +53,21 @@ div.progress-container:hover div.hint {
 }
 
 #main.window { 
-  width: 684px; 
+  width: 686px; 
 }
 
 #Trats, 
-#Spells, #Spells table,
 #Plots,  #Plots table,
 #Quests, #Quests table { 
   width: 200px;
 }
+
+#Izquierda, #Derecha {
+  width: 202px;
+}
+
+#Spells       { width: 200px; }
+#Spells table { width: 184px; }
 
 #Trats th,             #Trats td             { width: 145px; }
 #Trats th:first-child, #Trats td:first-child { width:  55px; }
@@ -86,6 +92,10 @@ tr         { height:  15px; }
 #Inventory       { width: 270px; }
 #Inventory table { width: 254px; }
 
+#Centro { 
+  width: 274px; 
+}
+
 #Equips th,             #Equips td             { width: 202px; }
 #Equips th:first-child, #Equips td:first-child { width:  70px; }
 
@@ -94,7 +104,7 @@ tr         { height:  15px; }
 }
 
 #Spells .value { 
- width: 15ex;
+ width: 12ex;
 }
 
 #Inventory .value {
@@ -107,12 +117,4 @@ tr         { height:  15px; }
 
 #Quests td, #Plots td { 
   padding-left: 0;
-}
- 
-#Izquierda, #Derecha {
-  width: 202px;
-}
-
-#Centro {
-  width: 274px;
 }

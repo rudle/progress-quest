@@ -46,7 +46,7 @@ table { border-collapse: collapse; border-spacing: 0; }
 }
 
 td, th, .label, tr input, #titlebar, div { 
-  font-family: Helvetica, sans-serif;
+  font-family: Tahoma, Helvetica, sans-serif;
   font-size: 8pt;
 }
 
@@ -84,8 +84,37 @@ th:first-child {
   float: right;
 }
 
+#quit {
+  float: right;
+  border: solid 1px white;
+  border-color: white grey grey white;
+  height: 15px;
+  text-align: center;
+  background-color: #e7e7e7;
+  color: black;
+  margin: 2px;
+  padding: 1px 3px 1px 3px;
+  cursor: pointer;
+  
+  position: relative;
+  display: table;
+}
+
+/* http://www.jakpsatweb.cz/css/css-vertical-center-solution.html */
+
+#quit div {
+  display: table-cell;
+  vertical-align: middle;
+  width: 100%
+}
+
+#quit:active {
+  border-color: #e7e7e7;
+  padding: 2px 2px 0px 4px;
+}
+
 .window { 
-  background-color: #eee; 
+  background-color: #e7e7e7; 
   border: outset 2px silver;
   padding: 2px;
   text-align: left;
