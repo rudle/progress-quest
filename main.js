@@ -987,7 +987,8 @@ function FormCreate() {
 
   AllBars = [ExpBar,PlotBar,TaskBar,QuestBar,EncumBar];
 
-  $.each(AllBars, function (i,bar) { bar.reposition(0); });
+  // TODO: probably get rid of this line
+  $.each(AllBars, function (i,bar) { bar.reset(1); });
   
   Traits = new ListBox("Traits", 2, true);
   Stats = new ListBox("Stats", 2, true);
