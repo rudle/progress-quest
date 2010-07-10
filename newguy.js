@@ -142,23 +142,26 @@ function TNewGuyForm_SoldClick() {
 
 function sold() {
   var newguy = {
-    name: $("#Name").val(),
-    race: $("input:radio[name=Race]:checked").val(),
-    'class': $("input:radio[name=Class]:checked").val(),
+    Traits: {
+      Name: $("#Name").val(),
+      Race: $("input:radio[name=Race]:checked").val(),
+      Class: $("input:radio[name=Class]:checked").val()
+    },
     dna: stats.seed,
     seed: stats.seed,
     birthday: ''+new Date(),
-    birthstamp: +new Date()
+    birthstamp: +new Date(),
+    Stats: {}
   };
   $.each(K.Stats, function (index,value) {
-    newguy[value] = stats[value];
+    newguy.Stats[value] = stats[value];
   });
   addToRoster(newguy);
   
   // TODO: cheesy
   var args = (window.location.href.indexOf("?sold") > 0) ? "?quit" : "";
 
-  window.location = "main.html" + args + "#" + newguy.name;
+  window.location = "main.html" + args + "#" + newguy.Traits.Name;
 }
 
 function cancel() {

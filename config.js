@@ -214,7 +214,7 @@ function storeRoster(roster) {
 function addToRoster(newguy) {
   if (storage) {
     var r = loadRoster();
-    r[newguy.name] = newguy;
+    r[newguy.Traits.Name] = newguy;
     storeRoster(r);
   }
 }

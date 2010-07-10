@@ -1,22 +1,5 @@
 // Copyright (c)2002-2010 Eric Fredricksen <e@fredricksen.net> all rights reserved
 
-// Before launch
-// TODO: Test and get working in IE
-// TODO: Hide cheaters
-
-// After launch
-// TODO: Stop using HTML to save the game
-// TODO: Get fully operational in Opera
-// TODO: Online leader board
-// TODO: Server side saves
-// TODO: Active controls on fake Xp screen
-// TODO: Refactor logic to run with visible interface as a layer on top
-// TODO: Charsheet in some more pleasing delivery method
-// TODO: Use a cookie rather than a fragment to choose char?
-// TODO: Line up things on main.html perfectly
-// TODO: Finalize borders in sections of main
-// TODO: Better ipad support
-
 var game = {};
 var lasttick, timerid;
 
@@ -550,20 +533,23 @@ var AllBars, AllLists;
     
     
 function InitializeCharacter(sheet) {
+  // TODO: some of the below is probably redundant
+  // TODO: just set needed info and then load game?
+  
   game = sheet;
   randseed(game.seed);
 
   game.tasks = 0;
   game.elapsed = 0;
 
-  Put(Traits, 'Name', sheet.name);
+  Put(Traits, 'Name', sheet.Traits.Name);
   Put(Traits, 'Level', 1);
-  Put(Traits, 'Race', sheet.race);
-  Put(Traits, 'Class', sheet['class']);
+  Put(Traits, 'Race', sheet.Traits.Race);
+  Put(Traits, 'Class', sheet.Traits.Class);
 
-  $.each(K.Stats, function (i,stat) { Put(Stats, stat, sheet[stat]); });
-  Put(Stats, 'HP Max', Random(8) + sheet.CON.div(6));
-  Put(Stats, 'MP Max', Random(8) + sheet.INT.div(6));
+  $.each(K.Stats, function (i,stat) { Put(Stats, stat, sheet.Stats[stat]); });
+  Put(Stats, 'HP Max', Random(8) + sheet.Stats.CON.div(6));
+  Put(Stats, 'MP Max', Random(8) + sheet.Stats.INT.div(6));
 
   game.bestequip = 'Sharp Stick';
   Put(Equips, 'Weapon', game.bestequip);
@@ -593,7 +579,6 @@ function InitializeCharacter(sheet) {
   Plots.Add((game.bestplot = 'Prologue'));
   game.act = 0;
 
-  //debugger;
   QuestBar.reset(1);
 
   EncumBar.reset(GetI(Stats, "STR") + 10);
@@ -1032,7 +1017,7 @@ function LoadCharacter() {
     storage = null;
   }
 
-  if (!sheet.Traits) {
+  if (!sheet.Traits.Level) {
     // New game
     InitializeCharacter(sheet);
   } else {
@@ -1047,13 +1032,14 @@ function LoadCharacter() {
 
 
 
-/*$IFDEF CHEATS*/
-$(function() {
+function Cheats() {
+  if ($(".cheater").length) return;
+
   function cheat(label, effect) {
-    var b = $("<button/>");
-    b.text(label);
-    b.click(effect);
-    b.appendTo('body');
+    $("<button/>", {
+      class: "cheater",
+      text: label,
+      click: effect}).appendTo('body');
   }
 
   cheat("Task", function () {
@@ -1113,8 +1099,7 @@ $(function() {
 
   cheat("Quit", quit);
 
-});
-/*$ENDIF*/
+}
 
 function HotOrNot() {
   // Figure out which spell is best
@@ -1195,6 +1180,10 @@ function FormKeyDown(e) {
   if (e.which == 2) { // ^B
     Brag('brag');
     //Navigate(GetHostAddr() + 'name=' + UrlEncode(Get(Traits,'Name')));
+  }
+  
+  if (e.which == 3) { // ^C
+    Cheats();
   }
   
   if (e.which == 7) { // ^G
