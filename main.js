@@ -431,6 +431,17 @@ function ProgressBar(id) {
 }
 
 
+
+function Key(tr) {
+  return $(tr).children().first().text();
+}
+
+function Value(tr) {
+  return $(tr).children().last().text();
+}
+
+
+
 function ListBox(id, columns, fixedkeys) {
   this.id = id;
   //this.box = $("#"+ id);
@@ -443,7 +454,6 @@ function ListBox(id, columns, fixedkeys) {
                caption + "</td></tr>");
     tr.appendTo(this.box);
     tr.each(function () {this.scrollIntoView();});
-    game[this.id].last = caption;
     return tr;
   };
 
@@ -454,7 +464,7 @@ function ListBox(id, columns, fixedkeys) {
   this.item = function (key) {
     if (typeof key == typeof 'string') {
       var result = this.rows().filter(function (index) {
-        return $(this).children().first().text() === key;
+        return Key(this) === key;
       });
       if (!result.length) {
         result = $("<tr><td>" + key + "</td><td/></tr>");
@@ -486,25 +496,49 @@ function ListBox(id, columns, fixedkeys) {
     this.box.find("tr").eq(n).remove();
   };
 
-  this.save = function (game, compact) {
-    if (!game[this.id])
-      game[this.id] = {};
+
+  this.save = function (game) {
+    var that = this;
     var dict = game[this.id];
-    dict.html = compact ? null : this.box.html();
-    if (this.columns == 2) {
+    if (this.fixedkeys) {
+      if (!dict) dict = {};
       this.rows().each(function (index) {
-        dict[$(this).children().first().text()] = 
-          $(this).children().last().text();
+        dict[Key(this)] = Value(this);
+      });
+    } else {
+      // Unfixed keys -- need to maintain order
+      dict = [];
+      this.rows().each(function (index) {
+        if (that.columns == 2) 
+          dict.push([Key(this),Value(this)]);
+        else 
+          dict.push($.trim($(this).text()));
+      });
+    }
+    game[this.id] = dict;
+  };
+
+
+  this.load = function (game) {
+    var that = this;
+    var dict = game[this.id];
+    if (this.fixedkeys) {
+      this.rows().each(function (index) {
+        Put(that, Key(this), dict[Key(this)]);
+      });
+    } else {
+      $.each(dict, function (index, row) {
+        if (that.columns == 2) 
+          Put(that, row[0], row[1]);
+        else
+          that.Add(row);
       });
     }
   };
 
-  this.load = function (game) {
-    this.box.html(game[this.id].html);
-  };
 
   this.label = function (n) {
-    return this.item(n).children().first().text();
+    return Key(this.item(n));
   };
 }
 
@@ -531,8 +565,8 @@ function InitializeCharacter(sheet) {
   Put(Stats, 'HP Max', Random(8) + sheet.CON.div(6));
   Put(Stats, 'MP Max', Random(8) + sheet.INT.div(6));
 
-  game.Equips = {best: 'Sharp Stick'};
-  Put(Equips, 'Weapon', game.Equips.best);
+  game.bestequip = 'Sharp Stick';
+  Put(Equips, 'Weapon', game.bestequip);
 
   Put(Inventory,'Gold',0);
 
@@ -556,7 +590,7 @@ function InitializeCharacter(sheet) {
   Q('plot|2|Loading');
 
   PlotBar.reset(26);
-  Plots.Add('Prologue');
+  Plots.Add((game.bestplot = 'Prologue'));
   game.act = 0;
 
   //debugger;
@@ -636,8 +670,8 @@ function WinEquip() {
   if (plus > 0) name = '+' + name;
 
   Put(Equips, posn, name);
-  game.Equips.best = name;
-  if (posn > 1) game.Equips.best += ' ' + Equips.label(posn);
+  game.bestequip = name;
+  if (posn > 1) game.bestequip += ' ' + Equips.label(posn);
 }
 
 
@@ -651,16 +685,16 @@ function WinStat() {
     // Favor the best stat so it will tend to clump
     var t = 0;
     Stats.rows().each(function (index,elt) {
-      t += Square(StrToInt($(this).children().last().text()));
+      t += Square(StrToInt(Value(this)));
     });
     t = Random(t);
     Stats.rows().each(function (index,elt) {
       i = this;
-      t -= Square(StrToInt($(this).children().last().text()));
+      t -= Square(StrToInt(Value(this)));
       return t < 0;
     });
   }
-  Add(Stats, $(i).find("td").first().text(), 1);
+  Add(Stats, Key(i), 1);
 }
 
 function SpecialItem() {
@@ -732,7 +766,7 @@ function CompleteQuest() {
     game.questmonster = '';  // We're trying to placate them, after all
     break;
   }
-  Quests.Add(caption);
+  Quests.Add((game.bestquest = caption));
   
   Log('Commencing quest: ' + caption);
 
@@ -800,7 +834,8 @@ function CompleteAct() {
   PlotBar.reset(60 * 60 * (1 + 5 * game.act)); // 1 hr + 5/act
   while (Plots.length() > 99)
     Plots.remove(0);
-  Plots.Add('Act ' + toRoman(game.act));
+  Plots.Add((game.bestplot = 'Act ' + toRoman(game.act)));
+  
 
   if (game.act > 1) {
     WinItem();
@@ -846,7 +881,7 @@ function AddR(list, key, value) {
 
 function Get(list, key) {
   var item = list.item(key);
-  return item.children().last().text();
+  return Value(item);
 }
 
 function GetI(list, key) {
@@ -860,7 +895,7 @@ function Min(a,b) {
 function Sum(list) {
   var result = 0;
   list.rows().each(function (index) {
-    result += StrToInt($(this).children().last().text());
+    result += StrToInt(Value(this));
   });
   return result;
 }
@@ -1070,7 +1105,10 @@ $(function() {
     Add(Inventory,'Gold',Random(100));
   });
 
-  cheat("Save", SaveGame);
+  cheat("Save", function () {
+    SaveGame();
+    alert(JSON.stringify(game).length);
+  });
 
   cheat("Quit", quit);
 
@@ -1086,7 +1124,7 @@ function HotOrNot() {
         (best+flat) * toArabic(Get(Spells,best)))
       best = i;
   }
-  game.Spells.best = Spells.label(best) + ' ' + Get(Spells, best);
+  game.bestspell = Spells.label(best) + ' ' + Get(Spells, best);
 
   /// And which stat is best?
   best = 0;
@@ -1094,13 +1132,13 @@ function HotOrNot() {
     if (GetI(Stats,i) > GetI(Stats,best)) 
       best = i;
   }
-  game.Stats.best = Stats.label(best) + ' ' + GetI(Stats, best);
+  game.beststat = Stats.label(best) + ' ' + GetI(Stats, best);
 }
 
 
-function SaveGame(compact) {
+function SaveGame() {
   Log('Saving game: ' + GameSaveName());
-  $.each(AllBars.concat(AllLists), function (i, e) { e.save(game, compact); });
+  $.each(AllBars.concat(AllLists), function (i, e) { e.save(game); });
   HotOrNot();
   game.date = ''+new Date();
   game.stamp = +new Date();
@@ -1179,14 +1217,13 @@ function LFSR(pt, salt) {
 
 
 function Brag(trigger) {
+  SaveGame();
   if (game.isonline) {
-    SaveGame(true);  // Save more compact version
     game.bragtrigger = trigger;
     $.post("webrag.php", game, function (data, textStatus, request) {
       if (data.alert) 
         alert(data.alert);
     }, "json");
   } 
-  SaveGame();  // Save whole game
 }
 

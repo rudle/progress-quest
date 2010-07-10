@@ -1,11 +1,15 @@
 // TODO These code bits don't really belong here, but this is the only shared bit of js
 
 
-function tabulate(html) {
+function tabulate(list) {
   var result = '';
-  $("<table>").html(html).find("tr").each(function () {
-    result += "   " + $(this).children().first().text() + ": " + 
-      $(this).children().last().text() + "\n";
+  $.each(list, function (index) {
+    if (this.length == 2) {
+      if (this[1].length)
+        result += "   " + this[0] + ": " + this[1] + "\n";
+    } else {
+      result += "   " + this + "\n";
+    }
   });
   return result;
 }
@@ -17,7 +21,7 @@ function template(tmpl, data) {
     $.each(p1.split("."), function (i,v) {
       if (!dict) return true;
       if (v == "___") {
-        dict = tabulate(dict.html);
+        dict = tabulate(dict);
       } else {
         dict = dict[v.replace("_"," ")];
       }

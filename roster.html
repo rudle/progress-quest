@@ -126,14 +126,14 @@ Testing:
       <td><a class="icon go">&#x2694;</a></td>
       <td>
         <div>
-          <a class="go"><b>$Traits.Name</b></a> the $Traits.Race ($Plots.last)
+          <a class="go"><b>$name</b></a> the $race ($bestplot)
         </div>
-        <div class="rc">Level $Traits.Level $Traits.Class</div>
-        <div class="bs">$Equips.best / $Spells.best / $Stats.best</div>
+        <div class="rc">Level $Traits.Level $class</div>
+        <div class="bs">$bestequip / $bestspell / $beststat</div>
       </td>
       <td>
         <a class="x" href="#">&#x2620</a><br>
-        <!--<a class="sheet" href="#">&#x270F</a>-->
+        <!-- <a class="sheet" href="#">&#x270F</a> -->
       </td>
     </tr>
   </table>
@@ -141,13 +141,13 @@ Testing:
 
 
 <script type="text/charsheet" id="sheet">
-$Traits.Name the $Traits.Race [$hostname]
+$name the $race [$hostname]
 "$motto"
 
-Level $Traits.Level $Traits.Class (exp. $ExpBar.position/$ExpBar.max)
+Level $Traits.Level $class (exp. $ExpBar.position/$ExpBar.max)
 
-Plot stage: $Plots.last ($PlotBar.hint)
-Quest: $Quests.last ($QuestBar.hint)
+Plot stage: $bestplot ($PlotBar.hint)
+Quest: $bestquest ($QuestBar.hint)
 
 Stats:
    STR $Stats.STR
