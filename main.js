@@ -321,7 +321,7 @@ function Dequeue() {
         game.queue.shift();
         if (a == 'plot') {
           CompleteAct();
-          s = 'Loading ' + Plots.last().text();
+          s = 'Loading ' + game.bestplot;
         }
         Task(s, n * 1000);
       } else {
@@ -471,10 +471,6 @@ function ListBox(id, columns, fixedkeys) {
       this.box.append(result);
     }
     return result;
-  };
-
-  this.last = function () {
-    return this.rows().last();
   };
 
   this.scrollToTop = function () {
@@ -641,7 +637,7 @@ function WinItem() {
 function CompleteQuest() {
   QuestBar.reset(50 + RandomLow(1000));
   if (Quests.length()) {
-    Log('Quest completed: ' + Quests.last().text());
+    Log('Quest completed: ' + game.bestquest);
     Quests.rows().find("input:checkbox").attr("checked", "true");
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
   }
