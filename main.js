@@ -138,7 +138,7 @@ function InterplotCinematic() {
     var nemesis = NamedMonster(GetI(Traits,'Level')+3);
     Q('task|4|A desperate struggle commences with ' + nemesis);
     var s = Random(3);
-    for (var i = 1; i <= Random(1 + Plots.length()); ++i) {
+    for (var i = 1; i <= Random(1 + game.act + 1); ++i) {
       s += 1 + Random(2);
       switch (s % 3) {
       case 0: Q('task|2|Locked in grim combat with ' + nemesis); break;
@@ -351,7 +351,7 @@ function Dequeue() {
 
 function Put(list, key, value) {
   if (typeof key === typeof 1)
-    key = list.fixedkeys ? list.fixedkeys[key] : game[list.id][key][0];
+    key = list.label(key);
 
   if (list.fixedkeys) {
     game[list.id][key] = value;
@@ -459,18 +459,14 @@ function ListBox(id, columns, fixedkeys) {
   };
 
   this.item = function (key) {
-    if (typeof key == typeof 'string') {
-      var result = this.rows().filter(function (index) {
-        return Key(this) === key;
-      });
-      if (!result.length) {
-        result = $("<tr><td>" + key + "</td><td/></tr>");
-        this.box.append(result);
-      }
-      return result;
-    } else {
-      return this.box.find("tr").eq(key);
+    var result = this.rows().filter(function (index) {
+      return Key(this) === key;
+    });
+    if (!result.length) {
+      result = $("<tr><td>" + key + "</td><td/></tr>");
+      this.box.append(result);
     }
+    return result;
   };
 
   this.last = function () {
@@ -486,7 +482,7 @@ function ListBox(id, columns, fixedkeys) {
   };
 
   this.length = function () {
-    return this.rows().length;
+    return (this.fixedkeys || game[this.id]).length;
   };
 
   this.remove0 = function (n) {
@@ -522,7 +518,7 @@ function ListBox(id, columns, fixedkeys) {
 
 
   this.label = function (n) {
-    return Key(this.item(n));
+    return this.fixedkeys ? this.fixedkeys[n] : game[this.id][n][0];
   };
 }
 
@@ -639,8 +635,8 @@ function WinItem() {
 }
 
 function CompleteQuest() {
-  QuestBar.reset(50 + Random(1000));
-  if (Quests.last().length) {
+  QuestBar.reset(50 + RandomLow(1000));
+  if (Quests.length()) {
     Log('Quest completed: ' + Quests.last().text());
     Quests.rows().find("input:checkbox").attr("checked", "true");
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
@@ -762,8 +758,6 @@ function CompleteAct() {
   Plots.rows().find("input:checkbox").attr("checked", "true");
   game.act += 1;
   PlotBar.reset(60 * 60 * (1 + 5 * game.act)); // 1 hr + 5/act
-  while (Plots.length() > 99)
-    Plots.remove0();
   Plots.AddUI((game.bestplot = 'Act ' + toRoman(game.act)));
 
   if (game.act > 1) {
@@ -809,8 +803,22 @@ function AddR(list, key, value) {
 }
 
 function Get(list, key) {
-  var item = list.item(key);
-  return Value(item);
+  if (list.fixedkeys) {
+    if (typeof key === typeof 1) 
+      key = list.fixedkeys[key];
+    return game[list.id][key];
+  } else if (typeof key === typeof 1) {
+    if (key < game[list.id].length)
+      return game[list.id][key][1];
+    else 
+      return "";
+  } else {
+    for (var i = 0; i < game[list.id].length; ++i) {
+      if (game[list.id][i][0] === key)
+        return game[list.id][i][1];
+    }
+    return "";
+  }
 }
 
 function GetI(list, key) {
@@ -1049,14 +1057,18 @@ function Cheats() {
 
 function HotOrNot() {
   // Figure out which spell is best
-  var flat = 1;  // Flattening constant
-  var best = 0, i;
-  for (i = 1; i < Spells.length(); ++i) {
-    if ((i+flat) * toArabic(Get(Spells,i)) >
-        (best+flat) * toArabic(Get(Spells,best)))
-      best = i;
+  if (Spells.length()) {
+    var flat = 1;  // Flattening constant
+    var best = 0, i;
+    for (i = 1; i < Spells.length(); ++i) {
+      if ((i+flat) * toArabic(Get(Spells,i)) >
+          (best+flat) * toArabic(Get(Spells,best)))
+        best = i;
+    }
+    game.bestspell = Spells.label(best) + ' ' + Get(Spells, best);
+  } else {
+    game.bestspell = '';
   }
-  game.bestspell = Spells.label(best) + ' ' + Get(Spells, best);
 
   /// And which stat is best?
   best = 0;
@@ -1136,6 +1148,17 @@ function FormKeyDown(e) {
   if (e.which == 7) { // ^G
     game.guild = InputBox('Choose a guild.\r\rMake sure you undestand the guild rules before you join one. To learn more about guilds, visit http://progressquest.com/guilds.php', game.guild);
     Brag("guild");
+  }
+
+  if (e.which == 16) { // ^P
+    if (timerid) 
+      StopTimer(); 
+    else  
+      StartTimer();
+  }
+
+  if (e.which == 17) { // ^Q
+    quit();
   }
 
 }
