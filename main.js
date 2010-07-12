@@ -601,21 +601,21 @@ function Square(x) { return x * x; }
 function WinStat() {
   var i;
   if (Odds(1,2))  {
-    i = Stats.rows().eq(Random(Stats.length()));
+    i = Pick(K.Stats);
   } else {
     // Favor the best stat so it will tend to clump
     var t = 0;
-    Stats.rows().each(function (index,elt) {
-      t += Square(StrToInt(Value(this)));
+    $.each(K.Stats, function (index, key) {
+      t += Square(GetI(Stats, key));
     });
     t = Random(t);
-    Stats.rows().each(function (index,elt) {
-      i = this;
-      t -= Square(StrToInt(Value(this)));
-      return t < 0;
+    $.each(K.Stats, function (index, key) {
+      i = key;
+      t -= Square(GetI(Stats, key));
+      if (t < 0) return false;
     });
   }
-  Add(Stats, Key(i), 1);
+  Add(Stats, i, 1);
 }
 
 function SpecialItem() {
