@@ -219,9 +219,36 @@ function addToRoster(newguy) {
   }
 }
 
+Number.prototype.div = function (divisor) {
+  var dividend = this / divisor;
+  return (dividend < 0 ? Math.ceil : Math.floor)(dividend);
+};
+
+
+function LevelUpTime(level) {  // seconds 
+  // 20 minutes per level
+  return 20 * level * 60;
+}
+
+
 var K = {};
 
-K.Stats = ["STR","CON","DEX","INT","WIS","CHA"];
+K.Traits = ["Name", "Race", "Class", "Level"];
+
+K.PrimeStats = ["STR","CON","DEX","INT","WIS","CHA"];
+K.Stats = K.PrimeStats.slice(0).concat(["HP Max","MP Max"]);
+
+K.Equips = ["Weapon",
+            "Shield",
+            "Helm",
+            "Hauberk",
+            "Brassairts",
+            "Vambraces",
+            "Gauntlets",
+            "Gambeson",
+            "Cuisses",
+            "Greaves",
+            "Sollerets"];
 
 K.Spells = [
   "Slime Finger",

@@ -299,7 +299,7 @@ function Dequeue() {
         var amt = GetI(Inventory, 1) * GetI(Traits,'Level');
         if (Pos(' of ', Inventory.label(1)) > 0)
           amt *= (1+RandomLow(10)) * (1+RandomLow(GetI(Traits,'Level')));
-        Inventory.remove(1);
+        Inventory.remove1();
         Add(Inventory, 'Gold', amt);
       }
       if (Inventory.length() > 1) {
@@ -385,11 +385,6 @@ function PutUI(list, key, value) {
   item.children().last().text(value);
   item.addClass("selected");
   item.each(function () {this.scrollIntoView();});
-}
-
-function LevelUpTime(level) {  // seconds 
-  // 20 minutes per level
-  return 20 * level * 60;
 }
 
 
@@ -498,31 +493,17 @@ function ListBox(id, columns, fixedkeys) {
     return this.rows().length;
   };
 
-  this.remove = function (n) {
-    this.box.find("tr").eq(n).remove();
+  this.remove0 = function (n) {
+    if (game[this.id])
+      game[this.id].shift();
+    this.box.find("tr").first().remove();
   };
 
-
-  this.save = function (game) {
-    return;
-    var that = this;
-    var dict = game[this.id];
-    if (this.fixedkeys) {
-      if (!dict) dict = {};
-      this.rows().each(function (index) {
-        dict[Key(this)] = Value(this);
-      });
-    } else {
-      // Unfixed keys -- need to maintain order
-      dict = [];
-      this.rows().each(function (index) {
-        if (that.columns == 2) 
-          dict.push([Key(this),Value(this)]);
-        else 
-          dict.push($.trim($(this).text()));
-      });
-    }
-    game[this.id] = dict;
+  this.remove1 = function (n) {
+    var t = game[this.id].shift();
+    game[this.id].shift();
+    game[this.id].unshift(t);
+    this.box.find("tr").eq(1).remove();
   };
 
 
@@ -556,67 +537,6 @@ var Kill;
 var AllBars, AllLists;
     
     
-function InitializeCharacter(sheet) {
-  // TODO: some of the below is probably redundant
-  // TODO: just set needed info and then load game?
-  
-  game = sheet;
-  randseed(game.seed);
-
-  game.tasks = 0;
-  game.elapsed = 0;
-
-  Put(Traits, 'Name', sheet.Traits.Name);
-  Put(Traits, 'Level', 1);
-  Put(Traits, 'Race', sheet.Traits.Race);
-  Put(Traits, 'Class', sheet.Traits.Class);
-
-  $.each(K.Stats, function (i,stat) { Put(Stats, stat, sheet.Stats[stat]); });
-  Put(Stats, 'HP Max', Random(8) + sheet.Stats.CON.div(6));
-  Put(Stats, 'MP Max', Random(8) + sheet.Stats.INT.div(6));
-
-  game.bestequip = 'Sharp Stick';
-  Put(Equips, 'Weapon', game.bestequip);
-
-  Put(Inventory,'Gold',0);
-
-  SaveGame();
-
-  ClearAllSelections();
-
-  // GoButtonClick();
-  
-  ExpBar.reset(LevelUpTime(1));
-
-  game.task = '';
-  game.questmonster = '';
-  game.queue = [];
-
-  Task('Loading.',2000); // that dot is spotted for later...
-  Q('task|10|Experiencing an enigmatic and foreboding night vision');
-  Q("task|6|Much is revealed about that wise old bastard you'd underestimated");
-  Q('task|6|A shocking series of events leaves you alone and bewildered, but resolute');
-  Q('task|4|Drawing upon an unexpected reserve of determination, you set out on a long and dangerous journey');
-  Q('plot|2|Loading');
-
-  PlotBar.reset(26);
-  Plots.AddUI((game.bestplot = 'Prologue'));
-  game.act = 0;
-
-  QuestBar.reset(1);
-
-  EncumBar.reset(GetI(Stats, "STR") + 10);
-
-  Put(Equips, "Hauberk", "-3 Burlap");
-  
-  ClearAllSelections();
-
-  StartTimer();
-
-  Brag('start');
-}
-
-
 function StrToIntDef(s, def) {
   var result = parseInt(s, 10);
   return isNaN(result) ? def : result;
@@ -723,14 +643,14 @@ function WinItem() {
 }
 
 function CompleteQuest() {
-  QuestBar.reset(50 + Random(100));
+  QuestBar.reset(50 + Random(1000));
   if (Quests.last().length) {
     Log('Quest completed: ' + Quests.last().text());
     Quests.rows().find("input:checkbox").attr("checked", "true");
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
   }
   while (Quests.length() > 99)
-    Quests.remove(0);
+    Quests.remove0();
 
   game.questmonster = '';
   var caption;
@@ -847,7 +767,7 @@ function CompleteAct() {
   game.act += 1;
   PlotBar.reset(60 * 60 * (1 + 5 * game.act)); // 1 hr + 5/act
   while (Plots.length() > 99)
-    Plots.remove(0);
+    Plots.remove0();
   Plots.AddUI((game.bestplot = 'Act ' + toRoman(game.act)));
 
   if (game.act > 1) {
@@ -916,11 +836,6 @@ function Sum(list) {
   });
   return result;
 }
-
-Number.prototype.div = function (divisor) {
-  var dividend = this / divisor;
-  return (dividend < 0 ? Math.ceil : Math.floor)(dividend);
-};
 
 
 function LevelUp() {
@@ -1020,7 +935,6 @@ function FormCreate() {
       this.AddUI(i ? 'Act ' + toRoman(i) : "Prologue");
 
   };
-  Plots.save = function () {};
 
   AllLists = [Traits,Stats,Spells,Equips,Inventory,Plots,Quests];
 
@@ -1056,12 +970,7 @@ function LoadCharacter() {
     storage = null;
   }
 
-  if (!sheet.Traits.Level) {
-    // New game
-    InitializeCharacter(sheet);
-  } else {
-    LoadGame(sheet);
-  }
+  LoadGame(sheet);
 
   $("#title").text("Progress Quest - " + GameSaveName());
 
@@ -1119,6 +1028,11 @@ function Cheats() {
     WinItem();
   });
 
+  cheat("Clear items", function () {
+    while (Inventory.length() > 1) 
+      Inventory.remove1();
+  })
+
   cheat("Spell", function () {
     WinSpell();
   });
@@ -1163,7 +1077,7 @@ function HotOrNot() {
 
 function SaveGame() {
   Log('Saving game: ' + GameSaveName());
-  $.each(AllBars.concat(AllLists), function (i, e) { e.save(game); });
+  $.each(AllBars, function (i, e) { e.save(game); });
   HotOrNot();
   game.date = ''+new Date();
   game.stamp = +new Date();
@@ -1181,6 +1095,8 @@ function LoadGame(sheet) {
     this.rows().find("input:checkbox").not(':last').attr("checked", "true");
   });
   Log('Loaded game: ' + name);
+  if (!game.elapsed)
+    Brag('start');
   StartTimer();
 }
 

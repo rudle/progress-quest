@@ -22,13 +22,10 @@ var stats = {"history":[]};
 function RollEm() {
   var Total = $("#Total");
   stats.seed = randseed();
-  stats.total = 
-    Roll("STR") +
-    Roll("CON") +
-    Roll("DEX") +
-    Roll("INT") +
-    Roll("WIS") +
-    Roll("CHA");
+  stats.total = 0;
+  $.each(K.PrimeStats, function () { stats.total += Roll(this); });
+  stats['HP Max'] = Random(8) + stats.CON.div(6);
+  stats['MP Max'] = Random(8) + stats.INT.div(6);
   Total.text(stats.total);
 
   var color = 
@@ -145,19 +142,45 @@ function sold() {
     Traits: {
       Name: $("#Name").val(),
       Race: $("input:radio[name=Race]:checked").val(),
-      Class: $("input:radio[name=Class]:checked").val()
+      Class: $("input:radio[name=Class]:checked").val(),
+      Level: 1
     },
     dna: stats.seed,
     seed: stats.seed,
     birthday: ''+new Date(),
     birthstamp: +new Date(),
-    Stats: {}
+    Stats: stats,
+    task: "",
+    tasks: 0,
+    elapsed: 0,
+    bestequip: "Sharp Rock",
+    Equips: {},
+    Inventory: [['Gold', 0]],
+    Spells: [],
+    act: 0,
+    Quests: [],
+    questmonster: "",
+    kill: "Loading....",
+    ExpBar: { position: 0, max: LevelUpTime(1) },
+    EncumBar: { position: 0, max: stats.STR + 10 },
+    PlotBar: { position: 0, max: 26 },
+    QuestBar: { position: 0, max: 1 },
+    TaskBar: { position: 0, max: 2000 },
+    queue: [
+      'task|10|Experiencing an enigmatic and foreboding night vision',
+      "task|6|Much is revealed about that wise old bastard you'd underestimated",
+      'task|6|A shocking series of events leaves you alone and bewildered, but resolute',
+      'task|4|Drawing upon an unexpected reserve of determination, you set out on a long and dangerous journey',
+      'plot|2|Loading'
+    ],
   };
-  $.each(K.Stats, function (index,value) {
-    newguy.Stats[value] = stats[value];
-  });
-  addToRoster(newguy);
   
+  $.each(K.Equips, function (i,equip) { newguy.Equips[equip] = ''; });
+  newguy.Equips.Weapon = newguy.bestequip;
+  newguy.Equips.Hauberk = "-3 Burlap";
+
+  addToRoster(newguy);
+
   // TODO: cheesy
   var args = (window.location.href.indexOf("?sold") > 0) ? "?quit" : "";
 
