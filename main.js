@@ -369,10 +369,8 @@ function Put(list, key, value) {
 
   PutUI(list, key, value);
 
-  if (key === 'STR') {
-    EncumBar.Max = 10 + value;
-    EncumBar.reposition(EncumBar.Position);
-  }
+  if (key === 'STR')
+    EncumBar.reset(10 + value, EncumBar.Position());
 
   if (list === Inventory)
     EncumBar.reposition(Sum(Inventory) - GetI(Inventory,'Gold'));
@@ -388,46 +386,44 @@ function PutUI(list, key, value) {
 }
 
 
-function ProgressBar(id) {
+function ProgressBar(id, tmpl) {
   this.id = id;
   this.bar = $("#"+ id + " > .bar");
-  this.hint = '';
+  this.tmpl = tmpl;
 
-  this.reset = function (newmax) {
-    this.Max = newmax;
-    this.reposition(0);
+  this.Max = function () { return game[this.id].max; };
+  this.Position = function () { return game[this.id].position; };
+
+  this.reset = function (newmax, newposition) {
+    game[this.id].max = newmax;
+    this.reposition(newposition || 0);
   };
 
   this.reposition = function (newpos) {
-    this.Position = Min(newpos, this.Max);
-    this.bar.css("width", 100 * this.Position / this.Max + "%");
+    game[this.id].position = Min(newpos, this.Max());
 
     // Recompute hint
     var label = $("#" + this.id).find(".hint");
-    this.percent = (100 * this.Position).div(this.Max);
-    this.remaining = Math.floor(this.Max - this.Position);
-    this.time = RoughTime(this.Max - this.Position);
-    this.hint = template(label.attr("template"), this);
-    label.text(this.hint);
+    this.percent = (100 * this.Position()).div(this.Max());
+    this.remaining = Math.floor(this.Max() - this.Position());
+    this.time = RoughTime(this.Max() - this.Position());
+    game[this.id].hint = template(this.tmpl, this);
+
+    // Update UI
+    this.bar.css("width", 100 * this.Position() / this.Max() + "%");
+    label.text(game[this.id].hint);
   };
 
   this.increment = function (inc) {
-    this.reposition(this.Position + inc);
+    this.reposition(this.Position() + inc);
   };
 
   this.done = function () {
-    return this.Position >= this.Max;
+    return this.Position() >= this.Max();
   };
 
-  this.save = function (game) {
-    game[id] = {position: this.Position, 
-                max: this.Max,
-                hint: this.hint};
-  };
-  
   this.load = function (game) {
-    this.Max = game[id].max;
-    this.reposition(game[id].position);
+    this.reposition(this.Position());
   };
 }
 
@@ -845,7 +841,6 @@ function LevelUp() {
   WinStat();
   WinStat();
   WinSpell();
-  ExpBar.Position = 0;
   ExpBar.reset(LevelUpTime(GetI(Traits,'Level')));
   Brag('level');
 }
@@ -868,11 +863,12 @@ function Pos(needle, haystack) {
 function Timer1Timer() {
   if (TaskBar.done()) {
     game.tasks += 1;
-    game.elapsed += TaskBar.Max.div(1000);
+    game.elapsed += TaskBar.Max().div(1000);
 
     ClearAllSelections();
       
-    if (Kill.text() == 'Loading....') TaskBar.Max = 0;
+    if (Kill.text() == 'Loading....') 
+      TaskBar.reset(0);  // Not sure if this is still the ticket
       
     // gain XP / level up
     var gain = Pos('kill|', game.task) == 1;
@@ -880,7 +876,7 @@ function Timer1Timer() {
       if (ExpBar.done()) 
         LevelUp();
       else 
-        ExpBar.increment(TaskBar.Max / 1000);
+        ExpBar.increment(TaskBar.Max() / 1000);
     }
 
     // advance quest
@@ -888,7 +884,7 @@ function Timer1Timer() {
       if (QuestBar.done() || !Quests.length()) {
         CompleteQuest();
       } else {
-        QuestBar.increment(TaskBar.Max / 1000);
+        QuestBar.increment(TaskBar.Max() / 1000);
       }
     }
       
@@ -897,7 +893,7 @@ function Timer1Timer() {
       if (PlotBar.done()) 
         InterplotCinematic();
       else 
-        PlotBar.increment(TaskBar.Max / 1000);
+        PlotBar.increment(TaskBar.Max() / 1000);
     }
      
     Dequeue();
@@ -911,17 +907,14 @@ function Timer1Timer() {
 }
 
 function FormCreate() {
-  ExpBar = new ProgressBar("ExpBar");
-  PlotBar = new ProgressBar("PlotBar");
-  TaskBar = new ProgressBar("TaskBar");
-  QuestBar = new ProgressBar("QuestBar");
-  EncumBar = new ProgressBar("EncumBar");
+  ExpBar = new ProgressBar("ExpBar", "$remaining XP needed for next level");
+  EncumBar = new ProgressBar("EncumBar", "$Position/$Max cubits");
+  PlotBar = new ProgressBar("PlotBar", "$time remaining");
+  QuestBar = new ProgressBar("QuestBar", "$percent% complete");
+  TaskBar = new ProgressBar("TaskBar", "$percent%");
 
   AllBars = [ExpBar,PlotBar,TaskBar,QuestBar,EncumBar];
 
-  // TODO: probably get rid of this line
-  $.each(AllBars, function (i,bar) { bar.reset(1); });
-  
   Traits = new ListBox("Traits", 2, true);
   Stats = new ListBox("Stats", 2, true);
   Spells = new ListBox("Spells", 2, false);
@@ -991,7 +984,7 @@ function Cheats() {
   }
 
   cheat("Task", function () {
-    TaskBar.reposition(TaskBar.Max);
+    TaskBar.reposition(TaskBar.Max());
   });
 
   cheat("Level", function () {
@@ -999,13 +992,13 @@ function Cheats() {
   });
 
   cheat("Quest", function () {
-    QuestBar.reposition(QuestBar.Max);
-    TaskBar.reposition(TaskBar.Max);
+    QuestBar.reposition(QuestBar.Max());
+    TaskBar.reposition(TaskBar.Max());
   });
 
   cheat("Plot", function () {
-    PlotBar.reposition(PlotBar.Max);
-    TaskBar.reposition(TaskBar.Max);
+    PlotBar.reposition(PlotBar.Max());
+    TaskBar.reposition(TaskBar.Max());
   });
 
 
@@ -1077,7 +1070,6 @@ function HotOrNot() {
 
 function SaveGame() {
   Log('Saving game: ' + GameSaveName());
-  $.each(AllBars, function (i, e) { e.save(game); });
   HotOrNot();
   game.date = ''+new Date();
   game.stamp = +new Date();

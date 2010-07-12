@@ -175,6 +175,9 @@ function sold() {
     ],
   };
   
+  newguy.date = newguy.birthday;
+  newguy.stamp = newguy.birthstamp;
+
   $.each(K.Equips, function (i,equip) { newguy.Equips[equip] = ''; });
   newguy.Equips.Weapon = newguy.bestequip;
   newguy.Equips.Hauberk = "-3 Burlap";
