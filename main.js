@@ -372,8 +372,13 @@ function Put(list, key, value) {
   if (key === 'STR')
     EncumBar.reset(10 + value, EncumBar.Position());
 
-  if (list === Inventory)
-    EncumBar.reposition(Sum(Inventory) - GetI(Inventory,'Gold'));
+  if (list === Inventory) {
+    var cubits = 0;
+    $.each(game.Inventory.slice(1), function (index, item) {
+      cubits += StrToInt(item[1]);
+    });
+    EncumBar.reposition(cubits);
+  }
 }
 
 
@@ -403,15 +408,14 @@ function ProgressBar(id, tmpl) {
     game[this.id].position = Min(newpos, this.Max());
 
     // Recompute hint
-    var label = $("#" + this.id).find(".hint");
-    this.percent = (100 * this.Position()).div(this.Max());
-    this.remaining = Math.floor(this.Max() - this.Position());
-    this.time = RoughTime(this.Max() - this.Position());
-    game[this.id].hint = template(this.tmpl, this);
+    game[this.id].percent = (100 * this.Position()).div(this.Max());
+    game[this.id].remaining = Math.floor(this.Max() - this.Position());
+    game[this.id].time = RoughTime(this.Max() - this.Position());
+    game[this.id].hint = template(this.tmpl, game[this.id]);
 
     // Update UI
     this.bar.css("width", 100 * this.Position() / this.Max() + "%");
-    label.text(game[this.id].hint);
+    this.bar.parent().find(".hint").text(game[this.id].hint);
   };
 
   this.increment = function (inc) {
@@ -833,15 +837,6 @@ function Max(a,b) {
   return a > b ? a : b;
 }
 
-function Sum(list) {
-  var result = 0;
-  list.rows().each(function (index) {
-    result += StrToInt(Value(this));
-  });
-  return result;
-}
-
-
 function LevelUp() {
   Add(Traits,'Level',1);
   Add(Stats,'HP Max', GetI(Stats,'CON').div(3) + 1 + Random(4));
@@ -916,7 +911,7 @@ function Timer1Timer() {
 
 function FormCreate() {
   ExpBar =   new ProgressBar("ExpBar", "$remaining XP needed for next level");
-  EncumBar = new ProgressBar("EncumBar", "$Position/$Max cubits");
+  EncumBar = new ProgressBar("EncumBar", "$position/$max cubits");
   PlotBar =  new ProgressBar("PlotBar", "$time remaining");
   QuestBar = new ProgressBar("QuestBar", "$percent% complete");
   TaskBar =  new ProgressBar("TaskBar", "$percent%");
