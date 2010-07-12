@@ -367,7 +367,7 @@ function Put(list, key, value) {
       game[list.id].push([key,value]);
   }
 
-  PutUI(list, key, value);
+  list.PutUI(key, value);
 
   if (key === 'STR')
     EncumBar.reset(10 + value, EncumBar.Position());
@@ -379,15 +379,6 @@ function Put(list, key, value) {
     });
     EncumBar.reposition(cubits);
   }
-}
-
-
-function PutUI(list, key, value) {
-  // Update UI
-  var item = list.item(key);
-  item.children().last().text(value);
-  item.addClass("selected");
-  item.each(function () {this.scrollIntoView();});
 }
 
 
@@ -462,15 +453,18 @@ function ListBox(id, columns, fixedkeys) {
     this.box.find("tr").removeClass("selected");
   };
 
-  this.item = function (key) {
-    var result = this.rows().filter(function (index) {
+  this.PutUI = function (key, value) {
+    var item = this.rows().filter(function (index) {
       return Key(this) === key;
     });
-    if (!result.length) {
-      result = $("<tr><td>" + key + "</td><td/></tr>");
-      this.box.append(result);
+    if (!item.length) {
+      item = $("<tr><td>" + key + "</td><td/></tr>");
+      this.box.append(item);
     }
-    return result;
+
+    item.children().last().text(value);
+    item.addClass("selected");
+    item.each(function () {this.scrollIntoView();});
   };
 
   this.scrollToTop = function () {
@@ -504,12 +498,12 @@ function ListBox(id, columns, fixedkeys) {
     var dict = game[this.id];
     if (this.fixedkeys) {
       $.each(this.fixedkeys, function (index, key) {
-        PutUI(that, key, dict[key]);
+        that.PutUI(key, dict[key]);
       });
     } else {
       $.each(dict, function (index, row) {
         if (that.columns == 2) 
-          PutUI(that, row[0], row[1]);
+          that.PutUI(row[0], row[1]);
         else
           that.AddUI(row);
       });
