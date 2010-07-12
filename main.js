@@ -350,8 +350,8 @@ function Dequeue() {
 
 
 function Put(list, key, value) {
-  if (!game[list.id])
-    game[list.id] = list.fixedkeys ? {} : [];
+  if (typeof key === typeof 1)
+    key = list.fixedkeys ? list.fixedkeys[key] : game[list.id][key][0];
 
   if (list.fixedkeys) {
     game[list.id][key] = value;
@@ -507,13 +507,13 @@ function ListBox(id, columns, fixedkeys) {
     var that = this;
     var dict = game[this.id];
     if (this.fixedkeys) {
-      this.rows().each(function (index) {
-        Put(that, Key(this), dict[Key(this)]);
+      $.each(this.fixedkeys, function (index, key) {
+        PutUI(that, key, dict[key]);
       });
     } else {
       $.each(dict, function (index, row) {
         if (that.columns == 2) 
-          Put(that, row[0], row[1]);
+          PutUI(that, row[0], row[1]);
         else
           that.AddUI(row);
       });
@@ -907,21 +907,21 @@ function Timer1Timer() {
 }
 
 function FormCreate() {
-  ExpBar = new ProgressBar("ExpBar", "$remaining XP needed for next level");
+  ExpBar =   new ProgressBar("ExpBar", "$remaining XP needed for next level");
   EncumBar = new ProgressBar("EncumBar", "$Position/$Max cubits");
-  PlotBar = new ProgressBar("PlotBar", "$time remaining");
+  PlotBar =  new ProgressBar("PlotBar", "$time remaining");
   QuestBar = new ProgressBar("QuestBar", "$percent% complete");
-  TaskBar = new ProgressBar("TaskBar", "$percent%");
+  TaskBar =  new ProgressBar("TaskBar", "$percent%");
 
   AllBars = [ExpBar,PlotBar,TaskBar,QuestBar,EncumBar];
 
-  Traits = new ListBox("Traits", 2, true);
-  Stats = new ListBox("Stats", 2, true);
-  Spells = new ListBox("Spells", 2, false);
-  Equips = new ListBox("Equips", 2, true);
-  Inventory = new ListBox("Inventory", 2, false);
-  Plots = new ListBox("Plots", 1);
-  Quests = new ListBox("Quests", 1);
+  Traits =    new ListBox("Traits",    2, K.Traits);
+  Stats =     new ListBox("Stats",     2, K.Stats);
+  Spells =    new ListBox("Spells",    2);
+  Equips =    new ListBox("Equips",    2, K.Equips);
+  Inventory = new ListBox("Inventory", 2);
+  Plots =     new ListBox("Plots",  1);
+  Quests =    new ListBox("Quests", 1);
 
   Plots.load = function (sheet) {
     for (var i = Max(0, game.act-99); i <= game.act; ++i)
