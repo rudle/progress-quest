@@ -350,10 +350,24 @@ function Dequeue() {
 
 
 function Put(list, key, value) {
-  var item = list.item(key);
-  item.children().last().text(value);
-  item.addClass("selected");
-  item.each(function () {this.scrollIntoView();});
+  if (!game[list.id])
+    game[list.id] = list.fixedkeys ? {} : [];
+
+  if (list.fixedkeys) {
+    game[list.id][key] = value;
+  } else {
+    var i = 0;
+    for (; i < game[list.id].length; ++i) {
+      if (game[list.id][i][0] === key) {
+        game[list.id][i][1] = value;
+        break;
+      }
+    }
+    if (i == game[list.id].length)
+      game[list.id].push([key,value]);
+  }
+
+  PutUI(list, key, value);
 
   if (key === 'STR') {
     EncumBar.Max = 10 + value;
@@ -362,6 +376,15 @@ function Put(list, key, value) {
 
   if (list === Inventory)
     EncumBar.reposition(Sum(Inventory) - GetI(Inventory,'Gold'));
+}
+
+
+function PutUI(list, key, value) {
+  // Update UI
+  var item = list.item(key);
+  item.children().last().text(value);
+  item.addClass("selected");
+  item.each(function () {this.scrollIntoView();});
 }
 
 function LevelUpTime(level) {  // seconds 
@@ -432,7 +455,7 @@ function ListBox(id, columns, fixedkeys) {
   this.columns = columns;
   this.fixedkeys = fixedkeys;
 
-  this.Add = function (caption) {
+  this.AddUI = function (caption) {
     var tr = $("<tr><td><input type=checkbox disabled> " + 
                caption + "</td></tr>");
     tr.appendTo(this.box);
@@ -481,6 +504,7 @@ function ListBox(id, columns, fixedkeys) {
 
 
   this.save = function (game) {
+    return;
     var that = this;
     var dict = game[this.id];
     if (this.fixedkeys) {
@@ -514,7 +538,7 @@ function ListBox(id, columns, fixedkeys) {
         if (that.columns == 2) 
           Put(that, row[0], row[1]);
         else
-          that.Add(row);
+          that.AddUI(row);
       });
     }
   };
@@ -576,7 +600,7 @@ function InitializeCharacter(sheet) {
   Q('plot|2|Loading');
 
   PlotBar.reset(26);
-  Plots.Add((game.bestplot = 'Prologue'));
+  Plots.AddUI((game.bestplot = 'Prologue'));
   game.act = 0;
 
   QuestBar.reset(1);
@@ -751,7 +775,12 @@ function CompleteQuest() {
     game.questmonster = '';  // We're trying to placate them, after all
     break;
   }
-  Quests.Add((game.bestquest = caption));
+  if (!game.Quests) game.Quests = [];
+  while (game.Quests.length > 99) game.Quests.shift();
+  game.Quests.push(caption);
+  game.bestquest = caption;
+  Quests.AddUI(caption);
+    
   
   Log('Commencing quest: ' + caption);
 
@@ -819,8 +848,7 @@ function CompleteAct() {
   PlotBar.reset(60 * 60 * (1 + 5 * game.act)); // 1 hr + 5/act
   while (Plots.length() > 99)
     Plots.remove(0);
-  Plots.Add((game.bestplot = 'Act ' + toRoman(game.act)));
-  
+  Plots.AddUI((game.bestplot = 'Act ' + toRoman(game.act)));
 
   if (game.act > 1) {
     WinItem();
@@ -875,6 +903,10 @@ function GetI(list, key) {
 
 function Min(a,b) {
   return a < b ? a : b;
+}
+
+function Max(a,b) {
+  return a > b ? a : b;
 }
 
 function Sum(list) {
@@ -982,6 +1014,13 @@ function FormCreate() {
   Inventory = new ListBox("Inventory", 2, false);
   Plots = new ListBox("Plots", 1);
   Quests = new ListBox("Quests", 1);
+
+  Plots.load = function (sheet) {
+    for (var i = Max(0, game.act-99); i <= game.act; ++i)
+      this.AddUI(i ? 'Act ' + toRoman(i) : "Prologue");
+
+  };
+  Plots.save = function () {};
 
   AllLists = [Traits,Stats,Spells,Equips,Inventory,Plots,Quests];
 
