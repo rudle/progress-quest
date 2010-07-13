@@ -23,7 +23,14 @@ function RollEm() {
   var Total = $("#Total");
   stats.seed = randseed();
   stats.total = 0;
-  $.each(K.PrimeStats, function () { stats.total += Roll(this); });
+  var best = -1;
+  $.each(K.PrimeStats, function () { 
+    stats.total += Roll(this);
+    if (best < stats[this]) {
+      best = stats[this];
+      stats.best = this;
+    }
+  });
   stats['HP Max'] = Random(8) + stats.CON.div(6);
   stats['MP Max'] = Random(8) + stats.INT.div(6);
   Total.text(stats.total);
@@ -150,6 +157,7 @@ function sold() {
     birthday: ''+new Date(),
     birthstamp: +new Date(),
     Stats: stats,
+    beststat: stats.best + " " + stats[stats.best],
     task: "",
     tasks: 0,
     elapsed: 0,
@@ -158,6 +166,7 @@ function sold() {
     Inventory: [['Gold', 0]],
     Spells: [],
     act: 0,
+    bestplot: "Prologue",
     Quests: [],
     questmonster: "",
     kill: "Loading....",

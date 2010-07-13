@@ -8,14 +8,11 @@ function load() {
     roster.html("<b>Hrumph:</b> This browser does not support local storage. You can still play fast and loose: your character will live only as long as the game stays running in your browser.");
     return;
   }
+
+  var newone = window.location.href.split('#')[1];
   
   games = loadRoster();
   $.each(games, function (key, c) {
-    if (!c.Traits) {
-      delete games[key];
-      return;
-    }
-    
     var name = c.Traits.Name;
     
     var br = brag(c);
@@ -36,6 +33,9 @@ function load() {
       // TODO: put in a window or whatev
     });
     
+    if (name === newone)
+      br.addClass("lit");
+
     /*
       var p = $("<p style='font:6pt verdana'/>");
       p.appendTo(roster);
