@@ -161,6 +161,7 @@ function CookieStorage() {
       return result;
     } catch (err) {
       // Probably a JSON parse error
+      return null;
     }
   };
   
@@ -170,8 +171,8 @@ function CookieStorage() {
 
   this.removeItem = function (key) {
     document.cookie = key + "=; expires=Thu, 01-Jan-70 00:00:01 GMT;";
-  }
-};
+  };
+}
     
 
 var storage = window.localStorage;
@@ -203,8 +204,8 @@ function storeRoster(roster) {
       return true;
     } catch (err) {
       if (err.toString().indexOf("QUOTA_EXCEEDED_ERR") != -1) {
-        alert("This browser lacks storage capacity to save this game. This game can continue but cannot be saved. (Mobile Safari, I'll wager?)")
-        storage = null;;
+        alert("This browser lacks storage capacity to save this game. This game can continue but cannot be saved. (Mobile Safari, I'll wager?)");
+        storage = null;
         return false;
       }
     }

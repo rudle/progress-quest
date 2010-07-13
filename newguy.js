@@ -181,7 +181,7 @@ function sold() {
       'task|6|A shocking series of events leaves you alone and bewildered, but resolute',
       'task|4|Drawing upon an unexpected reserve of determination, you set out on a long and dangerous journey',
       'plot|2|Loading'
-    ],
+    ]
   };
   
   newguy.date = newguy.birthday;

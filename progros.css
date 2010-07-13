@@ -80,10 +80,6 @@ th:first-child {
   margin: 2 0 0 2;
 }
 
-#titlebar button { 
-  float: right;
-}
-
 #quit {
   float: right;
   background: url(closedown.png);

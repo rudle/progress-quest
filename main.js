@@ -1017,7 +1017,7 @@ function Cheats() {
   cheat("Clear items", function () {
     while (Inventory.length() > 1) 
       Inventory.remove1();
-  })
+  });
 
   cheat("Spell", function () {
     WinSpell();
