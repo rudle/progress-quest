@@ -203,7 +203,7 @@ function storeRoster(roster) {
       return true;
     } catch (err) {
       if (err.toString().indexOf("QUOTA_EXCEEDED_ERR") != -1) {
-        alert("The limited storage available on this device has been filled. This game can lo longer be saved.")
+        alert("This browser lacks storage capacity to save this game. This game can continue but cannot be saved. (Mobile Safari, I'll wager?)")
         storage = null;;
         return false;
       }

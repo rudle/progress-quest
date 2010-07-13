@@ -971,7 +971,7 @@ function Cheats() {
 
   function cheat(label, effect) {
     $("<button/>", {
-      class: "cheater",
+      "class": "cheater",
       text: label,
       click: effect}).appendTo('body');
   }
