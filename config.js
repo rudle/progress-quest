@@ -278,6 +278,7 @@ K.Spells = [
   "Holy Batpole",
   "Tumor (Benign)",
   "Braingate",
+  "Summon a Bitch",
   "Nonplus",
   "Animate Nightstand",
   "Eye of the Troglodyte",
