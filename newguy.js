@@ -67,7 +67,7 @@ function fill(e, a, n) {
   }
 }
 
-$(document).ready(function () {
+function NewGuyFormLoad() {
   fill("#races", K.Races, "Race");
   fill("#classes", K.Klasses, "Class");
 
@@ -83,8 +83,8 @@ $(document).ready(function () {
 
   if (!$("#Name").text()) {
     GenClick();
-    $("#Name")[0].focus();
-    $("#Name")[0].select();
+    $("#Name").focus();
+    $("#Name").select();
   }
 
   seed = new Alea();
@@ -92,9 +92,10 @@ $(document).ready(function () {
 
   if (window.location.href.indexOf("?sold") > 0)
     sold();  // TODO: cheesy
-});
+}
 
 
+$(document).ready(NewGuyFormLoad);
 
 /* Multiplayer:
 function TNewGuyForm_ParseSoldResponse(body) {

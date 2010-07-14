@@ -1083,7 +1083,7 @@ function LoadGame(sheet) {
   $.each([Plots,Quests], function () {
     this.rows().find("input:checkbox").not(':last').attr("checked", "true");
   });
-  Log('Loaded game: ' + name);
+  Log('Loaded game: ' + game.Traits.Name);
   if (!game.elapsed)
     Brag('start');
   StartTimer();
@@ -1098,7 +1098,6 @@ $(window).unload(function (event) {
   StopTimer();
   SaveGame();
 });
-
 
 function GameSaveName() {
   if (!game.saveName) {
