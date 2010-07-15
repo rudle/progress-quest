@@ -92,11 +92,29 @@ timeGetTime = function () {
   return now;
 }
 
-for (var i = 0; i < 100000; ++i) {
+function charsheet(game) {
+  print(game.Traits.Name, 
+        game.Traits.Level,
+        game.tasks,
+        RoughTime(game.elapsed));
+}
+
+for (var j = 1, t = 0; j < 1001; ++j) {
+  t += LevelUpTime(j);
+  if (j % 50 == 0)
+    print(j, RoughTime(LevelUpTime(j))+",", RoughTime(t));
+}
+return;
+
+var l = 0;
+for (var i = 0; i < 100000000; ++i) {
+  if (game.Traits.Level != l) {
+    SaveGame();
+    charsheet(game);
+    l = game.Traits.Level;
+  }
   //assert(timers.id == 1);// TODO: this is for simplicity
   now += timers[1].interval;
   timers[1].callback();
 }
 
-SaveGame();
-print(guy, game.elapsed, game.tasks, game.Traits.Level, game.task);//JSON.stringify(loadSheet(guy)));
