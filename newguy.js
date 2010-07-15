@@ -3,7 +3,8 @@
 
 function Roll(stat) {
   stats[stat] = 3 + Random(6) + Random(6) + Random(6);
-  $("#"+stat).text(stats[stat]);
+  if (!navigator.v8)
+    $("#"+stat).text(stats[stat]);
   return stats[stat];
 }
 
@@ -17,15 +18,17 @@ function Choose(n, k) {
   return result / d;
 }
 
-var stats = {"history":[]};
+var stats = {};
+var traits = {};
+var total = 0;
+var seedHistory = [];
 
 function RollEm() {
-  var Total = $("#Total");
   stats.seed = randseed();
-  stats.total = 0;
+  total = 0;
   var best = -1;
   $.each(K.PrimeStats, function () { 
-    stats.total += Roll(this);
+    total += Roll(this);
     if (best < stats[this]) {
       best = stats[this];
       stats.best = this;
@@ -33,27 +36,31 @@ function RollEm() {
   });
   stats['HP Max'] = Random(8) + stats.CON.div(6);
   stats['MP Max'] = Random(8) + stats.INT.div(6);
-  Total.text(stats.total);
 
   var color = 
-    (stats.total >= (63+18)) ? 'red'    :
-    (stats.total > (4 * 18)) ? 'yellow' :
-    (stats.total <= (63-18)) ? 'grey'   :
-    (stats.total < (3 * 18)) ? 'silver' :
+    (total >= (63+18)) ? 'red'    :
+    (total > (4 * 18)) ? 'yellow' :
+    (total <= (63-18)) ? 'grey'   :
+    (total < (3 * 18)) ? 'silver' :
     'white';
-  Total.css("background-color", color);
 
-  $("#Unroll").attr("disabled", !stats.history.length);
+  if (!navigator.v8) {
+    var Total = $("#Total");
+    Total.text(total);
+    Total.css("background-color", color);
+
+    $("#Unroll").attr("disabled", !seedHistory.length);
+  }
 }
 
 function RerollClick() {
-  stats.history.push(stats.seed);
+  seedHistory.push(stats.seed);
   RollEm();
 }
 
 
 function UnrollClick() {
-  randseed(stats.history.pop());
+  randseed(seedHistory.pop());
   RollEm();
 }
 
@@ -61,41 +68,45 @@ function fill(e, a, n) {
   var def = Random(a.length);
   for (var i = 0; i < a.length; ++i) {
     var v = a[i].split("|")[0];
-    var check = def == i ? " checked " : " ";
-    $("<div><input type=radio id='" + v + "' name=\"" + n + "\" value=\"" + v + "\" " +
-      check  +"><label for='" + v + "'>" + v + "</label></div>").appendTo(e);
+    var check = (def == i) ? " checked " : " ";
+    if (def == i) traits[n] = v;
+    if (!navigator.v8) {
+      $("<div><input type=radio id='" + v + "' name=\"" + n + "\" value=\"" + v + "\" " +
+        check  +"><label for='" + v + "'>" + v + "</label></div>").appendTo(e);
+    }
   }
 }
 
 function NewGuyFormLoad() {
+  seed = new Alea();
+  RollEm();
+  GenClick();
+
   fill("#races", K.Races, "Race");
   fill("#classes", K.Klasses, "Class");
 
-  $("#Reroll").click(RerollClick);
-  $("#Unroll").click(UnrollClick);
-  $("#RandomName").click(GenClick);
-  $('#Sold').click(sold);
-  $('#quit').click(cancel);
+  if (!navigator.v8) {
+    $("#Reroll").click(RerollClick);
+    $("#Unroll").click(UnrollClick);
+    $("#RandomName").click(GenClick);
+    $('#Sold').click(sold);
+    $('#quit').click(cancel);
 
-  //var caption = 'Progress Quest - New Character';
-  //if (MainForm.GetHostName != '')
-  //  caption = caption + ' [' + MainForm.GetHostName + ']';
+    //var caption = 'Progress Quest - New Character';
+    //if (MainForm.GetHostName != '')
+      //  caption = caption + ' [' + MainForm.GetHostName + ']';
 
-  if (!$("#Name").text()) {
-    GenClick();
     $("#Name").focus();
     $("#Name").select();
   }
-
-  seed = new Alea();
-  RollEm();
 
   if (window.location.href.indexOf("?sold") > 0)
     sold();  // TODO: cheesy
 }
 
 
-$(document).ready(NewGuyFormLoad);
+if (!navigator.v8)
+  $(document).ready(NewGuyFormLoad);
 
 /* Multiplayer:
 function TNewGuyForm_ParseSoldResponse(body) {
@@ -147,12 +158,7 @@ function TNewGuyForm_SoldClick() {
 
 function sold() {
   var newguy = {
-    Traits: {
-      Name: $("#Name").val(),
-      Race: $("input:radio[name=Race]:checked").val(),
-      Class: $("input:radio[name=Class]:checked").val(),
-      Level: 1
-    },
+    Traits: traits,
     dna: stats.seed,
     seed: stats.seed,
     birthday: ''+new Date(),
@@ -184,7 +190,14 @@ function sold() {
       'plot|2|Loading'
     ]
   };
-  
+
+  if (!navigator.v8) {
+    newguy.Traits.Name = $("#Name").val();
+    newguy.Traits.Race = $("input:radio[name=Race]:checked").val();
+    newguy.Traits.Class = $("input:radio[name=Class]:checked").val();
+  }
+  newguy.Traits.Level = 1;
+
   newguy.date = newguy.birthday;
   newguy.stamp = newguy.birthstamp;
 
@@ -197,14 +210,16 @@ function sold() {
   // TODO: cheesy
   var args = (window.location.href.indexOf("?sold") > 0) ? "?quit" : "";
 
-  window.location = "main.html" + args + "#" + newguy.Traits.Name;
+  window.location.href = "main.html" + args + "#" + newguy.Traits.Name;
 }
 
 function cancel() {
-  window.location = "roster.html";
+  window.location.href = "roster.html";
 }
 
 function GenClick() {
-  $("#Name").attr("value", GenerateName());
+  traits.Name = GenerateName();
+  if (!navigator.v8)
+    $("#Name").attr("value", traits.Name);
 }
 

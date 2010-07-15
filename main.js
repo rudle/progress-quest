@@ -405,8 +405,10 @@ function ProgressBar(id, tmpl) {
     game[this.id].hint = template(this.tmpl, game[this.id]);
 
     // Update UI
-    this.bar.css("width", 100 * this.Position() / this.Max() + "%");
-    this.bar.parent().find(".hint").text(game[this.id].hint);
+    if (this.bar) {
+      this.bar.css("width", 100 * this.Position() / this.Max() + "%");
+      this.bar.parent().find(".hint").text(game[this.id].hint);
+    }
   };
 
   this.increment = function (inc) {
@@ -436,12 +438,12 @@ function Value(tr) {
 
 function ListBox(id, columns, fixedkeys) {
   this.id = id;
-  //this.box = $("#"+ id);
   this.box = $("tbody#_, #_ tbody".replace(/_/g, id));
   this.columns = columns;
   this.fixedkeys = fixedkeys;
 
   this.AddUI = function (caption) {
+    if (!this.box) return;
     var tr = $("<tr><td><input type=checkbox disabled> " + 
                caption + "</td></tr>");
     tr.appendTo(this.box);
@@ -450,10 +452,12 @@ function ListBox(id, columns, fixedkeys) {
   };
 
   this.ClearSelection = function () {
-    this.box.find("tr").removeClass("selected");
+    if (this.box)
+      this.box.find("tr").removeClass("selected");
   };
 
   this.PutUI = function (key, value) {
+    if (!this.box) return;
     var item = this.rows().filter(function (index) {
       return Key(this) === key;
     });
@@ -468,12 +472,22 @@ function ListBox(id, columns, fixedkeys) {
   };
 
   this.scrollToTop = function () {
-    this.box.parents(".scroll").scrollTop(0);
+    if (this.box)
+      this.box.parents(".scroll").scrollTop(0);
   };
 
   this.rows = function () {
     return this.box.find("tr").has("td");
   };
+
+  this.CheckAll = function (butlast) {
+    if (this.box) {
+      if (butlast)
+        this.rows().find("input:checkbox").not(':last').attr("checked","true");
+      else 
+        this.rows().find("input:checkbox").attr("checked","true");
+    }
+   };
 
   this.length = function () {
     return (this.fixedkeys || game[this.id]).length;
@@ -529,7 +543,8 @@ function StrToIntDef(s, def) {
 }
 
 
-$(document).ready(FormCreate);
+if (!navigator.v8)
+  $(document).ready(FormCreate);
 
 
 function WinSpell() {
@@ -632,7 +647,7 @@ function CompleteQuest() {
   QuestBar.reset(50 + RandomLow(1000));
   if (Quests.length()) {
     Log('Quest completed: ' + game.bestquest);
-    Quests.rows().find("input:checkbox").attr("checked", "true");
+    Quests.CheckAll();
     [WinSpell,WinEquip,WinStat,WinItem][Random(4)]();
   }
   while (Quests.length() > 99)
@@ -749,7 +764,7 @@ function toArabic(s) {
 }
 
 function CompleteAct() {
-  Plots.rows().find("input:checkbox").attr("checked", "true");
+  Plots.CheckAll();
   game.act += 1;
   PlotBar.reset(60 * 60 * (1 + 5 * game.act)); // 1 hr + 5/act
   Plots.AddUI((game.bestplot = 'Act ' + toRoman(game.act)));
@@ -770,9 +785,10 @@ function Log(line) {
 }
 
 function Task(caption, msec) {
-  Kill.text(caption + '...');
-  Log(Kill.text());
-  game.kill = Kill.text();
+  game.kill = caption + "...";
+  if (Kill)
+    Kill.text(game.kill);
+  Log(game.kill);
   TaskBar.reset(msec);
 }
 
@@ -860,7 +876,7 @@ function Timer1Timer() {
 
     ClearAllSelections();
       
-    if (Kill.text() == 'Loading....') 
+    if (game.kill == 'Loading....') 
       TaskBar.reset(0);  // Not sure if this is still the ticket
       
     // gain XP / level up
@@ -924,13 +940,25 @@ function FormCreate() {
 
   AllLists = [Traits,Stats,Spells,Equips,Inventory,Plots,Quests];
 
-  Kill = $("#Kill");
+  if (!navigator.v8) {
+    Kill = $("#Kill");
+    
+    $("#quit").click(quit);
+    
+    $(document).keypress(FormKeyDown);
 
-  $("#quit").click(quit);
+    $(document).bind('beforeunload', function () {
+      if (!storage)
+       return "Are you sure you want to quit? All your progress will be lost!";
+    });
+  
+    $(window).unload(function (event) {
+      StopTimer();
+      SaveGame();
+    });
+  }
 
   LoadCharacter();
-
-  $(document).keypress(FormKeyDown);
 }
 
 
@@ -958,7 +986,8 @@ function LoadCharacter() {
 
   LoadGame(sheet);
 
-  $("#title").text("Progress Quest - " + GameSaveName());
+  if (!navigator.v8)
+    $("#title").text("Progress Quest - " + GameSaveName());
 
   if (window.location.href.indexOf("?quit#") > 0)
     quit();  // TODO: cheesy
@@ -1078,26 +1107,17 @@ function LoadGame(sheet) {
   game = sheet;
   randseed(game.seed);
   $.each(AllBars.concat(AllLists), function (i, e) { e.load(game); });
-  Kill.text(game.kill);
+  if (Kill)
+    Kill.text(game.kill);
   ClearAllSelections();
   $.each([Plots,Quests], function () {
-    this.rows().find("input:checkbox").not(':last').attr("checked", "true");
+    this.CheckAll(true);
   });
   Log('Loaded game: ' + game.Traits.Name);
   if (!game.elapsed)
     Brag('start');
   StartTimer();
 }
-
-$(document).bind('beforeunload', function () {
-  if (!storage)
-    return "Are you sure you want to quit? All your progress will be lost!";
-});
-
-$(window).unload(function (event) {
-  StopTimer();
-  SaveGame();
-});
 
 function GameSaveName() {
   if (!game.saveName) {
