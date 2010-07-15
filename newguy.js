@@ -3,7 +3,7 @@
 
 function Roll(stat) {
   stats[stat] = 3 + Random(6) + Random(6) + Random(6);
-  if (!navigator.v8)
+  if (document)
     $("#"+stat).text(stats[stat]);
   return stats[stat];
 }
@@ -44,7 +44,7 @@ function RollEm() {
     (total < (3 * 18)) ? 'silver' :
     'white';
 
-  if (!navigator.v8) {
+  if (document) {
     var Total = $("#Total");
     Total.text(total);
     Total.css("background-color", color);
@@ -70,7 +70,7 @@ function fill(e, a, n) {
     var v = a[i].split("|")[0];
     var check = (def == i) ? " checked " : " ";
     if (def == i) traits[n] = v;
-    if (!navigator.v8) {
+    if (document) {
       $("<div><input type=radio id='" + v + "' name=\"" + n + "\" value=\"" + v + "\" " +
         check  +"><label for='" + v + "'>" + v + "</label></div>").appendTo(e);
     }
@@ -85,7 +85,7 @@ function NewGuyFormLoad() {
   fill("#races", K.Races, "Race");
   fill("#classes", K.Klasses, "Class");
 
-  if (!navigator.v8) {
+  if (document) {
     $("#Reroll").click(RerollClick);
     $("#Unroll").click(UnrollClick);
     $("#RandomName").click(GenClick);
@@ -105,7 +105,7 @@ function NewGuyFormLoad() {
 }
 
 
-if (!navigator.v8)
+if (document)
   $(document).ready(NewGuyFormLoad);
 
 /* Multiplayer:
@@ -191,7 +191,7 @@ function sold() {
     ]
   };
 
-  if (!navigator.v8) {
+  if (document) {
     newguy.Traits.Name = $("#Name").val();
     newguy.Traits.Race = $("input:radio[name=Race]:checked").val();
     newguy.Traits.Class = $("input:radio[name=Class]:checked").val();
@@ -219,7 +219,7 @@ function cancel() {
 
 function GenClick() {
   traits.Name = GenerateName();
-  if (!navigator.v8)
+  if (document)
     $("#Name").attr("value", traits.Name);
 }
 

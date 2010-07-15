@@ -496,14 +496,16 @@ function ListBox(id, columns, fixedkeys) {
   this.remove0 = function (n) {
     if (game[this.id])
       game[this.id].shift();
-    this.box.find("tr").first().remove();
+    if (this.box)
+      this.box.find("tr").first().remove();
   };
 
   this.remove1 = function (n) {
     var t = game[this.id].shift();
     game[this.id].shift();
     game[this.id].unshift(t);
-    this.box.find("tr").eq(1).remove();
+    if (this.box)
+      this.box.find("tr").eq(1).remove();
   };
 
 
@@ -543,7 +545,7 @@ function StrToIntDef(s, def) {
 }
 
 
-if (!navigator.v8)
+if (document)
   $(document).ready(FormCreate);
 
 
@@ -940,7 +942,7 @@ function FormCreate() {
 
   AllLists = [Traits,Stats,Spells,Equips,Inventory,Plots,Quests];
 
-  if (!navigator.v8) {
+  if (document) {
     Kill = $("#Kill");
     
     $("#quit").click(quit);
@@ -986,7 +988,7 @@ function LoadCharacter() {
 
   LoadGame(sheet);
 
-  if (!navigator.v8)
+  if (document)
     $("#title").text("Progress Quest - " + GameSaveName());
 
   if (window.location.href.indexOf("?quit#") > 0)

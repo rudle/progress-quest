@@ -1,68 +1,39 @@
 //!/usr/bin/env v8
 
-function noop() {}
-function nada() { return {}; }
-
-var document = {
-  addEventListener: noop,
-  createElement: function () {
-    var result = {
-      style: {},
-      getElementsByTagName: nada,
-      appendChild: noop,
-    };
-    result.lastChild = result;
-    return result;
-  },
-  documentElement: {
-    insertBefore: noop,
-    removeChild: noop,
-  },
-  getElementById: nada,
-  createComment: noop,
-  createDocumentFragment: nada,
-};
-
 var window = {
   location: {href: "#Woogle"},
+
   localStorage: {
-    items: {},
+    items: null,
 
     getItem: function(key) {
+      if (!this.items) {
+        try {
+          this.items = JSON.parse(read("local.storage"));
+        } catch (e) {
+          print(e);
+          this.items = {};
+        }
+      }
       return this.items[key];
     },
   
     setItem: function (key, value) {
       this.items[key] = value;
+      write("local.storage", JSON.stringify(this.items));
     },
 
     removeItem: function (key) {
       delete this.items[key];
+      write("local.storage", JSON.stringify(this.items));
     }
   },
-  document: document,
-  addEventListener: noop,
 };
+
 
 var location = window.location;
 
-var v8 = true;
-
-var $ = function () {
-  return null;
-  return {
-    click: noop,
-    keypress: noop,
-    ready: noop,
-    unload: noop,
-    bind: noop,
-    text: noop,
-    appendTo: noop,
-    attr: noop,
-    focus: noop,
-    select: noop,
-  };
-};
+var $ = function () { return null; };
 $.isFunction = function (obj) {
   return toString.call(obj) === "[object Function]";
 },
@@ -87,20 +58,9 @@ $.each = function (object, callback) {
   return object;
 }
 
+var document = null;
 
-var navigator = { 
-  v8: true,
-  userAgent: "V8 Shell" 
-};
 var alert = function (m) { print("ALERT: " + m); };
-
-var randseed = function () {};
-try {
-  window.localStorage.items = JSON.parse(read("local.storage"));
-} catch (e) {
-  print(e);
-  window.localStorage.items = {};
-}
 
 var now = 0;
 var timers = [{}];
@@ -109,9 +69,12 @@ function setInterval(callback, interval) {
   return timers.length-1;
 }
 
-//load("jquery.js");
-//var $ = window.$;
 load("config.js");
+
+var cs = 0;
+for (var c in loadRoster())
+  cs++;
+print(cs, "characters");
 
 load("newguy.js");
 NewGuyFormLoad();
@@ -129,11 +92,11 @@ timeGetTime = function () {
   return now;
 }
 
-for (var i = 0; i < 1000; ++i) {
+for (var i = 0; i < 100000; ++i) {
   //assert(timers.id == 1);// TODO: this is for simplicity
   now += timers[1].interval;
   timers[1].callback();
 }
 
 SaveGame();
-print(guy, game.elapsed, game.tasks, game.task);//JSON.stringify(loadSheet(guy)));
+print(guy, game.elapsed, game.tasks, game.Traits.Level, game.task);//JSON.stringify(loadSheet(guy)));
