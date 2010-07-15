@@ -11,6 +11,7 @@ function load() {
 
   var newone = window.location.href.split('#')[1];
   
+  var count = 0;
   games = loadRoster();
   $.each(games, function (key, c) {
     var name = c.Traits.Name;
@@ -41,7 +42,11 @@ function load() {
       p.appendTo(roster);
       p.text(JSON.stringify(c));
       */
+
+    ++count;
   });
+  if (!count) 
+    roster.html("<i>Games you start can be loaded from this page, but no saved games were found. Roll up a new character to get started.</i>");
 }
 
 

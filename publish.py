@@ -3,7 +3,18 @@
 
 import subprocess
 
-manifest = "*.html *.js *.gif back.jpg dicebar.jpg close*.png *.css".split()
+manifest = [
+  "*.html",
+  "config.js",
+  "jquery.js",
+  "main.js",
+  "newguy.js",
+  "roster.js",
+  "*.gif",
+  "back.jpg",
+  "dicebar.jpg",
+  "close*.png",
+  "*.css"]
 includes = sum(map(list, zip(["--include"] * len(manifest), manifest)), [])
 server = "play.progressquest.com"
 destination = "grumdrig.com:www/" + server + "/"
