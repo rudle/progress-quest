@@ -233,7 +233,7 @@ function MonsterTask(level) {
   var qty = 1;
   if (level-lev > 10) {
     // lev is too low. multiply...
-    qty = Math.floor((level + Random(lev)) / max(lev,1));
+    qty = Math.floor((level + Random(lev)) / Max(lev,1));
     if (qty < 1) qty = 1;
     level = Math.floor(level / qty);
   }
@@ -864,7 +864,10 @@ function RoughTime(s) {
   if (s < 120) return s + ' seconds';
   else if (s < 60 * 120) return s.div(60) + ' minutes';
   else if (s < 60 * 60 * 48) return s.div(3600) + ' hours';
-  else return s.div(3600 * 24) + ' days';
+  else if (s < 60 * 60 * 24 * 60) return s.div(3600 * 24) + ' days';
+  else if (s < 60 * 60 * 24 * 30 * 24) return s.div(3600 * 24 * 30) +" months";
+  else return s.div(3600 * 24 * 30 * 12) + " years";
+
 }
 
 function Pos(needle, haystack) {
