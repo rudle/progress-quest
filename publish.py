@@ -16,8 +16,7 @@ manifest = [
   "close*.png",
   "*.css"]
 includes = sum(map(list, zip(["--include"] * len(manifest), manifest)), [])
-server = "play.progressquest.com"
-destination = "grumdrig.com:www/" + server + "/"
+destination = "progressquest.com:www/progressquest.com/insitu/"
 
 print manifest
 output = subprocess.call(

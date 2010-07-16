@@ -141,7 +141,7 @@ for (var i = 0; i < 100000000; ++i) {
     SaveGame();
     charsheet(game);
     l = game.Traits.Level;
-    if (l >= 5) break;
+    //if (l >= 5) break;
   }
   //assert(timers.length == 2);// TODO: this is for simplicity
   now += timers[1].interval;

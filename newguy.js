@@ -186,7 +186,7 @@ function sold() {
       'task|10|Experiencing an enigmatic and foreboding night vision',
       "task|6|Much is revealed about that wise old bastard you'd underestimated",
       'task|6|A shocking series of events leaves you alone and bewildered, but resolute',
-      'task|4|Drawing upon an unexpected reserve of determination, you set out on a long and dangerous journey',
+      'task|4|Drawing upon an unrealized reserve of determination, you set out on a long and dangerous journey',
       'plot|2|Loading'
     ]
   };
@@ -207,10 +207,7 @@ function sold() {
 
   addToRoster(newguy);
 
-  // TODO: cheesy
-  var args = (window.location.href.indexOf("?sold") > 0) ? "?quit" : "";
-
-  window.location.href = "main.html" + args + "#" + newguy.Traits.Name;
+  window.location.href = "main.html#" + newguy.Traits.Name;
 }
 
 function cancel() {
