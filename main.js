@@ -61,15 +61,15 @@ function Ends(s, e) {
 }
 
 function Plural(s) {
-  if (Ends(s,'y')) 
+  if (Ends(s,'y'))
     return Copy(s,1,Length(s)-1) + 'ies';
-  else if (Ends(s,'us')) 
+  else if (Ends(s,'us'))
     return Copy(s,1,Length(s)-2) + 'i';
-  else if (Ends(s,'ch') || Ends(s,'x') || Ends(s,'s') || Ends(s, 'sh')) 
+  else if (Ends(s,'ch') || Ends(s,'x') || Ends(s,'s') || Ends(s, 'sh'))
     return s + 'es';
-  else if (Ends(s,'f')) 
+  else if (Ends(s,'f'))
     return Copy(s,1,Length(s)-1) + 'ves';
-  else if (Ends(s,'man') || Ends(s,'Man')) 
+  else if (Ends(s,'man') || Ends(s,'Man'))
     return Copy(s,1,Length(s)-2) + 'en';
   else return s + 's';
 }
@@ -80,9 +80,9 @@ function Split(s, field, separator) {
 
 function Indefinite(s, qty) {
   if (qty == 1) {
-    if (Pos(s.charAt(0), 'AEIOUÜaeiouü') > 0) 
+    if (Pos(s.charAt(0), 'AEIOUÜaeiouü') > 0)
       return 'an ' + s;
-    else 
+    else
       return 'a ' + s;
   } else {
     return IntToStr(qty) + ' ' + Plural(s);
@@ -127,13 +127,13 @@ function Special(m, s) {
 
 function InterplotCinematic() {
   switch (Random(3)) {
-  case 0: 
+  case 0:
     Q('task|1|Exhausted, you arrive at a friendly oasis in a hostile land');
     Q('task|2|You greet old friends and meet new allies');
     Q('task|2|You are privy to a council of powerful do-gooders');
     Q('task|1|There is much to be done. You are chosen!');
     break;
-  case 1: 
+  case 1:
     Q('task|1|Your quarry is in sight, but a mighty enemy bars your path!');
     var nemesis = NamedMonster(GetI(Traits,'Level')+3);
     Q('task|4|A desperate struggle commences with ' + nemesis);
@@ -149,7 +149,7 @@ function InterplotCinematic() {
     Q('task|3|Victory! ' + nemesis + ' is slain! Exhausted, you lose conciousness');
     Q('task|2|You awake in a friendly place, but the road awaits');
     break;
-  case 2: 
+  case 2:
     var nemesis2 = ImpressiveGuy();
     Q("task|2|Oh sweet relief! You've reached the protection of the good " + nemesis2);
     Q('task|3|There is rejoicing, and an unnerving encouter with ' + nemesis2 + ' in private');
@@ -185,7 +185,7 @@ function NamedMonster(level) {
 }
 
 function ImpressiveGuy() {
-  return Pick(K.ImpressiveTitles) + 
+  return Pick(K.ImpressiveTitles) +
     (Random(2) ? ' of the ' + Pick(K.Races) : ' of ' + GenerateName());
 }
 
@@ -276,8 +276,8 @@ function ProperCase(s) {
 }
 
 function EquipPrice() {
-  return  5 * GetI(Traits,'Level') * GetI(Traits,'Level') + 
-    10 * GetI(Traits,'Level') + 
+  return  5 * GetI(Traits,'Level') * GetI(Traits,'Level') +
+    10 * GetI(Traits,'Level') +
     20;
 }
 
@@ -287,7 +287,7 @@ function Dequeue() {
       if (Split(game.task,3) == '*') {
         WinItem();
       } else if (Split(game.task,3)) {
-        Add(Inventory,LowerCase(Split(game.task,1) + ' ' + 
+        Add(Inventory,LowerCase(Split(game.task,1) + ' ' +
                                 ProperCase(Split(game.task,3))),1);
       }
     } else if (game.task == 'buying') {
@@ -304,13 +304,13 @@ function Dequeue() {
       }
       if (Inventory.length() > 1) {
         Inventory.scrollToTop();
-        Task('Selling ' + Indefinite(Inventory.label(1), GetI(Inventory,1)), 
+        Task('Selling ' + Indefinite(Inventory.label(1), GetI(Inventory,1)),
              1 * 1000);
         game.task = 'sell';
         break;
       }
     }
-    
+
     var old = game.task;
     game.task = '';
     if (game.queue.length > 0) {
@@ -444,7 +444,7 @@ function ListBox(id, columns, fixedkeys) {
 
   this.AddUI = function (caption) {
     if (!this.box) return;
-    var tr = $("<tr><td><input type=checkbox disabled> " + 
+    var tr = $("<tr><td><input type=checkbox disabled> " +
                caption + "</td></tr>");
     tr.appendTo(this.box);
     tr.each(function () {this.scrollIntoView();});
@@ -484,7 +484,7 @@ function ListBox(id, columns, fixedkeys) {
     if (this.box) {
       if (butlast)
         this.rows().find("input:checkbox").not(':last').attr("checked","true");
-      else 
+      else
         this.rows().find("input:checkbox").attr("checked","true");
     }
    };
@@ -518,7 +518,7 @@ function ListBox(id, columns, fixedkeys) {
       });
     } else {
       $.each(dict, function (index, row) {
-        if (that.columns == 2) 
+        if (that.columns == 2)
           that.PutUI(row[0], row[1]);
         else
           that.AddUI(row);
@@ -537,8 +537,8 @@ var ExpBar, PlotBar, TaskBar, QuestBar, EncumBar;
 var Traits,Stats,Spells,Equips,Inventory,Plots,Quests;
 var Kill;
 var AllBars, AllLists;
-    
-    
+
+
 function StrToIntDef(s, def) {
   var result = parseInt(s, 10);
   return isNaN(result) ? def : result;
@@ -658,7 +658,7 @@ function CompleteQuest() {
   game.questmonster = '';
   var caption;
   switch (Random(5)) {
-  case 0: 
+  case 0:
     var level = GetI(Traits,'Level');
     var lev = 0;
     for (var i = 1; i <= 4; ++i) {
@@ -676,13 +676,13 @@ function CompleteQuest() {
   case 1:
     caption = 'Seek ' + Definite(InterestingItem(), 1);
     break;
-  case 2: 
+  case 2:
     caption = 'Deliver this ' + BoringItem();
     break;
-  case 3: 
+  case 3:
     caption = 'Fetch me ' + Indefinite(BoringItem(), 1);
     break;
-  case 4: 
+  case 4:
     var mlev = 0;
     level = GetI(Traits,'Level');
     for (var ii = 1; ii <= 2; ++ii) {
@@ -703,8 +703,8 @@ function CompleteQuest() {
   game.Quests.push(caption);
   game.bestquest = caption;
   Quests.AddUI(caption);
-    
-  
+
+
   Log('Commencing quest: ' + caption);
 
   SaveGame();
@@ -816,13 +816,13 @@ function AddR(list, key, value) {
 
 function Get(list, key) {
   if (list.fixedkeys) {
-    if (typeof key === typeof 1) 
+    if (typeof key === typeof 1)
       key = list.fixedkeys[key];
     return game[list.id][key];
   } else if (typeof key === typeof 1) {
     if (key < game[list.id].length)
       return game[list.id][key][1];
-    else 
+    else
       return "";
   } else {
     for (var i = 0; i < game[list.id].length; ++i) {
@@ -880,16 +880,16 @@ function Timer1Timer() {
     game.elapsed += TaskBar.Max().div(1000);
 
     ClearAllSelections();
-      
-    if (game.kill == 'Loading....') 
+
+    if (game.kill == 'Loading....')
       TaskBar.reset(0);  // Not sure if this is still the ticket
-      
+
     // gain XP / level up
     var gain = Pos('kill|', game.task) == 1;
     if (gain) {
-      if (ExpBar.done()) 
+      if (ExpBar.done())
         LevelUp();
-      else 
+      else
         ExpBar.increment(TaskBar.Max() / 1000);
     }
 
@@ -901,15 +901,15 @@ function Timer1Timer() {
         QuestBar.increment(TaskBar.Max() / 1000);
       }
     }
-      
+
     // advance plot
     if (gain || !game.act) {
-      if (PlotBar.done()) 
+      if (PlotBar.done())
         InterplotCinematic();
-      else 
+      else
         PlotBar.increment(TaskBar.Max() / 1000);
     }
-     
+
     Dequeue();
   } else {
     var elapsed = timeGetTime() - lasttick;
@@ -947,16 +947,16 @@ function FormCreate() {
 
   if (document) {
     Kill = $("#Kill");
-    
+
     $("#quit").click(quit);
-    
+
     $(document).keypress(FormKeyDown);
 
     $(document).bind('beforeunload', function () {
       if (!storage)
        return "Are you sure you want to quit? All your progress will be lost!";
     });
-  
+
     $(window).unload(function (event) {
       StopTimer();
       SaveGame();
@@ -1049,7 +1049,7 @@ function Cheats() {
   });
 
   cheat("Clear items", function () {
-    while (Inventory.length() > 1) 
+    while (Inventory.length() > 1)
       Inventory.remove1();
   });
 
@@ -1092,7 +1092,7 @@ function HotOrNot() {
   /// And which stat is best?
   best = 0;
   for (i = 1; i <= 5; ++i) {
-    if (GetI(Stats,i) > GetI(Stats,best)) 
+    if (GetI(Stats,i) > GetI(Stats,best))
       best = i;
   }
   game.beststat = Stats.label(best) + ' ' + GetI(Stats, best);
@@ -1149,20 +1149,20 @@ function FormKeyDown(e) {
     Brag('brag');
     //Navigate(GetHostAddr() + 'name=' + UrlEncode(Get(Traits,'Name')));
   }
-  
+
   if (e.which == 3) { // ^C
     Cheats();
   }
-  
+
   if (e.which == 7) { // ^G
     game.guild = InputBox('Choose a guild.\r\rMake sure you undestand the guild rules before you join one. To learn more about guilds, visit http://progressquest.com/guilds.php', game.guild);
     Brag("guild");
   }
 
   if (e.which == 16) { // ^P
-    if (timerid) 
-      StopTimer(); 
-    else  
+    if (timerid)
+      StopTimer();
+    else
       StartTimer();
   }
 
@@ -1190,9 +1190,9 @@ function Brag(trigger) {
   if (game.isonline) {
     game.bragtrigger = trigger;
     $.post("webrag.php", game, function (data, textStatus, request) {
-      if (data.alert) 
+      if (data.alert)
         alert(data.alert);
     }, "json");
-  } 
+  }
 }
 
