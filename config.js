@@ -1,5 +1,5 @@
-// TODO These code bits don't really belong here, but this is the only shared bit of js
-
+// TODO These code bits don't really belong here, but this is the only 
+// shared bit of js
 
 function tabulate(list) {
   var result = '';

@@ -60,11 +60,38 @@ $.each = function (object, callback) {
 
 var document = null;
 
-var alert = function (m) { print("ALERT: " + m); };
+if (typeof process !== "undefined") {
+  // Node
+  var fs = require("fs");
+  var sys = require("sys");
+  var load = function (filename) {
+    var content = fs.readFileSync(filename);
+    global.eval.call(global, String(content));
+  };
+  var print = function () {
+    for (var i = 0, len = arguments.length; i < len; ++i) {
+      sys.print(arguments[i] + " ");
+    }
+    sys.puts("");
+  };
+  var read = function (f) { return fs.readFileSync(f); };
+  var write = function (f,c) { fs.writeFileSync(f,c); };
+
+  global.window = window;
+  global.document = document;
+  global.$ = $;
+  print("node");
+} else {
+  // V8 shell
+  global = this;  
+  print("v8");
+}
+
+var alert = global.alert = function (m) { print("ALERT: " + m); };
 
 var now = 0;
 var timers = [{}];
-function setInterval(callback, interval) {
+var setInterval  = global.setInterval = function (callback, interval) {
   timers.push({callback:callback, interval:interval});
   return timers.length-1;
 }
@@ -82,15 +109,15 @@ sold();
 
 write("local.storage", JSON.stringify(window.localStorage.items));
 
-
 var guy = window.location.href.split("#")[1];
 
 load("main.js");
-FormCreate();
 
-timeGetTime = function () {
+var timeGetTime = global.timeGetTime = function () {
   return now;
 }
+
+FormCreate();
 
 function charsheet(game) {
   print(game.Traits.Name, 
@@ -99,12 +126,14 @@ function charsheet(game) {
         RoughTime(game.elapsed));
 }
 
-for (var j = 1, t = 0; j < 1001; ++j) {
+// It takes 18 sec to simulate 18 hours of play when I just checked (to 
+// level 10)
+
+for (var j = 1, t = 0; j < 11; ++j) {
   t += LevelUpTime(j);
-  if (j % 50 == 0)
+  //if (j % 100 == 0)
     print(j, RoughTime(LevelUpTime(j))+",", RoughTime(t));
 }
-return;
 
 var l = 0;
 for (var i = 0; i < 100000000; ++i) {
@@ -112,8 +141,9 @@ for (var i = 0; i < 100000000; ++i) {
     SaveGame();
     charsheet(game);
     l = game.Traits.Level;
+    if (l >= 5) break;
   }
-  //assert(timers.id == 1);// TODO: this is for simplicity
+  //assert(timers.length == 2);// TODO: this is for simplicity
   now += timers[1].interval;
   timers[1].callback();
 }
