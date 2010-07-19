@@ -24,6 +24,7 @@ var total = 0;
 var seedHistory = [];
 
 function RollEm() {
+  //randseed([0.4718227358534932,0.26480253390036523,0.2909720710013062,1]);
   stats.seed = randseed();
   total = 0;
   var best = -1;
