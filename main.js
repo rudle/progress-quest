@@ -10,7 +10,8 @@ function timeGetTime() {
 function StartTimer() {
   if (!timerid) {
     lasttick = timeGetTime();
-    timerid = setInterval(Timer1Timer, 100);
+    //timerid = setInterval(Timer1Timer, 100);
+    timerid = setTimeout(Timer1Timer, 100);
   }
 }
 
@@ -567,7 +568,7 @@ function LPick(list, goal) {
 }
 
 function Abs(x) {
-  return x < 0 ? -x : x;
+  if (x < 0) return -x; else return x;
 }
 
 function WinEquip() {
@@ -874,7 +875,10 @@ function Pos(needle, haystack) {
   return haystack.indexOf(needle) + 1;
 }
 
+var dealing = false;
+
 function Timer1Timer() {
+  timerid = null;  // Event has fired
   if (TaskBar.done()) {
     game.tasks += 1;
     game.elapsed += TaskBar.Max().div(1000);
@@ -917,7 +921,8 @@ function Timer1Timer() {
     if (elapsed < 0) elapsed = 0;
     TaskBar.increment(elapsed);
   }
-  lasttick = timeGetTime();
+
+  StartTimer();
 }
 
 function FormCreate() {
@@ -1061,20 +1066,48 @@ function InputBox(message, def) {
   return (i !== null) ? i : def;
 }
 
-function FormKeyDown(e) {
-  if (e.which == 13) { // ^M
-    game.motto = InputBox('Declare your motto!', game.motto);
-    Brag('motto');
+function ToDna(s) {
+  s = s + "";
+  var code = {
+    '0': "AT",
+    '1': "AG",
+    '2': "AC",
+    '3': "TA",
+    '4': "TG",
+    '5': "TC",
+    '6': "GA",
+    '7': "GT",
+    '8': "GC",
+    '9': "CA",
+    ',': "CT",
+    '.': "CG"
+  };
+  var r = "";
+  for (var i = 0; i < s.length; ++i) {
+    r += code[s[i]];
+    if (i && (i % 4) == 0) r += " ";
   }
+  return r;
+}
 
+function FormKeyDown(e) {
   if (e.which == 2) { // ^B
     Brag('brag');
     //Navigate(GetHostAddr() + 'name=' + UrlEncode(Get(Traits,'Name')));
   }
 
+  if (e.which == 4) { // ^D
+    alert("Your character's genome is " + ToDna(game.dna + ""));
+  }
+
   if (e.which == 7) { // ^G
     game.guild = InputBox('Choose a guild.\r\rMake sure you undestand the guild rules before you join one. To learn more about guilds, visit http://progressquest.com/guilds.php', game.guild);
     Brag("guild");
+  }
+
+  if (e.which == 13) { // ^M
+    game.motto = InputBox('Declare your motto!', game.motto);
+    Brag('motto');
   }
 
   if (e.which == 16) { // ^P
@@ -1088,6 +1121,11 @@ function FormKeyDown(e) {
     quit();
   }
 
+  /*
+  if (e.which == 20) { // ^T
+    TaskBar.reposition(TaskBar.Max());
+  }
+  */
 }
 
 function Navigate(url) {
