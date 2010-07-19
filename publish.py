@@ -24,6 +24,7 @@ output = subprocess.call(
    #"--dry-run",
    "--verbose",
    "--compress",
+   "--checksum",
    "--recursive",
    "--partial",
    "--progress",
