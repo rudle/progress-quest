@@ -15,6 +15,11 @@ function tabulate(list) {
 }
 
 
+String.prototype.escapeHtml = function () {
+  return this.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+
 function template(tmpl, data) {
   var brag = tmpl.replace(/\$([_A-Za-z.]+)/g, function (str, p1) {
     var dict = data;
@@ -24,6 +29,8 @@ function template(tmpl, data) {
         dict = tabulate(dict);
       } else {
         dict = dict[v.replace("_"," ")];
+        if (typeof dict == typeof "")
+          dict = dict.escapeHtml();
       }
       return null;
     });

@@ -974,7 +974,7 @@ function quit() {
 
 function LoadCharacter() {
   var result = true;
-  var name = window.location.href.split('#')[1];
+  var name = unescape(window.location.href.split('#')[1]);
   var sheet = loadSheet(name);
 
   if (!sheet) {

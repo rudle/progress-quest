@@ -18,7 +18,7 @@ function load() {
     
     var br = brag(c);
     roster.append(br);
-    br.find("a.go").attr("href", "main.html#" + name);
+    br.find("a.go").attr("href", "main.html#" + escape(name));
     
     br.find("a.x").click(function () {
       if (confirm("Terminate " + Pick(["faithful","noble","loyal","brave"])+ 
