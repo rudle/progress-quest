@@ -959,45 +959,43 @@ function FormCreate() {
 
     $(document).bind('beforeunload', function () {
       if (!storage)
-       return "Are you sure you want to quit? All your progress will be lost!";
+        return "Are you sure you want to quit? All your progress will be lost!";
     });
 
     $(window).unload(function (event) {
       StopTimer();
       SaveGame();
+      if (storage.async) {
+        // Have to give SQL transaction a chance to complete
+        if (window.showModalDialog)
+          pause(100);
+
+        // Just accept some data loss - alert is too ugly. Maybe increase save 
+        // frequency.
+        // else alert("Game saved"); 
+      }
     });
+
+    if (iOS) $("body").addClass("iOS");
   }
 
-  LoadCharacter();
+  var name = unescape(window.location.href.split('#')[1]);
+  storage.loadSheet(name, LoadGame);
 }
 
+
+
+function pause(msec) {
+  window.showModalDialog("javascript:document.writeln ('<script>window.setTimeout(" +
+                         "function () { window.close(); }," + msec + ");</script>')",
+                         null, 
+                         "dialogWidth:0;dialogHeight:0;dialogHide:yes;unadorned:yes;"+
+                  "status:no;scroll:no;center:no;dialogTop:-10000;dialogLeft:-10000");
+}
 
 function quit() {
-  SaveGame();
-  window.location = "roster.html";
-}
-
-function LoadCharacter() {
-  var result = true;
-  var name = unescape(window.location.href.split('#')[1]);
-  var sheet = loadSheet(name);
-
-  if (!sheet) {
-    alert("Error loading " + name);
-    window.location = "roster.html";
-    return;
-  }
-
-  if (!window.localStorage) {
-    // Cookies can't hold a whole game save
-    storage.removeItem("roster");
-    storage = null;
-  }
-
-  LoadGame(sheet);
-
-  if (document)
-    $("#title").text("Progress Quest - " + GameSaveName());
+  $(window).unbind('unload');
+  SaveGame(function () { window.location = "roster.html"; });
 }
 
 
@@ -1026,17 +1024,40 @@ function HotOrNot() {
 }
 
 
-function SaveGame() {
+function SaveGame(callback) {
   Log('Saving game: ' + GameSaveName());
   HotOrNot();
   game.date = ''+new Date();
   game.stamp = +new Date();
   game.seed = randseed();
-  return addToRoster(game);
+  storage.addToRoster(game, callback);
 }
 
 function LoadGame(sheet) {
+  if (!sheet) {
+    alert("Error loading game");
+    window.location = "roster.html";
+    return;
+  }
+
   game = sheet;
+
+  /*
+  if (!window.localStorage) {
+    // Cookies can't hold a whole game save
+    storage.removeItem("roster");
+    storage = null;
+  }
+*/
+
+  if (document) {
+    var title = "Progress Quest - " + GameSaveName();
+    $("#title").text(title);
+    if (iOS) title = GameSaveName();
+    $("title").text(title);
+  }
+  
+
   randseed(game.seed);
   $.each(AllBars.concat(AllLists), function (i, e) { e.load(game); });
   if (Kill)
@@ -1119,6 +1140,11 @@ function FormKeyDown(e) {
 
   if (e.which == 17) { // ^Q
     quit();
+  }
+
+  if (e.which == 19) { // ^S
+    SaveGame();
+    alert(JSON.stringify(game).length);
   }
 
   /*

@@ -157,73 +157,141 @@ function GenerateName() {
   return result.charAt(0).toUpperCase() + result.slice(1);
 }
 
+function LocalStorage() {
+  this.getItem = function (key, callback) {
+    var result = window.localStorage.getItem(key);
+    if (callback)
+      callback(result);
+  };
+
+  this.setItem = function (key, value, callback) {
+    window.localStorage.setItem(key, value);
+    if (callback)
+      callback();
+  };
+
+  this.removeItem = function (key) {
+    window.localStorage.removeItem(key);
+  };
+}
+
+
 function CookieStorage() {
-  this.getItem = function(key) {
-    try {
-      var result;
-      $.each(document.cookie.split(";"), function (i,cook) {
-        if (cook.split("=")[0] === key)
-          result = unescape(cook.split("=")[1]);
-      });
-      return result;
-    } catch (err) {
-      // Probably a JSON parse error
-      return null;
-    }
+  this.getItem = function(key, callback) {
+    var result;
+    $.each(document.cookie.split(";"), function (i,cook) {
+      if (cook.split("=")[0] === key)
+        result = unescape(cook.split("=")[1]);
+    });
+    if (callback)
+      setTimeout(function () { callback(result); }, 0);
+    return result;
   };
   
-  this.setItem = function (key, value) {
+  this.setItem = function (key, value, callback) {
     document.cookie = key + "=" + escape(value);
+    if (callback)
+      setTimeout(callback, 0);
   };
 
   this.removeItem = function (key) {
     document.cookie = key + "=; expires=Thu, 01-Jan-70 00:00:01 GMT;";
   };
 }
-    
 
-var storage = window.localStorage;
-if (!storage)
-  storage = new CookieStorage();
+function SqlStorage() {
+  this.async = true;
 
-function loadRoster() {
-  if (storage) {
-    var r = storage.getItem("roster");
-    if (r) {
+  this.db = window.openDatabase("pq", "", "Progress Quest", 2500);
+
+  this.db.transaction(function(tx) {
+    tx.executeSql("CREATE TABLE IF NOT EXISTS Storage(key TEXT UNIQUE, value TEXT)");
+  });
+
+  this.getItem = function(key, callback) {
+    this.db.transaction(function (tx) {
+      tx.executeSql("SELECT value FROM Storage WHERE key=?", [key], function(tx, rs) {
+        if (rs.rows.length) 
+          callback(rs.rows.item(0).value);
+        else
+          callback();
+      });
+    });
+  };
+  
+  this.setItem = function (key, value, callback) {
+    this.db.transaction(function (tx) {
+      tx.executeSql("INSERT OR REPLACE INTO Storage (key,value) VALUES (?,?)",
+                    [key, value], 
+                    callback);
+    });
+  };
+  
+  this.removeItem = function (key) {
+    this.db.transaction(function (tx) {
+      tx.executeSql("DELETE FROM Storage WHERE key=?", [key]);
+    });
+  };
+}
+
+var iPad = navigator.userAgent.match(/iPad/);
+var iPod = navigator.userAgent.match(/iPod/);
+var iPhone = navigator.userAgent.match(/iPhone/);
+var iOS = iPad || iPod || iPhone;
+
+var storage = ((window.localStorage && !iOS) ? new LocalStorage() :
+               window.openDatabase ? new SqlStorage() :
+               new CookieStorage());
+  
+storage.loadRoster = function (callback) {
+  function gotItem(value) {
+    if (value) {
       try {
-        return JSON.parse(r);
+        value = JSON.parse(value);
       } catch (err) {
         // aight
       }
     }
+    storage.games = value || {};
+    callback(storage.games);
   }
-  return {};
+  this.getItem("roster", gotItem);
 }
 
-function loadSheet(name) {
-  return loadRoster()[name];
+storage.loadSheet = function (name, callback) {
+  return this.loadRoster(function (games) {
+    if (callback)
+      callback(games[name]);
+  });
 }
 
-function storeRoster(roster) {
-  if (storage) {
-    try {
-      storage.setItem("roster", JSON.stringify(roster));
-      return true;
-    } catch (err) {
-      if (err.toString().indexOf("QUOTA_EXCEEDED_ERR") != -1) {
-        alert("This browser lacks storage capacity to save this game. This game can continue but cannot be saved. (Mobile Safari, I'll wager?)");
-        storage = null;
-        return false;
-      }
+
+storage.storeRoster = function (roster, callback) {
+  this.games = roster;
+  try {
+    this.setItem("roster", JSON.stringify(roster), callback);
+  } catch (err) {
+    if (err.toString().indexOf("QUOTA_EXCEEDED_ERR") != -1) {
+      alert("This browser lacks storage capacity to save this game. This game can continue but cannot be saved. (Mobile Safari, I'll wager?)");
+      this.storeRoster = function (roster, callback) {
+        setTimeout(callback, 0);
+      };
+      setTimeout(callback, 0);
+    } else {
+      throw err;
     }
   }
 }
 
-function addToRoster(newguy) {
-  if (storage) {
-    var r = loadRoster();
-    r[newguy.Traits.Name] = newguy;
-    storeRoster(r);
+storage.addToRoster = function (newguy, callback) {
+  if (this.games) {
+    this.games[newguy.Traits.Name] = newguy;
+    this.storeRoster(this.games, callback);
+  } else {
+    this.loadRoster(function () {
+      if (storage.games)  // should always be true
+        storage.addToRoster(newguy, callback);
+    });
   }
 }
 

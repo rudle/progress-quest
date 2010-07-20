@@ -30,6 +30,7 @@ var window = {
   },
 };
 
+var navigator = { userAgent: "v8" };
 
 var location = window.location;
 
@@ -94,13 +95,13 @@ var timers = [{}];
 var setInterval  = global.setInterval = function (callback, interval) {
   timers.push({callback:callback, interval:interval});
   return timers.length-1;
-}
+};
+var setTimeout = setInterval;  // TODO: distinguish!
 
 load("config.js");
 
 var cs = 0;
-for (var c in loadRoster())
-  cs++;
+storage.loadRoster(function (cs) { for (var c in cs) cs++; });
 print(cs, "characters");
 
 load("newguy.js");
@@ -129,22 +130,28 @@ function charsheet(game) {
 // It takes 18 sec to simulate 18 hours of play when I just checked (to 
 // level 10)
 
-for (var j = 1, t = 0; j < 11; ++j) {
+for (var j = 1, t = 0; j < 1001; ++j) {
   t += LevelUpTime(j);
-  //if (j % 100 == 0)
+  if (j % 100 == 0)
     print(j, RoughTime(LevelUpTime(j))+",", RoughTime(t));
 }
 
-var l = 0;
-for (var i = 0; i < 100000000; ++i) {
-  if (game.Traits.Level != l) {
-    SaveGame();
-    charsheet(game);
-    l = game.Traits.Level;
-    //if (l >= 5) break;
+var tmpl = read("charsheet.txt");
+storage.loadSheet("Shienzid", function (sheet) {
+  game = sheet;
+  print(template(tmpl, sheet));
+
+  var l = 0;
+  for (var i = 0; i < 1000000000; ++i) {
+    if (game.Traits.Level != l) {
+      SaveGame();
+      charsheet(game);
+      l = game.Traits.Level;
+      //if (l >= 5) break;
+    }
+    //assert(timers.length == 2);// TODO: this is for simplicity
+    now += timers[1].interval;
+    timers[1].callback();
   }
-  //assert(timers.length == 2);// TODO: this is for simplicity
-  now += timers[1].interval;
-  timers[1].callback();
-}
+});
 

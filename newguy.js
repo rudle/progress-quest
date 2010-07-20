@@ -205,9 +205,10 @@ function sold() {
   newguy.Equips.Weapon = newguy.bestequip;
   newguy.Equips.Hauberk = "-3 Burlap";
 
-  addToRoster(newguy);
+  storage.addToRoster(newguy, function () {
+    window.location.href = "main.html#" + escape(newguy.Traits.Name);
+  });
 
-  window.location.href = "main.html#" + escape(newguy.Traits.Name);
 }
 
 function cancel() {

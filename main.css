@@ -118,3 +118,7 @@ tr         { height:  15px; }
 #Quests td, #Plots td { 
   padding-left: 0;
 }
+
+body.iOS div.hint {
+  visibility: visible;
+}

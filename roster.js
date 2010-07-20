@@ -1,18 +1,22 @@
-var games;
   
 function load() {
-  var roster = $("#roster");
-  roster.empty();
   
   if (!window.localStorage) {
     roster.html("<b>Hrumph:</b> This browser does not support local storage. You can still play fast and loose: your character will live only as long as the game stays running in your browser.");
     return;
   }
 
+  storage.loadRoster(loadGames);
+}
+
+function loadGames(games) {
+  var roster = $("#roster");
+  roster.empty();
+
   var newone = window.location.href.split('#')[1];
   
   var count = 0;
-  games = loadRoster();
+
   $.each(games, function (key, c) {
     var name = c.Traits.Name;
     
@@ -24,7 +28,7 @@ function load() {
       if (confirm("Terminate " + Pick(["faithful","noble","loyal","brave"])+ 
                   " " + name + "?")) {
         delete games[name];
-        storeRoster(games);
+        storage.storeRoster(games);
         load();
       }
     });
@@ -58,8 +62,7 @@ function brag(sheet) {
 }
   
 function clearRoster() {
-  storeRoster({});
-  load();
+  storage.storeRoster({}, load);
 }
 
 $(document).ready(function () {
