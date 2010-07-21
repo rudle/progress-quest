@@ -5,6 +5,7 @@ import subprocess, sys
 
 manifest = [
   "*.html",
+  "json2.js",
   "config.js",
   "jquery.js",
   "main.js",
