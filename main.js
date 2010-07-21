@@ -407,7 +407,8 @@ function ProgressBar(id, tmpl) {
 
     // Update UI
     if (this.bar) {
-      this.bar.css("width", 100 * this.Position() / this.Max() + "%");
+      var p = this.Max() ? 100 * this.Position() / this.Max() : 0;
+      this.bar.css("width", p + "%");
       this.bar.parent().find(".hint").text(game[this.id].hint);
     }
   };
@@ -1054,7 +1055,7 @@ function LoadGame(sheet) {
     var title = "Progress Quest - " + GameSaveName();
     $("#title").text(title);
     if (iOS) title = GameSaveName();
-    $("title").text(title);
+    document.title = title;
   }
   
 

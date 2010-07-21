@@ -1,7 +1,7 @@
 #!/usr/bin/python
 """Publish this game here to server"""
 
-import subprocess
+import subprocess, sys
 
 manifest = [
   "*.html",
@@ -14,14 +14,17 @@ manifest = [
   "back.jpg",
   "dicebar.jpg",
   "close*.png",
+  "touch-icon.png",
+  "ipad-ad.jpg",
   "*.css"]
 includes = sum(map(list, zip(["--include"] * len(manifest), manifest)), [])
 destination = "progressquest.com:www/progressquest.com/play/"
 
 print manifest
-output = subprocess.call(
-  ["rsync",
-   #"--dry-run",
+args = (
+  ["rsync"] +
+  sys.argv[1:] +
+  [#"--dry-run",
    "--verbose",
    "--compress",
    "--checksum",
@@ -31,8 +34,11 @@ output = subprocess.call(
    #"--itemize-changes",
    "--delete",
    "--delete-excluded",
-   "--times",
-   ] + includes + [
-   "--exclude", "*",
+   "--times"] +
+  includes +
+  ["--exclude", "*",
    "./",
    destination])
+
+print args
+output = subprocess.call(args)
