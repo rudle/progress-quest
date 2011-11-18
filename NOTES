@@ -1,0 +1,26 @@
+// Before launch
+// TODO: Hide cheaters
+
+// After launch
+// TODO: No local storage on IE - why?
+// TODO: Do something about background-size failure on IE.
+// TODO: Stop using HTML to save the game
+// TODO: Get fully operational in Opera
+// TODO: Online leader board
+// TODO: Server side saves
+// TODO: Active controls on fake Xp screen
+// TODO: Refactor logic to run with visible interface as a layer on top
+// TODO: Charsheet in some more pleasing delivery method
+// TODO: Use a cookie rather than a fragment to choose char?
+// TODO: Line up things on main.html perfectly
+// TODO: Finalize borders in sections of main
+// TODO: Better ipad support
+
+On a wrapper for jquery in v8 shell:
+http://unethicalblogger.com/node/186
+
+http://mrgan.tumblr.com/post/98547533/fullscreen-web-apps
+http://kentbrewster.com/backchannel/
+
+DNA for double "Fetch me a sock" quests:
+[0.22078027506358922,0.7939568560104817,0.18758659553714097,1088812]
