@@ -1,0 +1,24 @@
+$Traits.Name the $Traits.Race [$hostname]
+"$motto"
+
+Level $Traits.Level $Traits.Class (exp. $ExpBar.position/$ExpBar.max)
+
+Plot stage: $bestplot ($PlotBar.hint)
+Quest: $bestquest ($QuestBar.hint)
+
+Stats:
+   STR $Stats.STR
+   CON $Stats.CON
+   DEX $Stats.DEX
+   INT $Stats.INT
+   WIS $Stats.WIS   HP Max $Stats.HP_Max
+   CHA $Stats.CHA   MP Max $Stats.MP_Max
+
+Equipment:
+$Equips.___
+Spell Book:
+$Spells.___
+Inventory ($EncumBar.hint):
+$Inventory.___
+-- $date
+-- Progress Quest 6.3.web - http://progressquest.com/

@@ -1,4 +1,15 @@
-//!/usr/bin/env v8
+// This is an in-console simulation of Progress Quest. It's rather a
+// hack job.
+//
+// Run it with node.js like so:
+//   $ node sim.js
+// or using a modified v8 shell, like so:
+//   $ git clone git://github.com/grumdrig/v8
+//   $ (cd v8; scons sample=shell)
+//   $ v8/shell sim.js
+//
+// It's not realtime - simulation runs at maximum speed and the
+// virtual time elapsed is displayed at each level-up.
 
 var window = {
   location: {href: "#Woogle"},
@@ -67,7 +78,8 @@ if (typeof process !== "undefined") {
   var sys = require("sys");
   var load = function (filename) {
     var content = fs.readFileSync(filename);
-    global.eval.call(global, String(content));
+    require("vm").runInThisContext(content, filename);
+    //global.eval.call(global, String(content));
   };
   var print = function () {
     for (var i = 0, len = arguments.length; i < len; ++i) {
@@ -80,6 +92,7 @@ if (typeof process !== "undefined") {
 
   global.window = window;
   global.document = document;
+  global.navigator = navigator;
   global.$ = $;
   print("node");
 } else {
@@ -96,7 +109,7 @@ var setInterval  = global.setInterval = function (callback, interval) {
   timers.push({callback:callback, interval:interval});
   return timers.length-1;
 };
-var setTimeout = setInterval;  // TODO: distinguish!
+var setTimeout = global.setTimeout = setInterval;  // TODO: distinguish!
 
 load("config.js");
 
@@ -106,6 +119,7 @@ print(cs, "characters");
 
 load("newguy.js");
 NewGuyFormLoad();
+traits.Name = "Shienzid";
 sold();
 
 write("local.storage", JSON.stringify(window.localStorage.items));
@@ -139,7 +153,7 @@ for (var j = 1, t = 0; j < 1001; ++j) {
 var tmpl = read("charsheet.txt");
 storage.loadSheet("Shienzid", function (sheet) {
   game = sheet;
-  print(template(tmpl, sheet));
+  print(template(''+tmpl, sheet));
 
   var l = 0;
   for (var i = 0; i < 1000000000; ++i) {
