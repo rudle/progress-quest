@@ -11,6 +11,9 @@
 // It's not realtime - simulation runs at maximum speed and the
 // virtual time elapsed is displayed at each level-up.
 
+var CHARACTER = "Shienzid";
+//var guy = window.location.href.split("#")[1];
+
 var window = {
   location: {href: "#Woogle"},
 
@@ -117,21 +120,12 @@ var cs = 0;
 storage.loadRoster(function (cs) { for (var c in cs) cs++; });
 print(cs, "characters");
 
-load("newguy.js");
-NewGuyFormLoad();
-traits.Name = "Shienzid";
-sold();
-
-write("local.storage", JSON.stringify(window.localStorage.items));
-
-var guy = window.location.href.split("#")[1];
-
-load("main.js");
 
 var timeGetTime = global.timeGetTime = function () {
   return now;
 }
 
+load("main.js");
 FormCreate();
 
 function charsheet(game) {
@@ -151,8 +145,18 @@ for (var j = 1, t = 0; j < 1001; ++j) {
 }
 
 var tmpl = read("charsheet.txt");
-storage.loadSheet("Shienzid", function (sheet) {
+storage.loadSheet(CHARACTER, function (sheet) {
+  if (!sheet) {
+    load("newguy.js");
+    NewGuyFormLoad();
+    traits.Name = CHARACTER;
+    sold();
+    sheet = storage.games[CHARACTER];
+  }
+  //write("local.storage", JSON.stringify(window.localStorage.items));
+
   game = sheet;
+  LoadGame(game);
   print(template(''+tmpl, sheet));
 
   var l = 0;

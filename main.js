@@ -996,7 +996,7 @@ function pause(msec) {
 
 function quit() {
   $(window).unbind('unload');
-  SaveGame(function () { window.location = "roster.html"; });
+  SaveGame(function () { window.location.href = "roster.html"; });
 }
 
 
@@ -1037,7 +1037,7 @@ function SaveGame(callback) {
 function LoadGame(sheet) {
   if (!sheet) {
     alert("Error loading game");
-    window.location = "roster.html";
+    window.location.href = "roster.html";
     return;
   }
 
