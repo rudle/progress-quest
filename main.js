@@ -10,7 +10,6 @@ function timeGetTime() {
 function StartTimer() {
   if (!timerid) {
     lasttick = timeGetTime();
-    //timerid = setInterval(Timer1Timer, 100);
     timerid = setTimeout(Timer1Timer, 100);
   }
 }
@@ -1113,43 +1112,50 @@ function ToDna(s) {
 }
 
 function FormKeyDown(e) {
-  if (e.which == 2) { // ^B
-    Brag('brag');
-    //Navigate(GetHostAddr() + 'name=' + UrlEncode(Get(Traits,'Name')));
-  }
+  var key = String.fromCharCode(e.which);
 
-  if (e.which == 4) { // ^D
+  if (key === 'd') {
     alert("Your character's genome is " + ToDna(game.dna + ""));
   }
 
-  if (e.which == 7) { // ^G
-    game.guild = InputBox('Choose a guild.\r\rMake sure you undestand the guild rules before you join one. To learn more about guilds, visit http://progressquest.com/guilds.php', game.guild);
-    Brag("guild");
+  if (game.isonline) {
+    if (key === 'b') {
+      Brag('brag');
+      //Navigate(GetHostAddr() + 'name=' + UrlEncode(Get(Traits,'Name')));
+    }
+    
+    if (key === 'g') {
+      game.guild = InputBox('Choose a guild.\r\rMake sure you undestand the guild rules before you join one. To learn more about guilds, visit http://progressquest.com/guilds.php', game.guild);
+      Brag("guild");
+    }
+    
+    if (key === 'm') {
+      game.motto = InputBox('Declare your motto!', game.motto);
+      Brag('motto');
+    }
   }
 
-  if (e.which == 13) { // ^M
-    game.motto = InputBox('Declare your motto!', game.motto);
-    Brag('motto');
-  }
-
-  if (e.which == 16) { // ^P
-    if (timerid)
+  if (key === 'p') {
+    if (timerid) {
+      $('#paused').css('display', 'block');
       StopTimer();
-    else
+    } else {
+      $('#paused').css('display', '');
       StartTimer();
+    }
   }
 
-  if (e.which == 17) { // ^Q
+  if (key === 'q') {
     quit();
   }
 
-  if (e.which == 19) { // ^S
+  if (key === 's') {
     SaveGame();
-    alert(JSON.stringify(game).length);
+    alert('Saved (' + JSON.stringify(game).length + ' bytes).');
   }
 
   /*
-  if (e.which == 20) { // ^T
+  if (key === 't') {
     TaskBar.reposition(TaskBar.Max());
   }
   */

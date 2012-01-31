@@ -1,5 +1,7 @@
 
-
+body {
+  height: 100%;
+}
 
 thead.mid { 
   border-top: solid 1px grey;
@@ -121,4 +123,15 @@ tr         { height:  15px; }
 
 body.iOS div.hint {
   visibility: visible;
+}
+
+div#paused {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 160px;
+  opacity: 0.5;
 }
