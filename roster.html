@@ -1,166 +1,80 @@
 <!DOCTYPE html>
 <html>
-<head>
-<link rel="shortcut icon" type="image/x-icon" href="http://progressquest.com/favicon.ico">
-<title>Progress Quest - Roster</title>
-<script src="json2.js"></script>
-<script src="jquery.js"></script>
-<script src="config.js"></script>
-<script src="roster.js"></script>
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<style>
+  <head>
+    <link rel="shortcut icon" type="image/x-icon" href="http://progressquest.com/favicon.ico">
+    <title>Progress Quest - Roster</title>
+    <script src="json2.js"></script>
+    <script src="jquery.js"></script>
+    <script src="config.js"></script>
+    <script src="roster.js"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
 
-.brag {
-  display: inline-block;
-  background-color: #ddddff;
-  margin: 5px;
-  border: solid 2px #ccccee;
-}
-.lit {
-  border: solid 2px #66ccee;
-}
-.brag td {
-  font-size: 9pt;
-  font-family: Tahoma, Helvetica, sans-serif;
-}
-div.rc {
-  font-size: 9pt;
-}
+  <body>
+    <a href="/">
+      <img src="pq.gif" alt="Progress Quest">
+    </a>
 
-div.bs {
-  font-size: 7pt;
-}
+    <h1>Character Roster</h1>
 
-body {
-  text-align: center;
-}
+    <p id="roster" class="banter">
+    </p>
 
-p {
-  margin-left: 10%;
-  margin-right: 10%;
-  text-align: left;
-}
-#newc {
-  text-align: center;
-}
-.brag a, .brag a:visited {
-  color: blue;
-  text-decoration: none;
-}
-a.icon.go {
-  font-size: 3em;
-}
-a.x, a.sheet {
-  font-size: 12pt;
-}
-.sig {
-  text-align: center;
-  font-size: small;
-  color: #808080;
-}
-.sig a, .sig a:visited {
-  color: #808080;
-  text-decoration: none;
-}
-.banter {
-  font-size: 11pt;
-}
-img {
-  border-style: none;
-}
-</style>
-</head>
+    <table class="brag">
+      <tr>
+        <td id="newc">
+          <b>New Character</b> <br>
+          <img src="dicebar.jpg"><br>
+          <button id="roll">Roll One Up</button>
+        </td>
+      </tr>
+    </table>
 
-<body>
+    <script id="badge" type="text/html">
+      <table class="brag">
+        <tr>
+          <td><a class="icon go">&#x2694;</a></td>
+          <td>
+            <div>
+              <a class="go"><b>$Traits.Name</b></a> the $Traits.Race ($bestplot)
+            </div>
+            <div class="rc">Level $Traits.Level $Traits.Class</div>
+            <div class="bs">$bestequip / $bestspell / $beststat</div>
+          </td>
+          <td>
+            <a class="icon x" href="#">&#x2620;</a><br>
+            <!-- <a class="sheet" href="#">&#x270F;</a> -->
+          </td>
+        </tr>
+      </table>
+    </script>
 
-<a href="/">
-<img src="pq.gif" alt="Progress Quest">
-</a>
+    <script type="text/charsheet" id="sheet">
+      $Traits.Name the $Traits.Race [$hostname]
+      "$motto"
 
-<h1>Character Roster</h1>
+      Level $Traits.Level $Traits.Class (exp. $ExpBar.position/$ExpBar.max)
 
-<p id="roster" class="banter">
-</p>
+      Plot stage: $bestplot ($PlotBar.hint)
+      Quest: $bestquest ($QuestBar.hint)
 
-<table class="brag">
-  <tr>
-    <td id="newc">
-      <b>New Character</b> <br>
-      <img src="dicebar.jpg"><br>
-      <button id="roll">Roll One Up</button>
-    </td>
-  </tr>
-</table>
+      Stats:
+      STR $Stats.STR
+      CON $Stats.CON
+      DEX $Stats.DEX
+      INT $Stats.INT
+      WIS $Stats.WIS   HP Max $Stats.HP_Max
+      CHA $Stats.CHA   MP Max $Stats.MP_Max
 
-
-<br>
-<br>
-<div align="center" id="nabar">
-  <a href="/">Home</a> &middot;
-  <a href="/info.php">Info</a> &middot;
-  <a href="/faq.php">FAQ</a> &middot;
-  <a href="/play/">Play</a> &middot;
-  <a href="/dl.php">Download</a> &middot;
-  <a href="/realms.php">Realms</a> &middot;
-  <a href="/acct.php">Accounts</a> &middot;
-  <a href="/news.php">News</a> &middot;
-  <a href="http://www.cafepress.com/pqm">Store</a> &middot;
-  <a href="http://forum.progressquest.com/">Forum</a> &middot;
-  <a href="/links.php">Links</a>
-</div>
-<br>
-<div class="sig">&copy;2001-2010 <a class=dim
-   href="mailto:grumdrig@progressquest.com">grumdrig@progressquest.com</a>
-</div>
-</body>
-
-
-<script id="badge" type="text/html">
-  <table class="brag">
-    <tr>
-      <td><a class="icon go">&#x2694;</a></td>
-      <td>
-        <div>
-          <a class="go"><b>$Traits.Name</b></a> the $Traits.Race ($bestplot)
-        </div>
-        <div class="rc">Level $Traits.Level $Traits.Class</div>
-        <div class="bs">$bestequip / $bestspell / $beststat</div>
-      </td>
-      <td>
-        <a class="icon x" href="#">&#x2620;</a><br>
-        <!-- <a class="sheet" href="#">&#x270F;</a> -->
-      </td>
-    </tr>
-  </table>
-</script>
-
-
-<script type="text/charsheet" id="sheet">
-$Traits.Name the $Traits.Race [$hostname]
-"$motto"
-
-Level $Traits.Level $Traits.Class (exp. $ExpBar.position/$ExpBar.max)
-
-Plot stage: $bestplot ($PlotBar.hint)
-Quest: $bestquest ($QuestBar.hint)
-
-Stats:
-   STR $Stats.STR
-   CON $Stats.CON
-   DEX $Stats.DEX
-   INT $Stats.INT
-   WIS $Stats.WIS   HP Max $Stats.HP_Max
-   CHA $Stats.CHA   MP Max $Stats.MP_Max
-
-Equipment:
-$Equips.___
-Spell Book:
-$Spells.___
-Inventory ($EncumBar.hint):
-$Inventory.___
--- $date
--- Progress Quest 6.3.web - http://progressquest.com/
-</script>
-
-
+      Equipment:
+      $Equips.___
+      Spell Book:
+      $Spells.___
+      Inventory ($EncumBar.hint):
+      $Inventory.___
+      -- $date
+      -- Progress Quest 6.3.web - http://progressquest.com/
+    </script>
+  </body>
 </html>
+

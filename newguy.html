@@ -1,89 +1,75 @@
 <!DOCTYPE html>
 <html>
-<head>
-<link rel="shortcut icon" type="image/x-icon" href="http://progressquest.com/favicon.ico">
-<link rel="stylesheet" href="progros.css" type="text/css">
-<link rel="stylesheet" href="newguy.css" type="text/css">
-<title>Progress Quest - Roll One Up</title>
-<script src="json2.js"></script>
-<script src="jquery.js"></script>
-<script src="config.js"></script>
-<script src="newguy.js"></script>
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<style>
-input, button { display: inline; }
+  <head>
+    <link rel="shortcut icon" type="image/x-icon" href="http://progressquest.com/favicon.ico">
+    <link rel="stylesheet" href="progros.css" type="text/css">
+    <link rel="stylesheet" href="newguy.css" type="text/css">
+    <title>Progress Quest - Roll One Up</title>
+    <script src="json2.js"></script>
+    <script src="jquery.js"></script>
+    <script src="config.js"></script>
+    <script src="newguy.js"></script>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+  </head>
 
-</style>
-</head>
+  <body>
+    <div class="vbox window" id="newguy">
 
-<body>
-
-<br>
-
-<div class="vbox window" id="newguy">
-
-  <div id="titlebar">
-    <img src="swords.gif">
-    <span>Progress Quest - New Character</span>
-    <a id="quit"><img src="closeup.png"></a>
-  </div> 
-
-  <div class="client">
-  <div class="hbox">
-    Name
-    <input id="Name" spellcheck="false">
-    <button id="RandomName">?</button>
-  </div>
-
-  <div class=hbox>
-
-    <fieldset class="vbox groupbox" id="races">
-      <legend>Race</legend>
-    </fieldset>
-
-    <div class=vbox>
-      <div class=hbox>
-        <fieldset class="vbox groupbox" id="classes">
-          <legend>Class</legend>
-        </fieldset>
-        
-        <fieldset class="vbox groupbox" id="stats">
-          <legend>Stats</legend>
-          
-          <table>
-            <tr> <th> STR <td id="STR">13</tr>
-            <tr> <th> CON <td id="CON">23</tr>
-            <tr> <th> DEX <td id="DEX">34</tr>
-            <tr> <th> INT <td id="INT">12</tr>
-            <tr> <th> WIS <td id="WIS">4</tr>
-            <tr> <th> CHA <td id="CHA">12</tr>
-            <tr> <th colspan=2> &nbsp; </tr>
-            <tr> <th> Total <td id="Total">48</tr>
-          </table>
-          
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          
-          <center>
-            <button id="Reroll">Roll</button> <br>
-            <button id="Unroll" disabled>Unroll</button>
-          </center>
-          <br>
-          
-        </fieldset>
+      <div id="titlebar">
+        <img src="swords.gif">
+        <span>Progress Quest - New Character</span>
+        <a id="quit"><img src="closeup.png"></a>
       </div>
-      
-      <div class=hbox style="text-align:right;padding-top:15px">
-        <button id=Sold>Sold!</button>
+
+      <div class="client">
+        <div class="hbox">
+          Name
+          <input id="Name" spellcheck="false">
+          <button id="RandomName">?</button>
+        </div>
+      </div>
+
+      <div class=hbox>
+        <fieldset class="vbox groupbox" id="races">
+          <legend>Race</legend>
+        </fieldset>
+
+        <div class=vbox>
+          <div class=hbox>
+            <fieldset class="vbox groupbox" id="classes">
+              <legend>Class</legend>
+            </fieldset>
+
+            <fieldset class="vbox groupbox" id="stats">
+              <legend>Stats</legend>
+
+              <table>
+                <tr> <th> STR <td id="STR">13</td></th></tr>
+                <tr> <th> CON <td id="CON">23</td></th></tr>
+                <tr> <th> DEX <td id="DEX">34</td></th></tr>
+                <tr> <th> INT <td id="INT">12</td></th></tr>
+                <tr> <th> WIS <td id="WIS">4</td></th></tr>
+                <tr> <th> CHA <td id="CHA">12</td></th></tr>
+                <tr> <th colspan=2> &nbsp; </th></tr>
+                <tr> <th> Total <td id="Total">48</td></tr>
+                </table>
+
+                <center>
+                  <button id="Reroll">Roll</button> <br>
+                  <button id="Unroll" disabled>Unroll</button>
+                </center>
+                <br>
+
+              </fieldset>
+            </div>
+
+            <div class=hbox style="text-align:right;padding-top:15px">
+              <button id=Sold>Sold!</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  </div>
-</div>
 
-</body>
+  </body>
 </html>
